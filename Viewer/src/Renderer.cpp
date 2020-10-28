@@ -7,7 +7,6 @@
 
 #define INDEX(width,x,y,c) ((x)+(y)*(width))*3+(c)
 #define Z_INDEX(width,x,y) ((x)+(y)*(width))
-
 Renderer::Renderer(int viewport_width, int viewport_height) :
 	viewport_width_(viewport_width),
 	viewport_height_(viewport_height)
@@ -34,7 +33,22 @@ void Renderer::PutPixel(int i, int j, const glm::vec3& color)
 void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::vec3& color)
 {
 	// TODO: Implement bresenham algorithm
-	// https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
+	int P1 = p1.x, P2 = p2.x, q1 = p1.y, q2 = p2.y, x = P1, y = q1;
+	double deltaP = (P2 - P1), deltaQ = (q2 - q1);
+	double a = deltaQ / deltaP, c = q1 + (a * P1), e = (-1) * deltaP;
+	while (x <= P2)
+	{
+		//compute distance
+		if (e > 0)
+		{
+			y += 1;
+			e -=(2 * deltaP);
+		}
+		PutPixel(x, y, color);
+		x += 1;
+		e += (2 * deltaP);
+	}
+	
 }
 
 void Renderer::CreateBuffers(int w, int h)
