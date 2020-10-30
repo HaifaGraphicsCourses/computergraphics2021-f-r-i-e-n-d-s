@@ -42,8 +42,10 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 		y = P1;
 
 	}
-	if (a > -1 && a < 0) //reflect
+	if ((a > -1 && a < 0) || a < -1) //reflect
 	{
+		x = -1 * x;
+		y = -1 * y;
 
 	}
 	while (x <= P2)
@@ -197,9 +199,18 @@ void Renderer::Render(const Scene& scene)
 	int half_width = viewport_width_ / 2;
 	int half_height = viewport_height_ / 2;
 	int thickness = 15;
-	glm::ivec2 center(100,100);
-	glm::vec3 color(0, 238, 225);
-	int x0 = 100, y0 = 100,i,r=500,a=50;
+	/*glm::vec3 color(0, 0, 0);
+	DrawLine(glm::ivec2(400, 400), glm::ivec2(600, 600),color);
+	DrawLine(glm::ivec2(300, 300), glm::ivec2(500, 200), color);
+	DrawLine(glm::ivec2(500, 500), glm::ivec2(250, 300), color);
+	DrawLine(glm::ivec2(500, 500), glm::ivec2(500, 0), color);
+	DrawLine(glm::ivec2(500, 500), glm::ivec2(500, -300), color);
+	DrawLine(glm::ivec2(500, 500), glm::ivec2(100, -500), color);
+	DrawLine(glm::ivec2(500, 500), glm::ivec2(-100, -300), color);
+	DrawLine(glm::ivec2(500, 500), glm::ivec2(-500, -500), color);
+	*/glm::ivec2 center(300,300);
+	glm::vec3 color(0, 0, 0);
+	int x0 = 300, y0 = 300,i,r=300,a=3;
 	for (i = 0; i < 360; i++)
 	{
         DrawLine(center, glm::ivec2((x0 + r * sin((2 * M_PI * i) / a)), (y0 + r * cos((2 * M_PI * i) / a))), color);
