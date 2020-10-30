@@ -36,9 +36,18 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 	int P1 = p1.x, P2 = p2.x, q1 = p1.y, q2 = p2.y, x = P1, y = q1;
 	double deltaP = (P2 - P1), deltaQ = (q2 - q1);
 	double a = deltaQ / deltaP, c = q1 + (a * P1), e = (-1) * deltaP;
+	if (a > 1 || a < -1) //switch x and y
+	{
+		x = q1;
+		y = P1;
+
+	}
+	if (a > -1 && a < 0) //reflect
+	{
+
+	}
 	while (x <= P2)
 	{
-		//compute distance
 		if (e > 0)
 		{
 			y += 1;
@@ -188,8 +197,17 @@ void Renderer::Render(const Scene& scene)
 	int half_width = viewport_width_ / 2;
 	int half_height = viewport_height_ / 2;
 	int thickness = 15;
+	glm::ivec2 center(100,100);
+	glm::vec3 color(0, 238, 225);
+	int x0 = 100, y0 = 100,i,r=500,a=50;
+	for (i = 0; i < 360; i++)
+	{
+        DrawLine(center, glm::ivec2((x0 + r * sin((2 * M_PI * i) / a)), (y0 + r * cos((2 * M_PI * i) / a))), color);
+	}
+
 	
-	for(int i = 0; i < viewport_width_; i++)
+
+	/*for(int i = 0; i < viewport_width_; i++)
 	{
 		for (int j = half_height - thickness; j < half_height + thickness; j++)
 		{
@@ -203,7 +221,7 @@ void Renderer::Render(const Scene& scene)
 		{
 			PutPixel(j, i, glm::vec3(1, 0, 1));
 		}
-	}
+	}*/
 }
 
 int Renderer::GetViewportWidth() const
