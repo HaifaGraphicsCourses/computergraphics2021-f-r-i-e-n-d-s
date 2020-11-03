@@ -4,6 +4,7 @@
 
 #include "Renderer.h"
 #include "InitShader.h"
+#include <iostream>
 
 #define INDEX(width,x,y,c) ((x)+(y)*(width))*3+(c)
 #define Z_INDEX(width,x,y) ((x)+(y)*(width))
@@ -33,33 +34,113 @@ void Renderer::PutPixel(int i, int j, const glm::vec3& color)
 void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::vec3& color)
 {
 	// TODO: Implement bresenham algorithm
-	int P1 = p1.x, P2 = p2.x, q1 = p1.y, q2 = p2.y, x = P1, y = q1;
-	double deltaP = (P2 - P1), deltaQ = (q2 - q1);
-	double a = deltaQ / deltaP, c = q1 + (a * P1), e = (-1) * deltaP;
-	if (a > 1 || a < -1) //switch x and y
+	int x = p1.x, y = p1.y, ReflectFlag = 0, LoopVar = p2.x;
+	double deltaP = (p2.x - p1.x), deltaQ = (p2.y - p1.y);
+	double a = deltaQ / deltaP, e = (-1) * deltaP;
+	if (a > 1 && !(a < -1)) //switch x and y
 	{
-		x = q1;
-		y = P1;
-
-	}
-	if ((a > -1 && a < 0) || a < -1) //reflect
-	{
-		x = -1 * x;
-		y = -1 * y;
-
-	}
-	while (x <= P2)
-	{
-		if (e > 0)
+		std::cout << "switch Case\n";
+		x = p1.y;
+		y = p1.x;
+		deltaQ = deltaP;
+		deltaP = (p2.y - p1.y);
+		while (x <= p2.y)
 		{
-			y += 1;
-			e -=(2 * deltaP);
+			if (e > 0)
+			{
+				y = y + 1;
+				e = e - (2 * deltaP);
+			}
+			PutPixel(y, x, color);
+			std::cout << y << ',' << x;
+			std::cout << '\n';
+			x = x + 1;
+			e = e + (2 * deltaQ);
 		}
-		PutPixel(x, y, color);
-		x += 1;
-		e += (2 * deltaP);
 	}
-	
+
+	if ((a > -1 && a < 0) && !(a < -1)) //reflect 
+	{
+		std::cout << "reflect Case\n";
+		//ReflectFlag = 1;
+		if (deltaQ < 0) {
+			deltaQ = (-1) * deltaQ;
+			while (x <= p2.x)
+			{
+				if (e > 0)
+				{
+					y = y - 1;
+					e = e - (2 * deltaP);
+				}
+				PutPixel(x, y, color);
+				std::cout << x << ',' << y;
+				std::cout << '\n';
+				x = x + 1;
+				e = e + (2 * deltaQ);
+			}
+		}
+		else
+		{
+			deltaP = (-1) * deltaP;
+				while (x >= LoopVar)
+				{
+					if (e > 0)
+					{
+						if (y < p2.y)
+							y = y + 1;
+						e = e - (2 * deltaP);
+					}
+					PutPixel(x, y, color);
+					std::cout << x << ',' << y;
+					std::cout << '\n';
+					x = x - 1;
+					e = e + (2 * deltaQ);
+				}
+		}
+	}
+
+	if (a < -1)//swtich and reflect
+	{
+		std::cout << "switch and reflect Case\n";
+		x = p1.y;
+		y = p1.x;
+		deltaQ = deltaP;
+		deltaP = (p2.y - p1.y);
+		LoopVar = p2.y;
+		if (deltaQ < 0) {
+			deltaP = (-1) * deltaP;
+			while (x <= LoopVar)
+			{
+				if (e < 0)
+				{
+					y = y - 1;
+					e = e - (2 * deltaP);
+				}
+				PutPixel(y, x, color);
+				std::cout << x << ',' << y;
+				std::cout << '\n';
+				x = x + 1;
+				e = e + (2 * deltaQ);
+			}
+		}
+		else
+		{
+			deltaQ = (-1) * deltaQ;
+			while (x >= LoopVar)
+			{
+				if (e < 0)
+				{
+					y = y + 1;
+					e = e - (2 * deltaP);
+				}
+				PutPixel(y, x, color);
+				std::cout << x << ',' << y;
+				std::cout << '\n';
+				x = x - 1;
+				e = e + (2 * deltaQ);
+			}
+		}
+	}
 }
 
 void Renderer::CreateBuffers(int w, int h)
@@ -199,21 +280,17 @@ void Renderer::Render(const Scene& scene)
 	int half_width = viewport_width_ / 2;
 	int half_height = viewport_height_ / 2;
 	int thickness = 15;
-	/*glm::vec3 color(0, 0, 0);
-	DrawLine(glm::ivec2(400, 400), glm::ivec2(600, 600),color);
-	DrawLine(glm::ivec2(300, 300), glm::ivec2(500, 200), color);
-	DrawLine(glm::ivec2(500, 500), glm::ivec2(250, 300), color);
-	DrawLine(glm::ivec2(500, 500), glm::ivec2(500, 0), color);
-	DrawLine(glm::ivec2(500, 500), glm::ivec2(500, -300), color);
-	DrawLine(glm::ivec2(500, 500), glm::ivec2(100, -500), color);
-	DrawLine(glm::ivec2(500, 500), glm::ivec2(-100, -300), color);
-	DrawLine(glm::ivec2(500, 500), glm::ivec2(-500, -500), color);
-	*/glm::ivec2 center(300,300);
+	//glm::vec3 color(0, 0, 0);
+	//glm::ivec2 Point1(200, 600);
+	//glm::ivec2 Point2(400, 200);
+	//DrawLine(Point1,Point2, color);
+	glm::ivec2 center(300,300);
 	glm::vec3 color(0, 0, 0);
-	int x0 = 300, y0 = 300,i,r=300,a=3;
+	int x0 = 300, y0 = 300,i,r=3000,a=30;
 	for (i = 0; i < 360; i++)
 	{
-        DrawLine(center, glm::ivec2((x0 + r * sin((2 * M_PI * i) / a)), (y0 + r * cos((2 * M_PI * i) / a))), color);
+		glm::ivec2 P1((x0 + r * sin((2 * M_PI * i) / a), (y0 + r * cos((2 * M_PI * i) / a))));
+        DrawLine(center, P1, color);
 	}
 
 	
