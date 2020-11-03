@@ -163,5 +163,7 @@ Circle image
 
 ![Cricle Image](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/Circle.JPG)
 
-##My be creative image my favorite TV series :)
+My be creative image my favorite TV series :)
+------------
+
 ![FRIENDS Image](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/FRIENDS.JPG)
