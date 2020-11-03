@@ -37,32 +37,64 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 	int x = p1.x, y = p1.y, ReflectFlag = 0, LoopVar = p2.x;
 	double deltaP = (p2.x - p1.x), deltaQ = (p2.y - p1.y);
 	double a = deltaQ / deltaP, e = (-1) * deltaP;
+	if (deltaQ == 0)
+	{
+		if(deltaP>0)
+		while (x <= p2.x)
+		{
+			PutPixel(x, y, color);
+			x = x + 1;
+		}
+		else
+		{
+			while (x >= p2.x)
+			{
+				PutPixel(x, y, color);
+				x = x - 1;
+			}
+		}
+	}else
+		if (deltaP == 0)
+		{
+			if (deltaQ > 0)
+				while (y <= p2.y)
+				{
+					PutPixel(x, y, color);
+					y = y + 1;
+				}
+			else
+				while (y >= p2.y)
+				{
+					PutPixel(x, y, color);
+					y = y - 1;
+				}
+		}
+		else
 	if (a > 1 && !(a < -1)) //switch x and y
 	{
-		std::cout << "switch Case\n";
 		x = p1.y;
 		y = p1.x;
 		deltaQ = deltaP;
 		deltaP = (p2.y - p1.y);
-		while (x <= p2.y)
-		{
-			if (e > 0)
+		if (deltaQ > 0 && deltaP > 0) {
+			while (x <= p2.y)
 			{
-				y = y + 1;
-				e = e - (2 * deltaP);
+				if (e > 0)
+				{
+					y = y + 1;
+					e = e - (2 * deltaP);
+				}
+				PutPixel(y, x, color);
+				x = x + 1;
+				e = e + (2 * deltaQ);
 			}
-			PutPixel(y, x, color);
-			std::cout << y << ',' << x;
-			std::cout << '\n';
-			x = x + 1;
-			e = e + (2 * deltaQ);
 		}
+		else
+			DrawLine(p2, p1, color);
 	}
-
+	else
 	if ((a > -1 && a < 0) && !(a < -1)) //reflect 
 	{
-		std::cout << "reflect Case\n";
-		//ReflectFlag = 1;
 		if (deltaQ < 0) {
 			deltaQ = (-1) * deltaQ;
 			while (x <= p2.x)
@@ -73,8 +105,6 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 					e = e - (2 * deltaP);
 				}
 				PutPixel(x, y, color);
-				std::cout << x << ',' << y;
-				std::cout << '\n';
 				x = x + 1;
 				e = e + (2 * deltaQ);
 			}
@@ -82,7 +112,7 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 		else
 		{
 			deltaP = (-1) * deltaP;
-				while (x >= LoopVar)
+				while (x >= p2.x)
 				{
 					if (e > 0)
 					{
@@ -91,17 +121,14 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 						e = e - (2 * deltaP);
 					}
 					PutPixel(x, y, color);
-					std::cout << x << ',' << y;
-					std::cout << '\n';
 					x = x - 1;
 					e = e + (2 * deltaQ);
 				}
 		}
 	}
-
+	else
 	if (a < -1)//swtich and reflect
 	{
-		std::cout << "switch and reflect Case\n";
 		x = p1.y;
 		y = p1.x;
 		deltaQ = deltaP;
@@ -117,29 +144,30 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 					e = e - (2 * deltaP);
 				}
 				PutPixel(y, x, color);
-				std::cout << x << ',' << y;
-				std::cout << '\n';
 				x = x + 1;
 				e = e + (2 * deltaQ);
 			}
 		}
 		else
-		{
-			deltaQ = (-1) * deltaQ;
-			while (x >= LoopVar)
+			DrawLine(p2, p1, color);
+	}
+	else
+	{
+		if (deltaP > 0 && deltaQ > 0) {
+			while (x <= p2.x)
 			{
-				if (e < 0)
+				if (e > 0)
 				{
 					y = y + 1;
 					e = e - (2 * deltaP);
 				}
-				PutPixel(y, x, color);
-				std::cout << x << ',' << y;
-				std::cout << '\n';
-				x = x - 1;
+				PutPixel(x, y, color);
+				x = x + 1;
 				e = e + (2 * deltaQ);
 			}
 		}
+		else
+			DrawLine(p2, p1, color);
 	}
 }
 
@@ -280,16 +308,16 @@ void Renderer::Render(const Scene& scene)
 	int half_width = viewport_width_ / 2;
 	int half_height = viewport_height_ / 2;
 	int thickness = 15;
-	//glm::vec3 color(0, 0, 0);
-	//glm::ivec2 Point1(200, 600);
-	//glm::ivec2 Point2(400, 200);
-	//DrawLine(Point1,Point2, color);
-	glm::ivec2 center(300,300);
+	float x, y;
+	glm::ivec2 center(500,350);
 	glm::vec3 color(0, 0, 0);
-	int x0 = 300, y0 = 300,i,r=3000,a=30;
-	for (i = 0; i < 360; i++)
+	int r=300,a=100,i;
+	double angle = 2.f * M_PI / a;
+	for (i =0; i <= a;i++)
 	{
-		glm::ivec2 P1((x0 + r * sin((2 * M_PI * i) / a), (y0 + r * cos((2 * M_PI * i) / a))));
+		x = center.x + (r * sin(angle*i));
+		y = center.y + (r * cos(angle*i));
+		glm::ivec2 P1(x,y);
         DrawLine(center, P1, color);
 	}
 
