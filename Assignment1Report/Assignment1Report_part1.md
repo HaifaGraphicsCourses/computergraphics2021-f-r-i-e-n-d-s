@@ -161,4 +161,4 @@ In code:
 Circle image
 ------------
 
-![Alt Text](/Images/Circle.jpeg)
+![Cricle Image](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/Circle.JPG)
