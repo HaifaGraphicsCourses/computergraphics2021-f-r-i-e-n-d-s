@@ -47,3 +47,7 @@ void MeshModel::PrintModel() const
 		std::cout << normals_[i].x << " " << normals_[i].y << " " << normals_[i].z << "\n";
 	}
 }
+
+void ScaleModel(int lower, int higher) {
+
+}

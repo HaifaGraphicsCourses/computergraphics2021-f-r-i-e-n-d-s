@@ -12,6 +12,7 @@ public:
 	int GetFacesCount() const;
 	const std::string& GetModelName() const;
 	void PrintModel()const;
+	void ScaleModel(int lower, int higher);
 
 private:
 	std::vector<Face> faces_;
