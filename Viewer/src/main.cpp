@@ -5,13 +5,15 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <nfd.h>
-
+#include <string>
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
 #include "Renderer.h"
 #include "Scene.h"
 #include "Utils.h"
+#include <fstream>
+#include <iostream>
 
 /**
  * Fields
@@ -31,9 +33,6 @@ void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& 
 void Cleanup(GLFWwindow* window);
 void DrawImguiMenus(ImGuiIO& io, Scene& scene);
 
-/**
- * Function implementation
- */
 void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
@@ -42,6 +41,10 @@ void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 
 int main(int argc, char **argv)
 {
+	const std::string path= "C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\banana.obj";
+	std::vector < glm::vec3 > out_vertices;
+	std::vector < glm::vec3 > out_normals;
+	std::vector<Face> faces;
 	int windowWidth = 1280, windowHeight = 720;
 	GLFWwindow* window = SetupGlfwWindow(windowWidth, windowHeight, "Mesh Viewer");
 	if (!window)
@@ -53,11 +56,12 @@ int main(int argc, char **argv)
 
 	Renderer renderer = Renderer(frameBufferWidth, frameBufferHeight);
 	Scene scene = Scene();
-	
+	std::shared_ptr<MeshModel> model = Utils::LoadMeshModel(path);
 	ImGuiIO& io = SetupDearImgui(window);
 	glfwSetScrollCallback(window, ScrollCallback);
     while (!glfwWindowShouldClose(window))
     {
+		scene.AddModel(model);
         glfwPollEvents();
 		StartFrame();
 		DrawImguiMenus(io, scene);

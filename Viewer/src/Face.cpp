@@ -1,6 +1,7 @@
 #pragma once
 #include <istream>
 #include "Face.h"
+#include <iostream>
 
 Face::Face(std::istream& issLine)
 {
@@ -47,4 +48,13 @@ int Face::GetNormalIndex(int internal_index) const
 int Face::GetTextureIndex(int internal_index) const
 {
 	return texture_indices_[internal_index];
+}
+void Face::PrintFace()const
+{
+	for (std::vector<int>::size_type i = 0; i != vertex_indices_.size(); i++) {
+		std::cout << "Vertex Index: "<< vertex_indices_[i];
+		std::cout << " Normal Index: " << normal_indices_[i];
+		std::cout << " Texture Index: " << texture_indices_[i]<<"\t";
+	}
+	
 }
