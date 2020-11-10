@@ -21,7 +21,7 @@ int Scene::GetModelCount() const
 
 MeshModel& Scene::GetModel(int index) const
 {
-	return *mesh_models_[index];
+		return *mesh_models_[index];
 }
 
 MeshModel& Scene::GetActiveModel() const

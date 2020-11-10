@@ -41,10 +41,6 @@ void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 
 int main(int argc, char **argv)
 {
-	const std::string path= "C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\banana.obj";
-	std::vector < glm::vec3 > out_vertices;
-	std::vector < glm::vec3 > out_normals;
-	std::vector<Face> faces;
 	int windowWidth = 1280, windowHeight = 720;
 	GLFWwindow* window = SetupGlfwWindow(windowWidth, windowHeight, "Mesh Viewer");
 	if (!window)
@@ -56,12 +52,10 @@ int main(int argc, char **argv)
 
 	Renderer renderer = Renderer(frameBufferWidth, frameBufferHeight);
 	Scene scene = Scene();
-	std::shared_ptr<MeshModel> model = Utils::LoadMeshModel(path);
 	ImGuiIO& io = SetupDearImgui(window);
 	glfwSetScrollCallback(window, ScrollCallback);
     while (!glfwWindowShouldClose(window))
     {
-		scene.AddModel(model);
         glfwPollEvents();
 		StartFrame();
 		DrawImguiMenus(io, scene);

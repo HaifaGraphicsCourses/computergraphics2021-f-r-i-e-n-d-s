@@ -1,10 +1,11 @@
 #include "MeshModel.h"
 #include <iostream>
 
-MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, const std::string& model_name) :
+MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, const std::string& model_name, glm::mat4x4& Transformation) :
 	faces_(faces),
 	vertices_(vertices),
-	normals_(normals)
+	normals_(normals),
+	PreTransformation(Transformation)
 {
 
 }
@@ -48,6 +49,10 @@ void MeshModel::PrintModel() const
 	}
 }
 
-void ScaleModel(int lower, int higher) {
+const glm::vec3 MeshModel::GetVertex(int index)const {
+	return vertices_[index-1];
+}
 
+const glm::mat4x4& MeshModel::GetPreTransformation() {
+	return PreTransformation;
 }

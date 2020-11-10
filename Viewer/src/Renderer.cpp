@@ -35,8 +35,31 @@ void Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::v
 {
 	// TODO: Implement bresenham algorithm
 	int x = p1.x, y = p1.y, ReflectFlag = 0, LoopVar = p2.x;
-	double deltaP = (p2.x - p1.x), deltaQ = (p2.y - p1.y);
+	double deltaP = (double)(p2.x - p1.x), deltaQ = (double)(p2.y - p1.y);
 	double a = deltaQ / deltaP, e = (-1) * deltaP;
+	if (a == -1)
+	{
+		if (deltaP > 0)
+		{
+			while (x < p2.x)
+			{
+				PutPixel(x, y, color);
+				x = x + 1;
+				y = y - 1;
+			}
+
+		}
+		else
+		{
+			while (x > p2.x)
+			{
+				PutPixel(x, y, color);
+				x = x - 1;
+				y = y + 1;
+			}
+		}
+	}
+	else
 	if (deltaQ == 0)
 	{
 		if(deltaP>0)
@@ -308,57 +331,29 @@ void Renderer::Render(const Scene& scene)
 	int half_width = viewport_width_ / 2;
 	int half_height = viewport_height_ / 2;
 	int thickness = 15;
-	float x, y;
-	//glm::ivec2 center(500,350);
+	int VertexIndex1, VertexIndex2, VertexIndex3;
+	glm::vec3 Vertex;
+	glm::vec4 Vertex1, Vertex2, Vertex3;
 	glm::vec3 color(0, 0, 0);
-	/*int r=300,a=100,i;
-	double angle = 2.f * M_PI / a;
-	for (i =0; i <= a;i++)
-	{
-		x = center.x + (r * sin(angle*i));
-		y = center.y + (r * cos(angle*i));
-		glm::ivec2 P1(x,y);
-        DrawLine(center, P1, color);
-	}*/
-	DrawLine(glm::ivec2(50, 200), glm::ivec2(50, 400), color);
-	DrawLine(glm::ivec2(50, 400), glm::ivec2(170, 400), color);
-	DrawLine(glm::ivec2(50,320), glm::ivec2(170,320), color);
-
-	DrawLine(glm::ivec2(200,200), glm::ivec2(200,400), color);
-	DrawLine(glm::ivec2(200,400) , glm::ivec2(300,400), color);
-	DrawLine(glm::ivec2(300,400), glm::ivec2(300,320), color);
-	DrawLine(glm::ivec2(300,320), glm::ivec2(200,320), color);
-	DrawLine(glm::ivec2(200,320 ), glm::ivec2(300,200), color);
-
-	DrawLine(glm::ivec2(350,200 ), glm::ivec2(500,200 ), color);
-	DrawLine(glm::ivec2(350,400 ), glm::ivec2(500,400 ), color);
-	DrawLine(glm::ivec2(425,400), glm::ivec2(425,200), color);
-
-	DrawLine(glm::ivec2(550, 200), glm::ivec2(550, 400), color);
-	DrawLine(glm::ivec2(550, 400), glm::ivec2(670, 400), color);
-	DrawLine(glm::ivec2(550, 320), glm::ivec2(670, 320), color);
-	DrawLine(glm::ivec2(550, 200), glm::ivec2(670, 200), color);
-
-	DrawLine(glm::ivec2(720, 200), glm::ivec2(720, 400), color);
-	DrawLine(glm::ivec2(720, 400), glm::ivec2(800,200), color);
-	DrawLine(glm::ivec2(800, 200), glm::ivec2(800,400), color);
-
-	DrawLine(glm::ivec2(850,200), glm::ivec2(850, 400), color);
-	DrawLine(glm::ivec2(850,390), glm::ivec2(950, 390), color);
-	DrawLine(glm::ivec2(950, 390), glm::ivec2(950,200), color);
-	DrawLine(glm::ivec2(950, 200), glm::ivec2(850, 201), color);
-
-	DrawLine(glm::ivec2(1000, 200), glm::ivec2(1150,200 ), color);
-	DrawLine(glm::ivec2(1150, 200), glm::ivec2(1150,300), color);
-	DrawLine(glm::ivec2(1150, 300), glm::ivec2(1000, 300), color);
-	DrawLine(glm::ivec2(1000, 300), glm::ivec2(1000, 400), color);
-	DrawLine(glm::ivec2(1000, 400), glm::ivec2(1150, 400), color);
-	
-
-
-
-	
-
+	if (scene.GetModelCount() > 0) {
+		auto model = scene.GetActiveModel();
+		for (int i = 0; i < model.GetFacesCount(); i++)
+		{
+			Face face = model.GetFace(i);
+			VertexIndex1 = face.GetVertexIndex(0);
+			VertexIndex2 = face.GetVertexIndex(1);
+			VertexIndex3 = face.GetVertexIndex(2);
+			Vertex = model.GetVertex(VertexIndex1);
+			Vertex1 =model.GetPreTransformation() * glm::vec4(Vertex.x,Vertex.y,Vertex.z,1);
+			Vertex = model.GetVertex(VertexIndex2);
+			Vertex2 = model.GetPreTransformation() * glm::vec4(Vertex.x, Vertex.y, Vertex.z, 1);
+			Vertex = model.GetVertex(VertexIndex3);
+			Vertex3 = model.GetPreTransformation() * glm::vec4(Vertex.x, Vertex.y, Vertex.z, 1);
+			DrawLine(glm::ivec2(Vertex1.x / Vertex1.w, Vertex1.y / Vertex1.w), glm::ivec2(Vertex2.x / Vertex2.w, Vertex2.y / Vertex2.w), color);
+			DrawLine(glm::ivec2(Vertex1.x / Vertex1.w, Vertex1.y / Vertex1.w), glm::ivec2(Vertex3.x / Vertex3.w, Vertex3.y / Vertex3.w), color);
+			DrawLine(glm::ivec2(Vertex3.x / Vertex3.w, Vertex3.y / Vertex3.w), glm::ivec2(Vertex2.x / Vertex2.w, Vertex2.y / Vertex2.w), color);
+		}
+	}
 	/*for(int i = 0; i < viewport_width_; i++)
 	{
 		for (int j = half_height - thickness; j < half_height + thickness; j++)
