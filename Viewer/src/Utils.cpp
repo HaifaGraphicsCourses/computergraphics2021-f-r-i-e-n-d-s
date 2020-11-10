@@ -88,8 +88,7 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 	}
 		MaxIndex = Max_X > Max_Y ? Max_X : Max_Y;
 		MaxIndex = MaxIndex > Max_Z ? MaxIndex : Max_Z;
-		glm::vec4 ModelCenter((Min_X + Max_X) / 2, (Min_Y + Max_Y) / 2, (Min_Z + Max_Z) / 2, 1);
-		float ScalingParameter = 300 / MaxIndex;
+		float ScalingParameter = 330 / MaxIndex;
 		glm::mat4x4 scaling = Transformations::ScalingTransformation(ScalingParameter, ScalingParameter, ScalingParameter);
 		glm::mat4x4 translateObjectToCenter = Transformations::TranslationTransformation(-Min_X, -Min_Y, -Min_Z);
 		Transformation = scaling * translateObjectToCenter;
