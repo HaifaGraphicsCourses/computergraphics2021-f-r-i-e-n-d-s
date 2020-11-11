@@ -249,12 +249,14 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	{
 		const static char* items[] = { "Scale","Rotate","Translate"};
 		const static char* TransformItems[] = {"World Transformation","Local Transformation"};
+		const static char* Axis[] = { "X Axis","Y Axis","Z Axis" };
 		static int SelectedItem = 0;
 		static int SelectedTransform = 0;
+		static int SelectedAxis;
 		static float ScaleX = 0.f;
 		static float ScaleY = 0.f;
 		static float ScaleZ = 0.f;
-		
+		glm::mat4x4 Transformation;
 		static int TranslateX = 0;
 		static int TranslateY = 0;
 		static int TranslateZ = 0;
@@ -266,17 +268,21 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		switch (SelectedItem)
 		{
 		case 0:
-			ImGui::SliderFloat("Scale Factor X", &ScaleX, 0.f, 300.f);
-			ImGui::SliderFloat("Scale Factor Y", &ScaleY, 0.f, 300.f);
-			ImGui::SliderFloat("Scale Factor Z", &ScaleZ, 0.f, 300.f);
+			ImGui::SliderFloat("Scale Factor X", &ScaleX, 0.f, 3.f);
+			ImGui::SliderFloat("Scale Factor Y", &ScaleY, 0.f, 3.f);
+			ImGui::SliderFloat("Scale Factor Z", &ScaleZ, 0.f, 3.f);
+			Transformation = Transformations::ScalingTransformation(ScaleX, ScaleY, ScaleZ);
 			break;
 		case 1:
+			ImGui::ListBox("Choose Axis to rotate around", &SelectedAxis, Axis, IM_ARRAYSIZE(Axis), 3);
 			ImGui::SliderInt("Rotation Angle", &Angle, 0, 360);
+			Transformation = (SelectedAxis == 0 ? Transformations::XRotationTransformation(Angle) : SelectedAxis == 1 ? Transformations::YRotationTransformation(Angle) : Transformations::ZRotationTransformation(Angle));
 			break;
 		case 2:
 			ImGui::SliderInt("Translate Factor X", &TranslateX, -500, 500);
 			ImGui::SliderInt("Translate Factor Y", &TranslateY, -500, 500);
 			ImGui::SliderInt("Translate Factor Z", &TranslateZ, -500, 500);
+			Transformation = Transformations::TranslationTransformation(TranslateX, TranslateY, TranslateZ);
 			break;
 		default:
 			break;
@@ -285,11 +291,11 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		{
 			if (SelectedTransform)
 			{
-				//Local Transform
+				scene.GetActiveModel().SetLocalTransformation(Transformation);
 			}
 			else
 			{
-				//World Transformation
+				scene.GetActiveModel().SetWorldTransformation(Transformation);
 			}
 		}
 		ImGui::End();

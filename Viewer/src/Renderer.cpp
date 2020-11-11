@@ -344,11 +344,12 @@ void Renderer::Render(const Scene& scene)
 			VertexIndex2 = face.GetVertexIndex(1);
 			VertexIndex3 = face.GetVertexIndex(2);
 			Vertex = model.GetVertex(VertexIndex1);
-			Vertex1 =model.GetPreTransformation() * glm::vec4(Vertex.x,Vertex.y,Vertex.z,1);
+			glm::mat4x4 Transformation =(model.GetWorldTransformation()) * model.GetPreTransformation();
+			Vertex1 = Transformation * glm::vec4(Vertex.x, Vertex.y, Vertex.z, 1);
 			Vertex = model.GetVertex(VertexIndex2);
-			Vertex2 = model.GetPreTransformation() * glm::vec4(Vertex.x, Vertex.y, Vertex.z, 1);
+			Vertex2 = Transformation * glm::vec4(Vertex.x, Vertex.y, Vertex.z, 1);
 			Vertex = model.GetVertex(VertexIndex3);
-			Vertex3 = model.GetPreTransformation() * glm::vec4(Vertex.x, Vertex.y, Vertex.z, 1);
+			Vertex3 = Transformation * glm::vec4(Vertex.x, Vertex.y, Vertex.z, 1);
 			DrawLine(glm::ivec2(Vertex1.x / Vertex1.w, Vertex1.y / Vertex1.w), glm::ivec2(Vertex2.x / Vertex2.w, Vertex2.y / Vertex2.w), color);
 			DrawLine(glm::ivec2(Vertex1.x / Vertex1.w, Vertex1.y / Vertex1.w), glm::ivec2(Vertex3.x / Vertex3.w, Vertex3.y / Vertex3.w), color);
 			DrawLine(glm::ivec2(Vertex3.x / Vertex3.w, Vertex3.y / Vertex3.w), glm::ivec2(Vertex2.x / Vertex2.w, Vertex2.y / Vertex2.w), color);

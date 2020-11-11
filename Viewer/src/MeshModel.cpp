@@ -57,3 +57,19 @@ const glm::vec3 MeshModel::GetVertex(int index)const {
 const glm::mat4x4& MeshModel::GetPreTransformation() {
 	return PreTransformation;
 }
+const glm::mat4x4& MeshModel::GetWorldTransformation()const
+{
+	return WorldTransformation;
+}
+const glm::mat4x4& MeshModel::GetLocalTransformation()const
+{
+	return ModelTransformation;
+}
+void MeshModel::SetWorldTransformation(glm::mat4x4& Transformation)
+{
+	this->WorldTransformation = Transformation * WorldTransformation;
+}
+void MeshModel::SetLocalTransformation(glm::mat4x4& Transformation)
+{
+	this->ModelTransformation = Transformation * ModelTransformation;
+}
