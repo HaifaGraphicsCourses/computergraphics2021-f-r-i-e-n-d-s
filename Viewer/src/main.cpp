@@ -281,7 +281,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		default:
 			break;
 		}
-		if (ImGui::Button("Aplly"))
+		if (ImGui::Button("Apply"))
 		{
 			if (SelectedTransform)
 			{
