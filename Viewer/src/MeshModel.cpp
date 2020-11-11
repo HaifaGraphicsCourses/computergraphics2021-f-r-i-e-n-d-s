@@ -73,3 +73,15 @@ void MeshModel::SetLocalTransformation(glm::mat4x4& Transformation)
 {
 	this->ModelTransformation = Transformation * ModelTransformation;
 }
+void MeshModel::SetTransformation(glm::mat4x4& TransMat) {
+	this->Transformation = TransMat * Transformation;
+}
+const glm::mat4x4& MeshModel::GetTransformation()const {
+	return this->Transformation;
+}
+void MeshModel::ResetModel()
+{
+	this->WorldTransformation = Transformations::Identity4X4Matrix();
+	this->ModelTransformation = Transformations::Identity4X4Matrix();
+	this->Transformation = Transformations::Identity4X4Matrix();
+}

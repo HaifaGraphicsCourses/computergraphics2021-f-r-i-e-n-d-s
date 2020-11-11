@@ -292,11 +292,17 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			if (SelectedTransform)
 			{
 				scene.GetActiveModel().SetLocalTransformation(Transformation);
+				scene.GetActiveModel().SetTransformation(Transformation);
 			}
 			else
 			{
 				scene.GetActiveModel().SetWorldTransformation(Transformation);
+				scene.GetActiveModel().SetTransformation(Transformation);
 			}
+		}
+		if (ImGui::Button("Reset"))
+		{
+			scene.GetActiveModel().ResetModel();
 		}
 		ImGui::End();
 	

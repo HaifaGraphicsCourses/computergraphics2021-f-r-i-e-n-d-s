@@ -18,7 +18,10 @@ public:
 	void SetWorldTransformation(glm::mat4x4& Transformation);
 	void SetLocalTransformation(glm::mat4x4& Transformation);
 	const glm::mat4x4& GetWorldTransformation()const;
+	const glm::mat4x4& GetTransformation()const;
 	const glm::mat4x4& GetLocalTransformation()const;
+	void SetTransformation(glm::mat4x4& Transformation);
+	void ResetModel();
 
 private:
 	std::vector<Face> faces_;
@@ -27,5 +30,6 @@ private:
 	glm::mat4x4 PreTransformation;
 	glm::mat4x4 WorldTransformation=Transformations::Identity4X4Matrix();
 	glm::mat4x4 ModelTransformation= Transformations::Identity4X4Matrix();
+	glm::mat4x4 Transformation = Transformations::Identity4X4Matrix();
 	std::string model_name_;
 };
