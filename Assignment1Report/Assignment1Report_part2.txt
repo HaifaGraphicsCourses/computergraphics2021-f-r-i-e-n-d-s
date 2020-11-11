@@ -14,3 +14,10 @@
 #####-Get back to 3d coordinates (v1=(v1.x/v1.w,v1.y/v1.w,v1.z/v1.w))
 #####-draw lines from v1 to v2 , v2 to v3 , v1 to v3 depending on the x and y coordinates only.
 ===============================
+#Drawing the model in Render
+!Cow Model](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/CowModel.JPG)
+===============================
+#Showing the GUI and explaining how it works
+####The GUI is shown in the pictures bellow before loading a model and after loading a model.
+####The user can pick World or Local transformation and the transformation type(scale,translate,rotate)
+####With the appropriate parameters can be chosen with sliderInt or sliderFloat

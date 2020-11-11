@@ -1,6 +1,7 @@
 #include "MeshModel.h"
 #include <iostream>
 
+
 MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, const std::string& model_name, glm::mat4x4& Transformation) :
 	faces_(faces),
 	vertices_(vertices),

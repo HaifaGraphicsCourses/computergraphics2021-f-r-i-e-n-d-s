@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <string>
+#include "../../build/Transformations.h"
 #include "Face.h"
 
 class MeshModel
@@ -20,5 +21,7 @@ private:
 	std::vector<glm::vec3> vertices_;
 	std::vector<glm::vec3> normals_;
 	glm::mat4x4 PreTransformation;
+	glm::mat4x4 WorldTransfomation=Transformations::Identity4X4Matrix();
+	glm::mat4x4 ModelTransformation= Transformations::Identity4X4Matrix();
 	std::string model_name_;
 };

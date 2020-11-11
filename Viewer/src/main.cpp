@@ -244,4 +244,56 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			show_another_window = false;
 		ImGui::End();
 	}
+	//My Transformations Window
+	if(scene.GetModelCount()>0)
+	{
+		const static char* items[] = { "Scale","Rotate","Translate"};
+		const static char* TransformItems[] = {"World Transformation","Local Transformation"};
+		static int SelectedItem = 0;
+		static int SelectedTransform = 0;
+		static float ScaleX = 0.f;
+		static float ScaleY = 0.f;
+		static float ScaleZ = 0.f;
+		
+		static int TranslateX = 0;
+		static int TranslateY = 0;
+		static int TranslateZ = 0;
+
+		static int Angle=0;
+		ImGui::Begin("Transformations Window");
+		ImGui::ListBox("World Or Local", &SelectedTransform, TransformItems, IM_ARRAYSIZE(TransformItems),2);
+		ImGui::ListBox("Choose Transformation",&SelectedItem,items,IM_ARRAYSIZE(items),3);
+		switch (SelectedItem)
+		{
+		case 0:
+			ImGui::SliderFloat("Scale Factor X", &ScaleX, 0.f, 300.f);
+			ImGui::SliderFloat("Scale Factor Y", &ScaleY, 0.f, 300.f);
+			ImGui::SliderFloat("Scale Factor Z", &ScaleZ, 0.f, 300.f);
+			break;
+		case 1:
+			ImGui::SliderInt("Rotation Angle", &Angle, 0, 360);
+			break;
+		case 2:
+			ImGui::SliderInt("Translate Factor X", &TranslateX, -500, 500);
+			ImGui::SliderInt("Translate Factor Y", &TranslateY, -500, 500);
+			ImGui::SliderInt("Translate Factor Z", &TranslateZ, -500, 500);
+			break;
+		default:
+			break;
+		}
+		if (ImGui::Button("Aplly"))
+		{
+			if (SelectedTransform)
+			{
+				//Local Transform
+			}
+			else
+			{
+				//World Transformation
+			}
+		}
+		ImGui::End();
+	
+
+	}
 }
