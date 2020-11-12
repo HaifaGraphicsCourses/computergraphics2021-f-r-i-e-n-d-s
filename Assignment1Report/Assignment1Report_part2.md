@@ -24,9 +24,10 @@
 
 # Showing the GUI and explaining how it works
 ===============================
-####The GUI is shown in the pictures bellow before loading a model and after loading a model.
-####The user can pick World or Local transformation and the transformation type(scale,translate,rotate)
-####With the appropriate parameters can be chosen with sliderInt or sliderFloat
+#### The GUI is shown in the pictures bellow before loading a model and after loading a model.
+#### The user can pick World or Local transformation and the transformation type(scale,translate,rotate)
+#### With the appropriate parameters can be chosen with sliderInt or sliderFloat
+#### The transformation is done immediatly 
 ![Before Loading](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/BeforeLoading.JPG)
 ![After Loading](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/AfterLoading.JPG)
 ===============================
