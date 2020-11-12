@@ -31,7 +31,7 @@
 ![After Loading](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/AfterLoading.JPG)
 ===============================
 
-####Showing th deffirence between Translating in the world frame then Rotating in the model frame
+#Showing th deffirence between Translating in the world frame then Rotating in the model frame
 ===============================
 ####Vs. translating in the Model frame then Rotating in the world frame.
 ####We can obviously see that there is a diffrence in the placement of the model.
