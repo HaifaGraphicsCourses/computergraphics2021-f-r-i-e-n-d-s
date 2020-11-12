@@ -32,9 +32,9 @@
 ![After Loading](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/AfterLoading.JPG)
 ===============================
 
-# Showing th deffirence between Translating in the world frame then Rotating in the model frame
+# Showing th deffirence between Translating in the world frame then Rotating in the model frame Vs. translating in the Model frame then Rotating in the world frame.
 ===============================
-#### Vs. translating in the Model frame then Rotating in the world frame.
+#### The parameters are Translation in X with parameter 200 and Rotation arround Y with 120 degree angle.
 #### We can obviously see that there is a diffrence in the placement of the model.
 #### This happens because of the fact that rotating around the model frame rotates the model in it's own placement 
 #### while rotating in the world frame it rotates the model arround the axis of the world which is place is in the left bottom corner of the screen.
