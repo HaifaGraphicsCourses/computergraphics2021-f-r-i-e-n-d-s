@@ -15,12 +15,17 @@ public:
 	void PrintModel()const;
 	const glm::mat4x4& GetPreTransformation();
 	const glm::vec3 MeshModel::GetVertex(int index)const;
-	void SetWorldTransformation(glm::mat4x4& Transformation);
-	void SetLocalTransformation(glm::mat4x4& Transformation);
-	const glm::mat4x4& GetWorldTransformation()const;
+
+	void Set_S_w(glm::mat4x4& Transformation);
+	void Set_R_w(glm::mat4x4& Transformation);
+	void Set_T_w(glm::mat4x4& Transformation);
+	void Set_S_m(glm::mat4x4& Transformation);
+	void Set_R_m(glm::mat4x4& Transformation);
+	void Set_T_m(glm::mat4x4& Transformation);
+
+
 	const glm::mat4x4& GetTransformation()const;
-	const glm::mat4x4& GetLocalTransformation()const;
-	void SetTransformation(glm::mat4x4& Transformation);
+	void SetTransformation();
 	void ResetModel();
 
 private:
@@ -28,8 +33,13 @@ private:
 	std::vector<glm::vec3> vertices_;
 	std::vector<glm::vec3> normals_;
 	glm::mat4x4 PreTransformation;
-	glm::mat4x4 WorldTransformation=Transformations::Identity4X4Matrix();
-	glm::mat4x4 ModelTransformation= Transformations::Identity4X4Matrix();
+	glm::mat4x4 S_w= Transformations::Identity4X4Matrix();
+	glm::mat4x4 R_w= Transformations::Identity4X4Matrix();
+	glm::mat4x4 T_w= Transformations::Identity4X4Matrix();
+	glm::mat4x4 S_m= Transformations::Identity4X4Matrix();
+	glm::mat4x4 R_m= Transformations::Identity4X4Matrix();
+	glm::mat4x4 T_m= Transformations::Identity4X4Matrix();
+
 	glm::mat4x4 Transformation = Transformations::Identity4X4Matrix();
 	std::string model_name_;
 };

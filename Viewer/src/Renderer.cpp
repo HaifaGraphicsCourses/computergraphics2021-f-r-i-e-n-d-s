@@ -344,7 +344,7 @@ void Renderer::Render(const Scene& scene)
 			VertexIndex2 = face.GetVertexIndex(1);
 			VertexIndex3 = face.GetVertexIndex(2);
 			Vertex = model.GetVertex(VertexIndex1);
-			glm::mat4x4 Transformation =(model.GetTransformation()) * model.GetPreTransformation();
+			glm::mat4x4 Transformation = model.GetTransformation()*model.GetPreTransformation();
 			Vertex1 = Transformation * glm::vec4(Vertex.x, Vertex.y, Vertex.z, 1);
 			Vertex = model.GetVertex(VertexIndex2);
 			Vertex2 = Transformation * glm::vec4(Vertex.x, Vertex.y, Vertex.z, 1);
@@ -355,21 +355,6 @@ void Renderer::Render(const Scene& scene)
 			DrawLine(glm::ivec2(Vertex3.x / Vertex3.w, Vertex3.y / Vertex3.w), glm::ivec2(Vertex2.x / Vertex2.w, Vertex2.y / Vertex2.w), color);
 		}
 	}
-	/*for(int i = 0; i < viewport_width_; i++)
-	{
-		for (int j = half_height - thickness; j < half_height + thickness; j++)
-		{
-			PutPixel(i, j, glm::vec3(1, 1, 0));
-		}
-	}
-
-	for (int i = 0; i < viewport_height_; i++)
-	{
-		for (int j = half_width - thickness; j < half_width + thickness; j++)
-		{
-			PutPixel(j, i, glm::vec3(1, 0, 1));
-		}
-	}*/
 }
 
 int Renderer::GetViewportWidth() const

@@ -57,31 +57,37 @@ const glm::vec3 MeshModel::GetVertex(int index)const {
 const glm::mat4x4& MeshModel::GetPreTransformation() {
 	return PreTransformation;
 }
-const glm::mat4x4& MeshModel::GetWorldTransformation()const
-{
-	return WorldTransformation;
-}
-const glm::mat4x4& MeshModel::GetLocalTransformation()const
-{
-	return ModelTransformation;
-}
-void MeshModel::SetWorldTransformation(glm::mat4x4& Transformation)
-{
-	this->WorldTransformation = Transformation * WorldTransformation;
-}
-void MeshModel::SetLocalTransformation(glm::mat4x4& Transformation)
-{
-	this->ModelTransformation = Transformation * ModelTransformation;
-}
-void MeshModel::SetTransformation(glm::mat4x4& TransMat) {
-	this->Transformation = TransMat * Transformation;
+void MeshModel::SetTransformation() {
+	this->Transformation = S_w * R_w * T_w * S_m * R_m * T_m;
 }
 const glm::mat4x4& MeshModel::GetTransformation()const {
 	return this->Transformation;
 }
+void MeshModel::Set_S_w(glm::mat4x4& Transformation) {
+	S_w = Transformation;
+}
+void MeshModel::Set_R_w(glm::mat4x4& Transformation) {
+	R_w = Transformation;
+}
+void MeshModel::Set_T_w(glm::mat4x4& Transformation) {
+	T_w = Transformation;
+}
+void MeshModel::Set_S_m(glm::mat4x4& Transformation) {
+	S_m = Transformation;
+}
+void MeshModel::Set_R_m(glm::mat4x4& Transformation) {
+	R_m = Transformation;
+}
+void MeshModel::Set_T_m(glm::mat4x4& Transformation) {
+	T_m = Transformation;
+}
 void MeshModel::ResetModel()
 {
-	this->WorldTransformation = Transformations::Identity4X4Matrix();
-	this->ModelTransformation = Transformations::Identity4X4Matrix();
+	this->S_m = Transformations::Identity4X4Matrix();
+	this->R_m = Transformations::Identity4X4Matrix();
+	this->T_m = Transformations::Identity4X4Matrix();
+	this->S_w = Transformations::Identity4X4Matrix();
+	this->R_w= Transformations::Identity4X4Matrix();
+	this->T_w = Transformations::Identity4X4Matrix();
 	this->Transformation = Transformations::Identity4X4Matrix();
 }

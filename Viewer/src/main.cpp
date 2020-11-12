@@ -253,55 +253,98 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		static int SelectedItem = 0;
 		static int SelectedTransform = 0;
 		static int SelectedAxis;
-		static float ScaleX = 0.f;
-		static float ScaleY = 0.f;
-		static float ScaleZ = 0.f;
+		static float ScaleX = 1.f;
+		static float ScaleY = 1.f;
+		static float ScaleZ = 1.f;
+		static float WScaleX = 1.f;
+		static float WScaleY = 1.f;
+		static float WScaleZ = 1.f;
 		glm::mat4x4 Transformation;
 		static int TranslateX = 0;
 		static int TranslateY = 0;
 		static int TranslateZ = 0;
-
+		static int WTranslateX = 0;
+		static int WTranslateY = 0;
+		static int WTranslateZ = 0;
 		static int Angle=0;
+		static int WAngle=0;
 		ImGui::Begin("Transformations Window");
 		ImGui::ListBox("World Or Local", &SelectedTransform, TransformItems, IM_ARRAYSIZE(TransformItems),2);
 		ImGui::ListBox("Choose Transformation",&SelectedItem,items,IM_ARRAYSIZE(items),3);
-		switch (SelectedItem)
-		{
-		case 0:
-			ImGui::SliderFloat("Scale Factor X", &ScaleX, 0.f, 3.f);
-			ImGui::SliderFloat("Scale Factor Y", &ScaleY, 0.f, 3.f);
-			ImGui::SliderFloat("Scale Factor Z", &ScaleZ, 0.f, 3.f);
-			Transformation = Transformations::ScalingTransformation(ScaleX, ScaleY, ScaleZ);
-			break;
-		case 1:
-			ImGui::ListBox("Choose Axis to rotate around", &SelectedAxis, Axis, IM_ARRAYSIZE(Axis), 3);
-			ImGui::SliderInt("Rotation Angle", &Angle, 0, 360);
-			Transformation = (SelectedAxis == 0 ? Transformations::XRotationTransformation(Angle) : SelectedAxis == 1 ? Transformations::YRotationTransformation(Angle) : Transformations::ZRotationTransformation(Angle));
-			break;
-		case 2:
-			ImGui::SliderInt("Translate Factor X", &TranslateX, -500, 500);
-			ImGui::SliderInt("Translate Factor Y", &TranslateY, -500, 500);
-			ImGui::SliderInt("Translate Factor Z", &TranslateZ, -500, 500);
-			Transformation = Transformations::TranslationTransformation(TranslateX, TranslateY, TranslateZ);
-			break;
-		default:
-			break;
-		}
-		if (ImGui::Button("Apply"))
-		{
-			if (SelectedTransform)
+		if (SelectedTransform) {
+			switch (SelectedItem)
 			{
-				scene.GetActiveModel().SetLocalTransformation(Transformation);
-				scene.GetActiveModel().SetTransformation(Transformation);
+			case 0:
+				ImGui::SliderFloat("Scale Factor X", &ScaleX, 0.f, 3.f);
+				ImGui::SliderFloat("Scale Factor Y", &ScaleY, 0.f, 3.f);
+				ImGui::SliderFloat("Scale Factor Z", &ScaleZ, 0.f, 3.f);
+				Transformation = Transformations::ScalingTransformation(ScaleX, ScaleY, ScaleZ);
+				scene.GetActiveModel().Set_S_m(Transformation);
+				break;
+			case 1:
+				ImGui::ListBox("Choose Axis to rotate around", &SelectedAxis, Axis, IM_ARRAYSIZE(Axis), 3);
+				ImGui::SliderInt("Rotation Angle", &Angle, 0, 360);
+				Transformation = (SelectedAxis == 0 ? Transformations::XRotationTransformation(Angle) : SelectedAxis == 1 ? Transformations::YRotationTransformation(Angle) : Transformations::ZRotationTransformation(Angle));
+			    scene.GetActiveModel().Set_R_m(Transformation);
+				break;
+			case 2:
+				ImGui::SliderInt("Translate Factor X", &TranslateX, -500, 500);
+				ImGui::SliderInt("Translate Factor Y", &TranslateY, -500, 500);
+				ImGui::SliderInt("Translate Factor Z", &TranslateZ, -500, 500);
+				Transformation = Transformations::TranslationTransformation(TranslateX, TranslateY, TranslateZ);
+			    scene.GetActiveModel().Set_T_m(Transformation);
+				break;
+			default:
+				break;
 			}
-			else
+
+		}
+		else
+		{
+			
+			switch (SelectedItem)
 			{
-				scene.GetActiveModel().SetWorldTransformation(Transformation);
-				scene.GetActiveModel().SetTransformation(Transformation);
+			case 0:
+				ImGui::SliderFloat("World Scale Factor X", &WScaleX, 0.f, 3.f);
+				ImGui::SliderFloat("World Scale Factor Y", &WScaleY, 0.f, 3.f);
+				ImGui::SliderFloat("World Scale Factor Z", &WScaleZ, 0.f, 3.f);
+				Transformation = Transformations::ScalingTransformation(WScaleX, WScaleY, WScaleZ);
+				scene.GetActiveModel().Set_S_w(Transformation);
+				break;
+			case 1:
+				ImGui::ListBox("Choose World Axis to rotate around", &SelectedAxis, Axis, IM_ARRAYSIZE(Axis), 3);
+				ImGui::SliderInt("Rotation Angle", &WAngle, 0, 360);
+				Transformation = (SelectedAxis == 0 ? Transformations::XRotationTransformation(WAngle) : SelectedAxis == 1 ? Transformations::YRotationTransformation(WAngle) : Transformations::ZRotationTransformation(WAngle));
+				scene.GetActiveModel().Set_R_w(Transformation);
+				break;
+			case 2:
+				ImGui::SliderInt("World Translate Factor X", &WTranslateX, -500, 500);
+				ImGui::SliderInt("World Translate Factor Y", &WTranslateY, -500, 500);
+				ImGui::SliderInt("World Translate Factor Z", &WTranslateZ, -500, 500);
+				Transformation = Transformations::TranslationTransformation(WTranslateX, WTranslateY, WTranslateZ);
+				scene.GetActiveModel().Set_T_w(Transformation);
+				break;
+			default:
+				break;
 			}
 		}
+		scene.GetActiveModel().SetTransformation();
 		if (ImGui::Button("Reset"))
 		{
+			ScaleX = 1.f;
+			ScaleY = 1.f;
+			ScaleZ = 1.f;
+			WScaleX = 1.f;
+			WScaleY = 1.f;
+			WScaleZ = 1.f;
+			TranslateX = 0;
+			TranslateY = 0;
+			TranslateZ = 0;
+			WTranslateX = 0;
+			WTranslateY = 0;
+			WTranslateZ = 0;
+			Angle = 0;
+			WAngle = 0;
 			scene.GetActiveModel().ResetModel();
 		}
 		ImGui::End();
