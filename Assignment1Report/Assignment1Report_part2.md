@@ -11,10 +11,10 @@
 ####-Make 4x4 Scaling matrix=diag 3x3(300 / Max(max_x,max_y,max_z)) 
 ####-Make 4x4 Translation matrix with tx=|min_x| ty=|min_y| tz=|min_z| 
 ####-For each Face:
-#####-Get face's vertices :v1 v2 v3
-#####-Apply the Transformation=scaling * Translation on v1 v2 v3 after moving to the homogenous coordinates
-#####-Get back to 3d coordinates (v1=(v1.x/v1.w,v1.y/v1.w,v1.z/v1.w))
-#####-draw lines from v1 to v2 , v2 to v3 , v1 to v3 depending on the x and y coordinates only.
+####-Get face's vertices :v1 v2 v3
+####-Apply the Transformation=scaling * Translation on v1 v2 v3 after moving to the homogenous coordinates
+####-Get back to 3d coordinates (v1=(v1.x/v1.w,v1.y/v1.w,v1.z/v1.w))
+####-draw lines from v1 to v2 , v2 to v3 , v1 to v3 depending on the x and y coordinates only.
 ===============================
 
 #Drawing the model in Render
