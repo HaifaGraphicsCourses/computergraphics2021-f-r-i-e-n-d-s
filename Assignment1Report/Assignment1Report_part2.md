@@ -8,7 +8,7 @@
 # Transformation description:
 ===============================
 #### -While loading the vertices from the .obj file i calculated the minimum value and maximum value of each dimension (x,y,z).
-#### -Make 4x4 Scaling matrix=diag 3x3(300 / Max(max_x,max_y,max_z)) 
+#### -Make 4x4 Scaling matrix=diag 3x3(330 / Max(max_x,max_y,max_z)) 
 #### -Make 4x4 Translation matrix with tx=|min_x| ty=|min_y| tz=|min_z| 
 #### -For each Face:
 #### -Get face's vertices :v1 v2 v3
