@@ -2,11 +2,19 @@
 #include <iostream>
 
 
-MeshModel::MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, const std::string& model_name, glm::mat4x4& Transformation) :
-	faces_(faces),
-	vertices_(vertices),
-	normals_(normals),
-	PreTransformation(Transformation)
+MeshModel::MeshModel(ModelParameters model) :
+	faces_(model.faces),
+	vertices_(model.vertices),
+	normals_(model.normals),
+	PreTransformation(model.preTransformation),
+	leftTopNear_(model.leftTopNear),
+	rightTopNear_(model.rightTopNear),
+	leftTopFar_(model.leftTopFar),
+	rightTopFar_(model.rightTopFar),
+	leftBottomNear_(model.leftBottomNear),
+	rightBottomNear_(model.rightBottomNear),
+	leftBottomFar_(model.leftBottomFar),
+	rightBottomFar_(model.rightBottomFar)
 {
 
 }
@@ -90,6 +98,46 @@ void MeshModel::ResetModel()
 	this->R_w= Transformations::Identity4X4Matrix();
 	this->T_w = Transformations::Identity4X4Matrix();
 	this->Transformation = Transformations::Identity4X4Matrix();
+}
+void MeshModel::SetBoundingBoxFlag()
+{
+	ShowOrHideBoundingBox = !ShowOrHideBoundingBox;
+}
+bool MeshModel::GetBoundingBoxFlag()
+{
+	return ShowOrHideBoundingBox;
+}
+glm::vec4 MeshModel::GetLeftTopNear()
+{
+	return leftTopNear_;
+}
+glm::vec4 MeshModel::GetRightTopNear()
+{
+	return rightTopNear_;
+}
+glm::vec4 MeshModel::GetLeftTopFar()
+{
+	return leftTopFar_;
+}
+glm::vec4 MeshModel::GetRightTopFar()
+{
+	return rightTopFar_;
+}
+glm::vec4 MeshModel::GetLeftBottomNear()
+{
+	return leftBottomNear_;
+}
+glm::vec4 MeshModel::GetLeftBottomFar()
+{
+	return leftBottomFar_;
+}
+glm::vec4 MeshModel::GetRightBottomNear()
+{
+	return rightBottomNear_;
+}
+glm::vec4 MeshModel::GetRightBottomFar()
+{
+	return rightBottomFar_;
 }
 void MeshModel::SetRotationMatrix(glm::mat4x4& Transformation, bool IsWorld, int Axis)
 {

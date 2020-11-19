@@ -1,13 +1,14 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <string>
-#include "../../build/Transformations.h"
+#include "Transformations.h"
 #include "Face.h"
+#include "ModelParameters.h"
 
 class MeshModel
 {
 public:
-	MeshModel(std::vector<Face> faces, std::vector<glm::vec3> vertices, std::vector<glm::vec3> normals, const std::string& model_name,glm::mat4x4& Transformation);
+	MeshModel(ModelParameters model);
 	virtual ~MeshModel();
 	const Face& GetFace(int index) const;
 	int GetFacesCount() const;
@@ -23,10 +24,19 @@ public:
 	void Set_R_m();
 	void Set_T_m(glm::mat4x4& Transformation);
 	void SetRotationMatrix(glm::mat4x4& Transformation,bool IsWorld,int Axis);
-
+	void SetBoundingBoxFlag();
+	bool GetBoundingBoxFlag();
 	const glm::mat4x4& GetTransformation()const;
 	void SetTransformation();
 	void ResetModel();
+	glm::vec4 GetLeftTopNear();
+	glm::vec4 GetRightTopNear();
+	glm::vec4 GetLeftTopFar();
+	glm::vec4 GetRightTopFar();
+	glm::vec4 GetLeftBottomNear();
+	glm::vec4 GetLeftBottomFar();
+	glm::vec4 GetRightBottomNear();
+	glm::vec4 GetRightBottomFar();
 
 private:
 	std::vector<Face> faces_;
@@ -47,5 +57,14 @@ private:
 	glm::mat4x4 W_Rotation_Y = Transformations::Identity4X4Matrix();
 	glm::mat4x4 W_Rotation_Z = Transformations::Identity4X4Matrix();
 	glm::mat4x4 Transformation = Transformations::Identity4X4Matrix();
+	glm::vec4 leftTopNear_;
+	glm::vec4 rightTopNear_;
+	glm::vec4 leftTopFar_;
+	glm::vec4 rightTopFar_;
+	glm::vec4 leftBottomNear_;
+	glm::vec4 rightBottomNear_;
+	glm::vec4 leftBottomFar_;
+	glm::vec4 rightBottomFar_;
 	std::string model_name_;
+	bool ShowOrHideBoundingBox = false;
 };

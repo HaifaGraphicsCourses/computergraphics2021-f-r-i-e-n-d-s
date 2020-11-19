@@ -348,6 +348,10 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			WAngle = 0;
 			scene.GetActiveModel().ResetModel();
 		}
+		if (ImGui::Button("Show/Hide Bounding Box"))
+		{
+			scene.GetActiveModel().SetBoundingBoxFlag();
+		}
 		ImGui::End();
 	}
 }

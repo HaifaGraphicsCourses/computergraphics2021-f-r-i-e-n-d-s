@@ -2,6 +2,7 @@
 #include <glm/glm.hpp>
 #include <string>
 #include "MeshModel.h"
+#include "ModelParameters.h"
 
 class Utils
 {

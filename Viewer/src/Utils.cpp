@@ -5,7 +5,7 @@
 #include <sstream>
 
 #include "Utils.h"
-#include "../../build/Transformations.h"
+#include "Transformations.h"
 
 glm::vec3 Utils::Vec3fFromStream(std::istream& issLine)
 {
@@ -23,10 +23,8 @@ glm::vec2 Utils::Vec2fFromStream(std::istream& issLine)
 
 std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 {
-	std::vector<Face> faces;
+	ModelParameters model;
 	glm::vec3 Vertex;
-	std::vector<glm::vec3> vertices;
-	std::vector<glm::vec3> normals;
 	glm::mat4x4 Transformation;
 	std::ifstream ifile(filePath.c_str());
 	float Min_X = FLT_MAX, Max_X = FLT_MIN, Max_Y = FLT_MIN, Min_Y = FLT_MAX, Max_Z = FLT_MIN, Min_Z = FLT_MAX,MaxIndex;
@@ -63,11 +61,11 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 			if (Vertex.z < Min_Z)
 				Min_Z = Vertex.z;
 
-			vertices.push_back(Vertex);
+			model.vertices.push_back(Vertex);
 		}
 		else if (lineType == "vn")
 		{
-			normals.push_back(Utils::Vec3fFromStream(issLine));
+			model.normals.push_back(Utils::Vec3fFromStream(issLine));
 		}
 		else if (lineType == "vt")
 		{
@@ -75,7 +73,7 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 		}
 		else if (lineType == "f")
 		{
-			faces.push_back(Face(issLine));
+			model.faces.push_back(Face(issLine));
 		}
 		else if (lineType == "#" || lineType == "")
 		{
@@ -86,14 +84,25 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 			std::cout << "Found unknown line Type \"" << lineType << "\"";
 		}
 	}
-	float modelBoundingBox[] = { Max_X, Min_X, Max_Y, Min_Y, Max_Z,Min_Z };
+	model.modelName=Utils::GetFileName(filePath);
+	//float modelBoundingBox[] = { Max_X, Min_X, Max_Y, Min_Y, Max_Z,Min_Z };
+	model.leftTopNear = glm::vec4(Min_X, Max_Y, Max_Z, 1);
+	model.rightTopNear = glm::vec4(Max_X, Max_Y, Max_Z, 1);
+	model.leftTopFar = glm::vec4(Min_X, Max_Y, Min_Z, 1);
+	model.rightTopFar = glm::vec4(Max_X, Max_Y, Min_Z, 1);
+	model.leftBottomNear = glm::vec4(Min_X, Min_Y, Max_Z, 1);
+	model.rightBottomNear = glm::vec4(Max_X, Min_Y, Max_Z, 1);
+	model.leftBottomFar = glm::vec4(Min_X, Min_Y, Min_Z, 1);
+	model.rightBottomFar = glm::vec4(Max_X, Min_Y, Min_Z, 1);
+	model.modelName = GetFileName(filePath);
 		MaxIndex = Max_X > Max_Y ? Max_X : Max_Y;
 		MaxIndex = MaxIndex > Max_Z ? MaxIndex : Max_Z;
 		float ScalingParameter = 330 / MaxIndex;
 		glm::mat4x4 scaling = Transformations::ScalingTransformation(ScalingParameter, ScalingParameter, ScalingParameter);
 		glm::mat4x4 translateObjectToCenter = Transformations::TranslationTransformation(-Min_X, -Min_Y, -Min_Z);
 		Transformation = scaling * translateObjectToCenter;
-	return std::make_shared<MeshModel>(faces, vertices, normals, Utils::GetFileName(filePath),Transformation);
+		model.preTransformation = Transformation;
+	return std::make_shared<MeshModel>(model);
 }
 
 std::string Utils::GetFileName(const std::string& filePath)
