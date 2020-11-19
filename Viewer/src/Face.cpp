@@ -58,3 +58,22 @@ void Face::PrintFace()const
 	}
 	
 }
+glm::vec3 Face::GetNormal()
+{
+	return FaceNormal;
+}
+
+glm::vec3 Face::GetCenter()
+{
+	return FaceCenter;
+}
+
+void Face::SetNormal(glm::vec3 normal)
+{
+	FaceNormal = normal;
+}
+
+void Face::SetCenter(glm::vec3 center)
+{
+	FaceCenter = center;
+}

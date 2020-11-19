@@ -1,5 +1,6 @@
 #include "MeshModel.h"
 #include <iostream>
+#include "Renderer.h"
 
 
 MeshModel::MeshModel(ModelParameters model) :
@@ -107,6 +108,14 @@ bool MeshModel::GetBoundingBoxFlag()
 {
 	return ShowOrHideBoundingBox;
 }
+void MeshModel::SetFacesNormalsFlag()
+{
+	ShowOrHideFacesNormals = !ShowOrHideFacesNormals;
+}
+bool MeshModel::GetFacesNormalsFlag()
+{
+	return ShowOrHideFacesNormals;
+}
 glm::vec4 MeshModel::GetLeftTopNear()
 {
 	return leftTopNear_;
@@ -166,5 +175,25 @@ void MeshModel::SetRotationMatrix(glm::mat4x4& Transformation, bool IsWorld, int
 		case 3:
 			M_Rotation_Z = Transformation;
 		}
+	}
+}
+void MeshModel::ComputeFacesNormals(glm::mat4x4 Transformation)
+{
+	for (int faceIndex = 0; faceIndex < faces_.size(); ++faceIndex)
+	{
+		Face face = GetFace(faceIndex);
+		int VertexIndex1 = face.GetVertexIndex(0);
+		int VertexIndex2 = face.GetVertexIndex(1);
+		int VertexIndex3 = face.GetVertexIndex(2);
+		glm::vec4 v1Temp = Transformation * glm::vec4(GetVertex(VertexIndex1),1);
+		glm::vec4 v2Temp = Transformation * glm::vec4(GetVertex(VertexIndex2),1);
+		glm::vec4 v3Temp = Transformation * glm::vec4(GetVertex(VertexIndex3),1);
+		glm::vec3 v1 (v1Temp.x / v1Temp.w, v1Temp.y / v1Temp.w, v1Temp.z / v1Temp.w);
+		glm::vec3 v2 (v2Temp.x / v2Temp.w, v2Temp.y / v2Temp.w, v2Temp.z / v2Temp.w);
+		glm::vec3 v3 (v3Temp.x / v3Temp.w, v3Temp.y / v3Temp.w, v3Temp.z / v3Temp.w);
+		glm::vec3 faceCenter = (v1 + v2 + v3) / 3.0f;
+		glm::vec3 faceNormal = normalize(cross(glm::vec3(v1 - v2), glm::vec3(v1 - v3)));
+		faces_[faceIndex].SetNormal(faceNormal);
+		faces_[faceIndex].SetCenter(faceCenter);
 	}
 }

@@ -334,7 +334,7 @@ void Renderer::Render(const Scene& scene)
 	int VertexIndex1, VertexIndex2, VertexIndex3;
 	glm::vec3 Vertex;
 	glm::vec4 Vertex1, Vertex2, Vertex3;
-	glm::vec3 color(0, 0, 0),BoundingBoxColor(255,0,0);
+	glm::vec3 color(0, 0, 0),BoundingBoxColor(255,0,0),FacesNormalsColor(0,255,0);
 	if (scene.GetModelCount() > 0) {
 		auto model = scene.GetActiveModel();
 		for (int i = 0; i < model.GetFacesCount(); i++)
@@ -365,11 +365,11 @@ void Renderer::Render(const Scene& scene)
 			glm::vec4 leftBottomFar = Transformation * model.GetLeftBottomFar();
 			glm::vec4 rightBottomFar = Transformation * model.GetRightBottomFar();
 			glm::vec4 rightBottomNear = Transformation * model.GetRightBottomNear();
-			DrawLine( glm::vec4(leftTopNear.x, leftTopNear.y, 0, 0), glm::vec4(rightTopNear.x, rightTopNear.y, 0, 0), BoundingBoxColor);
-			DrawLine(glm::vec4(leftTopNear.x, leftTopNear.y, 0, 0), glm::vec4(leftTopFar.x, leftTopFar.y, 0, 0), BoundingBoxColor);
+			DrawLine( glm::vec4(leftTopNear.x/leftTopNear.w, leftTopNear.y/ leftTopNear.w, 0, 0), glm::vec4(rightTopNear.x/ rightTopNear.w, rightTopNear.y / rightTopNear.w, 0, 0), BoundingBoxColor);
+			DrawLine(glm::vec4(leftTopNear.x/leftTopNear.w, leftTopNear.y/leftTopNear.w, 0, 0), glm::vec4(leftTopFar.x, leftTopFar.y, 0, 0), BoundingBoxColor);
 			DrawLine(glm::vec4(leftTopFar.x, leftTopFar.y, 0, 0), glm::vec4(rightTopFar.x, rightTopFar.y, 0, 0), BoundingBoxColor);
 			DrawLine( glm::vec4(rightTopFar.x, rightTopFar.y, 0, 0), glm::vec4(rightTopNear.x, rightTopNear.y, 0, 0), BoundingBoxColor);
-			DrawLine( glm::vec4(leftTopNear.x, leftTopNear.y, 0, 0), glm::vec4(leftBottomNear.x, leftBottomNear.y, 0, 0), BoundingBoxColor);
+			DrawLine( glm::vec4(leftTopNear.x/ leftTopNear.w, leftTopNear.y/leftTopNear.w, 0, 0), glm::vec4(leftBottomNear.x, leftBottomNear.y, 0, 0), BoundingBoxColor);
 			DrawLine( glm::vec4(leftTopFar.x, leftTopFar.y, 0, 0), glm::vec4(leftBottomFar.x, leftBottomFar.y, 0, 0), BoundingBoxColor);
 			DrawLine( glm::vec4(rightTopFar.x, rightTopFar.y, 0, 0), glm::vec4(rightBottomFar.x, rightBottomFar.y, 0, 0), BoundingBoxColor);
 			DrawLine( glm::vec4(rightTopNear.x, rightTopNear.y, 0, 0), glm::vec4(rightBottomNear.x, rightBottomNear.y, 0, 0), BoundingBoxColor);
@@ -377,6 +377,20 @@ void Renderer::Render(const Scene& scene)
 			DrawLine( glm::vec4(leftBottomNear.x, leftBottomNear.y, 0, 0), glm::vec4(leftBottomFar.x, leftBottomFar.y, 0, 0), BoundingBoxColor);
 			DrawLine( glm::vec4(leftBottomFar.x, leftBottomFar.y, 0, 0), glm::vec4(rightBottomFar.x, rightBottomFar.y, 0, 0), BoundingBoxColor);
 			DrawLine( glm::vec4(rightBottomFar.x, rightBottomFar.y, 0, 0), glm::vec4(rightBottomNear.x, rightBottomNear.y, 0, 0), BoundingBoxColor);
+		}
+		if (model.GetFacesNormalsFlag())
+		{
+			glm::mat4x4 Transformation = model.GetTransformation() * model.GetPreTransformation();
+			model.ComputeFacesNormals(Transformation);
+			for (int faceIndex = 0; faceIndex < model.GetFacesCount(); ++faceIndex)
+			{
+				Face face = model.GetFace(faceIndex);
+				glm::vec3 FaceNormal = face.GetNormal();
+				glm::vec3 FaceCenter = face.GetCenter();
+				DrawLine(FaceNormal, FaceCenter, FacesNormalsColor);
+			}
+
+
 		}
 	}
 }

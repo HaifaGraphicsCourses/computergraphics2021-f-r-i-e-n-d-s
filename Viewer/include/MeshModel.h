@@ -37,7 +37,9 @@ public:
 	glm::vec4 GetLeftBottomFar();
 	glm::vec4 GetRightBottomNear();
 	glm::vec4 GetRightBottomFar();
-
+	void ComputeFacesNormals(glm::mat4x4 Transofrmation);
+	void SetFacesNormalsFlag();
+	bool GetFacesNormalsFlag();
 private:
 	std::vector<Face> faces_;
 	std::vector<glm::vec3> vertices_;
@@ -67,4 +69,5 @@ private:
 	glm::vec4 rightBottomFar_;
 	std::string model_name_;
 	bool ShowOrHideBoundingBox = false;
+	bool ShowOrHideFacesNormals = false;
 };
