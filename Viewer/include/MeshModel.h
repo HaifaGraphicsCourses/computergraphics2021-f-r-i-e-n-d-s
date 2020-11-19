@@ -33,6 +33,7 @@ private:
 	std::vector<glm::vec3> vertices_;
 	std::vector<glm::vec3> normals_;
 	glm::mat4x4 PreTransformation;
+	std::vector<glm::vec3> boundingBoxVertices;
 	glm::mat4x4 S_w= Transformations::Identity4X4Matrix();
 	glm::mat4x4 R_w= Transformations::Identity4X4Matrix();
 	glm::mat4x4 T_w= Transformations::Identity4X4Matrix();

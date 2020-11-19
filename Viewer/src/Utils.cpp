@@ -86,6 +86,7 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 			std::cout << "Found unknown line Type \"" << lineType << "\"";
 		}
 	}
+	float modelBoundingBox[] = { Max_X, Min_X, Max_Y, Min_Y, Max_Z,Min_Z };
 		MaxIndex = Max_X > Max_Y ? Max_X : Max_Y;
 		MaxIndex = MaxIndex > Max_Z ? MaxIndex : Max_Z;
 		float ScalingParameter = 330 / MaxIndex;

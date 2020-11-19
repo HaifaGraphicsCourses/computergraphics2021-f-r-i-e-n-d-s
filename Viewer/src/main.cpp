@@ -349,7 +349,5 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			scene.GetActiveModel().ResetModel();
 		}
 		ImGui::End();
-	
-
 	}
 }
