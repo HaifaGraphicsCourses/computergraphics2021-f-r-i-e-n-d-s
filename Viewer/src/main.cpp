@@ -297,7 +297,6 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			default:
 				break;
 			}
-
 		}
 		else
 		{
