@@ -90,6 +90,14 @@ void MeshModel::Set_R_m() {
 void MeshModel::Set_T_m(glm::mat4x4& Transformation) {
 	T_m = Transformation;
 }
+glm::mat4x4 MeshModel::Get_R_m()
+{
+	return R_m;
+}
+glm::mat4x4 MeshModel::Get_R_w()
+{
+	return R_w;
+}
 void MeshModel::ResetModel()
 {
 	this->S_m = Transformations::Identity4X4Matrix();
@@ -115,6 +123,10 @@ void MeshModel::SetFacesNormalsFlag()
 bool MeshModel::GetFacesNormalsFlag()
 {
 	return ShowOrHideFacesNormals;
+}
+void MeshModel::SetNormalsFlag()
+{
+	NormalsFlag = !NormalsFlag;
 }
 glm::vec4 MeshModel::GetLeftTopNear()
 {
@@ -196,4 +208,12 @@ void MeshModel::ComputeFacesNormals(glm::mat4x4 Transformation)
 		faces_[faceIndex].SetNormal(faceNormal);
 		faces_[faceIndex].SetCenter(faceCenter);
 	}
+}
+bool MeshModel::GetNormalsFlag()
+{
+	return NormalsFlag;
+}
+glm::vec3 MeshModel::GetNormals(int index) const
+{
+	return normals_[index - 1];
 }

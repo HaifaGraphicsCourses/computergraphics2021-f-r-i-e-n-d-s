@@ -352,6 +352,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			scene.GetActiveModel().SetBoundingBoxFlag();
 		if (ImGui::Button("Show/Hide Faces Normals"))
 			scene.GetActiveModel().SetFacesNormalsFlag();
+		if (ImGui::Button("Show/Hide Normals"))
+			scene.GetActiveModel().SetNormalsFlag();
 		ImGui::End();
 	}
 }
