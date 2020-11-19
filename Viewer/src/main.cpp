@@ -266,8 +266,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		static int WTranslateX = 0;
 		static int WTranslateY = 0;
 		static int WTranslateZ = 0;
-		static int Angle=0;
-		static int WAngle=0;
+		static float Angle=0;
+		static float WAngle=0;
 		ImGui::Begin("Transformations Window");
 		ImGui::ListBox("World Or Local", &SelectedTransform, TransformItems, IM_ARRAYSIZE(TransformItems),2);
 		ImGui::ListBox("Choose Transformation",&SelectedItem,items,IM_ARRAYSIZE(items),3);
@@ -283,9 +283,10 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				break;
 			case 1:
 				ImGui::ListBox("Choose Axis to rotate around", &SelectedAxis, Axis, IM_ARRAYSIZE(Axis), 3);
-				ImGui::SliderInt("Rotation Angle", &Angle, 0, 360);
+				ImGui::SliderFloat("Rotation Angle", &Angle,0,360);
 				Transformation = (SelectedAxis == 0 ? Transformations::XRotationTransformation(Angle) : SelectedAxis == 1 ? Transformations::YRotationTransformation(Angle) : Transformations::ZRotationTransformation(Angle));
-			    scene.GetActiveModel().Set_R_m(Transformation);
+				scene.GetActiveModel().SetRotationMatrix(Transformation, false, SelectedAxis + 1);
+				scene.GetActiveModel().Set_R_m();
 				break;
 			case 2:
 				ImGui::SliderInt("Translate Factor X", &TranslateX, -500, 500);
@@ -312,9 +313,10 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				break;
 			case 1:
 				ImGui::ListBox("Choose World Axis to rotate around", &SelectedAxis, Axis, IM_ARRAYSIZE(Axis), 3);
-				ImGui::SliderInt("Rotation Angle", &WAngle, 0, 360);
+				ImGui::SliderFloat("Rotation Angle", &WAngle,0,360);
 				Transformation = (SelectedAxis == 0 ? Transformations::XRotationTransformation(WAngle) : SelectedAxis == 1 ? Transformations::YRotationTransformation(WAngle) : Transformations::ZRotationTransformation(WAngle));
-				scene.GetActiveModel().Set_R_w(Transformation);
+				scene.GetActiveModel().SetRotationMatrix(Transformation, true, SelectedAxis + 1);
+				scene.GetActiveModel().Set_R_w();
 				break;
 			case 2:
 				ImGui::SliderInt("World Translate Factor X", &WTranslateX, -500, 500);

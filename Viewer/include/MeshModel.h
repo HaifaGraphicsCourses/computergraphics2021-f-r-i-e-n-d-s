@@ -17,12 +17,12 @@ public:
 	const glm::vec3 MeshModel::GetVertex(int index)const;
 
 	void Set_S_w(glm::mat4x4& Transformation);
-	void Set_R_w(glm::mat4x4& Transformation);
+	void Set_R_w();
 	void Set_T_w(glm::mat4x4& Transformation);
 	void Set_S_m(glm::mat4x4& Transformation);
-	void Set_R_m(glm::mat4x4& Transformation);
+	void Set_R_m();
 	void Set_T_m(glm::mat4x4& Transformation);
-
+	void SetRotationMatrix(glm::mat4x4& Transformation,bool IsWorld,int Axis);
 
 	const glm::mat4x4& GetTransformation()const;
 	void SetTransformation();
@@ -39,7 +39,12 @@ private:
 	glm::mat4x4 S_m= Transformations::Identity4X4Matrix();
 	glm::mat4x4 R_m= Transformations::Identity4X4Matrix();
 	glm::mat4x4 T_m= Transformations::Identity4X4Matrix();
-
+	glm::mat4x4 M_Rotation_X = Transformations::Identity4X4Matrix();
+	glm::mat4x4 M_Rotation_Y = Transformations::Identity4X4Matrix();
+	glm::mat4x4 M_Rotation_Z= Transformations::Identity4X4Matrix();
+	glm::mat4x4 W_Rotation_X = Transformations::Identity4X4Matrix();
+	glm::mat4x4 W_Rotation_Y = Transformations::Identity4X4Matrix();
+	glm::mat4x4 W_Rotation_Z = Transformations::Identity4X4Matrix();
 	glm::mat4x4 Transformation = Transformations::Identity4X4Matrix();
 	std::string model_name_;
 };

@@ -58,7 +58,7 @@ const glm::mat4x4& MeshModel::GetPreTransformation() {
 	return PreTransformation;
 }
 void MeshModel::SetTransformation() {
-	this->Transformation = S_w * R_w * T_w * S_m * R_m * T_m;
+	this->Transformation = S_w * R_w * T_w * S_m * T_m *R_m ;
 }
 const glm::mat4x4& MeshModel::GetTransformation()const {
 	return this->Transformation;
@@ -66,8 +66,8 @@ const glm::mat4x4& MeshModel::GetTransformation()const {
 void MeshModel::Set_S_w(glm::mat4x4& Transformation) {
 	S_w = Transformation;
 }
-void MeshModel::Set_R_w(glm::mat4x4& Transformation) {
-	R_w = Transformation;
+void MeshModel::Set_R_w() {
+	R_w = (W_Rotation_X) *(W_Rotation_Y) *(W_Rotation_Z);
 }
 void MeshModel::Set_T_w(glm::mat4x4& Transformation) {
 	T_w = Transformation;
@@ -75,8 +75,8 @@ void MeshModel::Set_T_w(glm::mat4x4& Transformation) {
 void MeshModel::Set_S_m(glm::mat4x4& Transformation) {
 	S_m = Transformation;
 }
-void MeshModel::Set_R_m(glm::mat4x4& Transformation) {
-	R_m = Transformation;
+void MeshModel::Set_R_m() {
+	R_m =(M_Rotation_X)*(M_Rotation_Y)*(M_Rotation_Z);
 }
 void MeshModel::Set_T_m(glm::mat4x4& Transformation) {
 	T_m = Transformation;
@@ -90,4 +90,33 @@ void MeshModel::ResetModel()
 	this->R_w= Transformations::Identity4X4Matrix();
 	this->T_w = Transformations::Identity4X4Matrix();
 	this->Transformation = Transformations::Identity4X4Matrix();
+}
+void MeshModel::SetRotationMatrix(glm::mat4x4& Transformation, bool IsWorld, int Axis)
+{
+	if (IsWorld)
+	{
+		switch (Axis) {
+		case 1:
+			W_Rotation_X = Transformation;
+			break;
+		case 2:
+			W_Rotation_Y = Transformation;
+			break;
+		case 3:
+			W_Rotation_Z = Transformation;
+		}
+	}
+	else
+	{
+		switch (Axis) {
+		case 1:
+			M_Rotation_X = Transformation;
+			break;
+		case 2:
+			M_Rotation_Y = Transformation;
+			break;
+		case 3:
+			M_Rotation_Z = Transformation;
+		}
+	}
 }
