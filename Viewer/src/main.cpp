@@ -94,7 +94,6 @@ GLFWwindow* SetupGlfwWindow(int w, int h, const char* window_name)
 	glfwSwapInterval(1); // Enable vsync
 						 // very importent!! initialization of glad
 						 // https://stackoverflow.com/questions/48582444/imgui-with-the-glad-opengl-loader-throws-segmentation-fault-core-dumped
-
 	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 	return window;
 }
@@ -147,7 +146,6 @@ void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& 
 			// Left mouse button is down
 		}
 	}
-
 	renderer.ClearColorBuffer(clear_color);
 	renderer.Render(scene);
 	renderer.SwapBuffers();

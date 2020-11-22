@@ -1,7 +1,6 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <algorithm>
-
 #include "Renderer.h"
 #include "InitShader.h"
 #include <iostream>
@@ -355,7 +354,7 @@ void Renderer::Render(const Scene& scene)
 				glm::vec3 v3(v3Temp.x / v3Temp.w, v3Temp.y / v3Temp.w, v3Temp.z / v3Temp.w);
 				glm::vec3 FaceCenter = (v1 + v2 + v3) / 3.0f;
 				glm::vec3 faceNormal = normalize(cross(glm::vec3(v1 - v2), glm::vec3(v1 - v3)));
-				glm::vec4 FaceNormal = Transformations::ScalingTransformation(40, 40, 40) * glm::vec4(faceNormal, 1) + glm::vec4(FaceCenter, 0);
+				glm::vec4 FaceNormal = Transformations::ScalingTransformation(50,50,50) * model.Get_R_w() * model.Get_R_m()* glm::vec4(faceNormal, 1) + glm::vec4(FaceCenter, 0);
 				DrawLine(glm::ivec2(FaceCenter.x, FaceCenter.y), glm::ivec2(FaceNormal.x/FaceNormal.w, FaceNormal.y/FaceNormal.w), model.GetFN());
 			}
 		}
@@ -363,14 +362,23 @@ void Renderer::Render(const Scene& scene)
 		
 		if (model.GetNormalsFlag())
 		{
-			for (int i = 0; i < model.GetVertexCount(); i++)
+			for (int i = 0; i < model.GetFacesCount(); i++)
 			{
-				glm::vec3 v = model.GetVertex(i+1);
-				glm::vec4 vn (model.GetNormals(i+1),1);
-				glm::vec4 vertex1(v,1);
-				vertex1 = Transformation * vertex1;
-				glm::vec4 normalVertex1 =Transformation*vn +vertex1;
-				DrawLine(glm::ivec2(vertex1.x / vertex1.w, vertex1.y / vertex1.w), glm::ivec2(normalVertex1.x / normalVertex1.w, normalVertex1.y / normalVertex1.w), model.GetVN());
+				Face face = model.GetFace(i);
+				int VertexIndex1 = face.GetVertexIndex(0), VertexIndex2 = face.GetVertexIndex(1), VertexIndex3 = face.GetVertexIndex(2);
+				int Nindex1 = face.GetNormalIndex(0), Nindex2 = face.GetNormalIndex(1), Nindex3 = face.GetNormalIndex(2);
+				glm::vec4 v1Temp = Transformation * glm::vec4(model.GetVertex(VertexIndex1), 1);
+				glm::vec4 v2Temp = Transformation * glm::vec4(model.GetVertex(VertexIndex2), 1);
+				glm::vec4 v3Temp = Transformation * glm::vec4(model.GetVertex(VertexIndex3), 1);
+				glm::vec3 v1(v1Temp.x / v1Temp.w, v1Temp.y / v1Temp.w, v1Temp.z / v1Temp.w);
+				glm::vec3 v2(v2Temp.x / v2Temp.w, v2Temp.y / v2Temp.w, v2Temp.z / v2Temp.w);
+				glm::vec3 v3(v3Temp.x / v3Temp.w, v3Temp.y / v3Temp.w, v3Temp.z / v3Temp.w);
+				glm::vec4 vn1 = Transformations::ScalingTransformation(50,50,50) * model.Get_R_w() * model.Get_R_m() * glm::vec4(model.GetNormals(Nindex1),1);
+				glm::vec4 vn2 = Transformations::ScalingTransformation(50,50,50) * model.Get_R_w() * model.Get_R_m() * glm::vec4(model.GetNormals(Nindex2),1);
+				glm::vec4 vn3 = Transformations::ScalingTransformation(50,50,50) * model.Get_R_w() * model.Get_R_m() * glm::vec4(model.GetNormals(Nindex3),1);
+				DrawLine(glm::ivec2(v1.x ,v1.y), glm::ivec2((vn1.x / vn1.w)+v1.x, (vn1.y/vn1.w)+v1.y), model.GetVN());
+				DrawLine(glm::ivec2(v2.x, v2.y), glm::ivec2((vn2.x / vn2.w)+v2.x, (vn2.y / vn2.w)+v2.y), model.GetVN());
+				DrawLine(glm::ivec2(v3.x , v3.y), glm::ivec2((vn3.x / vn3.w)+v3.x, (vn3.y / vn3.w)+v3.y), model.GetVN());
 			}
 		}
 		// draw normals
@@ -431,4 +439,13 @@ int Renderer::GetViewportWidth() const
 int Renderer::GetViewportHeight() const
 {
 	return viewport_height_;
+}
+
+void Renderer::SetViewportWidth(int w)
+{
+	viewport_width_ = w;
+}
+void Renderer::SetViewportHeight(int h)
+{
+	viewport_height_ = h;
 }

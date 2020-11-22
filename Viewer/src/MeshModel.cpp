@@ -17,7 +17,11 @@ MeshModel::MeshModel(ModelParameters model) :
 	leftBottomFar_(model.leftBottomFar),
 	rightBottomFar_(model.rightBottomFar)
 {
-
+	VerticesCheck=std::vector<bool>(vertices_.size());
+	for (int i = 0; i < VerticesCheck.size(); i++)
+	{
+		VerticesCheck[i] = false;
+	}
 }
 
 MeshModel::~MeshModel()
@@ -61,6 +65,16 @@ void MeshModel::PrintModel() const
 
 const glm::vec3 MeshModel::GetVertex(int index)const {
 	return vertices_[index-1];
+}
+
+bool MeshModel::GetVertexCheck(int index)
+{
+	return VerticesCheck[index - 1];
+}
+
+void MeshModel::SetVertexCheck(bool val, int index)
+{
+	VerticesCheck[index - 1] = val;
 }
 
 const glm::mat4x4& MeshModel::GetPreTransformation() {

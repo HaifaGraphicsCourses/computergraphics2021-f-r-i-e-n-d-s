@@ -36,6 +36,8 @@ public:
 	glm::vec4 GetLeftBottomFar();
 	glm::vec4 GetRightBottomNear();
 	glm::vec4 GetRightBottomFar();
+	bool GetVertexCheck(int index);
+	void SetVertexCheck(bool val, int index);
 	int GetVertexCount();
 	void SetFacesNormalsFlag();
 	void SetNormalsFlag();
@@ -50,6 +52,7 @@ public:
 	glm::vec3& GetVN();
 	glm::vec3& GetMC();
 private:
+	std::vector<bool> VerticesCheck;
 	std::vector<Face> faces_;
 	std::vector<glm::vec3> vertices_;
 	std::vector<glm::vec3> normals_;
