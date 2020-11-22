@@ -66,38 +66,49 @@ const glm::vec3 MeshModel::GetVertex(int index)const {
 const glm::mat4x4& MeshModel::GetPreTransformation() {
 	return PreTransformation;
 }
+
 void MeshModel::SetTransformation() {
 	this->Transformation = S_w * R_w * T_w * S_m * T_m *R_m ;
 }
+
 const glm::mat4x4& MeshModel::GetTransformation()const {
 	return this->Transformation;
 }
+
 void MeshModel::Set_S_w(glm::mat4x4& Transformation) {
 	S_w = Transformation;
 }
+
 void MeshModel::Set_R_w() {
 	R_w = (W_Rotation_X) *(W_Rotation_Y) *(W_Rotation_Z);
 }
+
 void MeshModel::Set_T_w(glm::mat4x4& Transformation) {
 	T_w = Transformation;
 }
+
 void MeshModel::Set_S_m(glm::mat4x4& Transformation) {
 	S_m = Transformation;
 }
+
 void MeshModel::Set_R_m() {
 	R_m =(M_Rotation_X)*(M_Rotation_Y)*(M_Rotation_Z);
 }
+
 void MeshModel::Set_T_m(glm::mat4x4& Transformation) {
 	T_m = Transformation;
 }
+
 glm::mat4x4 MeshModel::Get_R_m()
 {
 	return R_m;
 }
+
 glm::mat4x4 MeshModel::Get_R_w()
 {
 	return R_w;
 }
+
 void MeshModel::ResetModel()
 {
 	this->S_m = Transformations::Identity4X4Matrix();
@@ -108,58 +119,72 @@ void MeshModel::ResetModel()
 	this->T_w = Transformations::Identity4X4Matrix();
 	this->Transformation = Transformations::Identity4X4Matrix();
 }
+
 void MeshModel::SetBoundingBoxFlag()
 {
 	ShowOrHideBoundingBox = !ShowOrHideBoundingBox;
 }
+
 bool MeshModel::GetBoundingBoxFlag()
 {
 	return ShowOrHideBoundingBox;
 }
+
 void MeshModel::SetFacesNormalsFlag()
 {
 	ShowOrHideFacesNormals = !ShowOrHideFacesNormals;
 }
+
 bool MeshModel::GetFacesNormalsFlag()
 {
 	return ShowOrHideFacesNormals;
 }
+
 void MeshModel::SetNormalsFlag()
 {
 	NormalsFlag = !NormalsFlag;
 }
+
 glm::vec4 MeshModel::GetLeftTopNear()
 {
 	return leftTopNear_;
 }
+
 glm::vec4 MeshModel::GetRightTopNear()
 {
 	return rightTopNear_;
 }
+
 glm::vec4 MeshModel::GetLeftTopFar()
 {
 	return leftTopFar_;
 }
+
 glm::vec4 MeshModel::GetRightTopFar()
 {
 	return rightTopFar_;
 }
+
 glm::vec4 MeshModel::GetLeftBottomNear()
 {
 	return leftBottomNear_;
 }
+
 glm::vec4 MeshModel::GetLeftBottomFar()
 {
 	return leftBottomFar_;
 }
+
 glm::vec4 MeshModel::GetRightBottomNear()
 {
 	return rightBottomNear_;
 }
+
 glm::vec4 MeshModel::GetRightBottomFar()
 {
 	return rightBottomFar_;
 }
+
 void MeshModel::SetRotationMatrix(glm::mat4x4& Transformation, bool IsWorld, int Axis)
 {
 	if (IsWorld)
@@ -173,6 +198,7 @@ void MeshModel::SetRotationMatrix(glm::mat4x4& Transformation, bool IsWorld, int
 			break;
 		case 3:
 			W_Rotation_Z = Transformation;
+			break;
 		}
 	}
 	else
@@ -186,34 +212,44 @@ void MeshModel::SetRotationMatrix(glm::mat4x4& Transformation, bool IsWorld, int
 			break;
 		case 3:
 			M_Rotation_Z = Transformation;
+			break;
 		}
 	}
 }
-void MeshModel::ComputeFacesNormals(glm::mat4x4 Transformation)
-{
-	for (int faceIndex = 0; faceIndex < faces_.size(); ++faceIndex)
-	{
-		Face face = GetFace(faceIndex);
-		int VertexIndex1 = face.GetVertexIndex(0);
-		int VertexIndex2 = face.GetVertexIndex(1);
-		int VertexIndex3 = face.GetVertexIndex(2);
-		glm::vec4 v1Temp = Transformation * glm::vec4(GetVertex(VertexIndex1),1);
-		glm::vec4 v2Temp = Transformation * glm::vec4(GetVertex(VertexIndex2),1);
-		glm::vec4 v3Temp = Transformation * glm::vec4(GetVertex(VertexIndex3),1);
-		glm::vec3 v1 (v1Temp.x / v1Temp.w, v1Temp.y / v1Temp.w, v1Temp.z / v1Temp.w);
-		glm::vec3 v2 (v2Temp.x / v2Temp.w, v2Temp.y / v2Temp.w, v2Temp.z / v2Temp.w);
-		glm::vec3 v3 (v3Temp.x / v3Temp.w, v3Temp.y / v3Temp.w, v3Temp.z / v3Temp.w);
-		glm::vec3 faceCenter = (v1 + v2 + v3) / 3.0f;
-		glm::vec3 faceNormal = normalize(cross(glm::vec3(v1 - v2), glm::vec3(v1 - v3)));
-		faces_[faceIndex].SetNormal(faceNormal);
-		faces_[faceIndex].SetCenter(faceCenter);
-	}
-}
+
 bool MeshModel::GetNormalsFlag()
 {
 	return NormalsFlag;
 }
+
 glm::vec3 MeshModel::GetNormals(int index) const
 {
-	return normals_[index - 1];
+	return normals_[(index - 1)];
 }
+
+int MeshModel::GetVertexCount()
+{
+	return vertices_.size();
+}
+
+void MeshModel::SetColors(float* BB, float* FN, float* VN, float* MC)
+{
+	BoundingBoxColor_ = glm::vec3(BB[0],BB[1],BB[2]);
+	FacesNormalsColor_ = glm::vec3(FN[0], FN[1], FN[2]);
+	NormalsColor_ = glm::vec3(VN[0], VN[1], VN[2]);
+	ModelColor_ = glm::vec3(MC[0], MC[1], MC[2]);
+}
+
+glm::vec3& MeshModel::GetBB() 
+{ 
+	return BoundingBoxColor_;
+}
+
+glm::vec3& MeshModel::GetFN() 
+{ return FacesNormalsColor_; }
+
+glm::vec3& MeshModel::GetVN() 
+{ return NormalsColor_; }
+
+glm::vec3& MeshModel::GetMC() 
+{ return ModelColor_; }

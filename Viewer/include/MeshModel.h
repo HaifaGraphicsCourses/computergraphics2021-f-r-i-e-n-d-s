@@ -16,7 +16,6 @@ public:
 	void PrintModel()const;
 	const glm::mat4x4& GetPreTransformation();
 	const glm::vec3 MeshModel::GetVertex(int index)const;
-
 	void Set_S_w(glm::mat4x4& Transformation);
 	void Set_R_w();
 	void Set_T_w(glm::mat4x4& Transformation);
@@ -37,7 +36,7 @@ public:
 	glm::vec4 GetLeftBottomFar();
 	glm::vec4 GetRightBottomNear();
 	glm::vec4 GetRightBottomFar();
-	void ComputeFacesNormals(glm::mat4x4 Transofrmation);
+	int GetVertexCount();
 	void SetFacesNormalsFlag();
 	void SetNormalsFlag();
 	glm::vec3 GetNormals(int index) const;
@@ -45,6 +44,11 @@ public:
 	bool GetNormalsFlag();
 	glm::mat4x4 Get_R_m();
 	glm::mat4x4 Get_R_w();
+	void SetColors(float* BB, float* FN, float* VN, float* MC);
+	glm::vec3& GetBB();
+	glm::vec3& GetFN();
+	glm::vec3& GetVN();
+	glm::vec3& GetMC();
 private:
 	std::vector<Face> faces_;
 	std::vector<glm::vec3> vertices_;
@@ -76,4 +80,9 @@ private:
 	bool ShowOrHideBoundingBox = false;
 	bool ShowOrHideFacesNormals = false;
 	bool NormalsFlag = false;
+	glm::vec3 BoundingBoxColor_;
+	glm::vec3 FacesNormalsColor_;
+	glm::vec3 NormalsColor_;
+	glm::vec3 ModelColor_;
+
 };

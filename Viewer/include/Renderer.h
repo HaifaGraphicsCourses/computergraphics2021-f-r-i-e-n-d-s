@@ -16,12 +16,10 @@ public:
 	
 private:
 	void PutPixel(const int i, const int j, const glm::vec3& color);
-	void DrawLine(const glm::ivec2& p1, const glm::ivec2& p2, const glm::vec3& color);
-
+	void DrawLine(const glm::ivec2& p1, const glm::ivec2& p2,glm::vec3& color);
 	void CreateBuffers(int w, int h);
 	void CreateOpenGLBuffer();
 	void InitOpenGLRendering();
-
 	float* color_buffer_;
 	int viewport_width_;
 	int viewport_height_;

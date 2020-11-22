@@ -21,5 +21,6 @@ public:
 	glm::vec4 leftBottomFar;
 	glm::vec4 rightBottomFar;
 	glm::mat4x4 preTransformation;
+	glm::mat4x4 NormalsPreTransformation;
 };
 

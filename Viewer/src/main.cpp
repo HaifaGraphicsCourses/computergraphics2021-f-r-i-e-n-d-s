@@ -20,7 +20,12 @@
  */
 bool show_demo_window = false;
 bool show_another_window = false;
-glm::vec4 clear_color = glm::vec4(0.8f, 0.8f, 0.8f, 1.00f);
+
+glm::vec4 clear_color = glm::vec4(0.2f, 0.2f, 0.2f, 1.00f);
+static float BoundingBoxColor[3] = { 1.f, 1.f, 0.f };
+static float NormalsColor[3]= { 1.f, 1.f, 1.f };
+static float FacesNormalsColor[3] = { 0.0039f,0.f,1.f };
+static float ModelColor[3]= {0.2f, 0.75f, 0.8f};
 
 /**
  * Function declarations
@@ -200,6 +205,12 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 	// Controls
 	ImGui::ColorEdit3("Clear Color", (float*)&clear_color);
+	ImGui::ColorEdit3("Bounding Box Color",BoundingBoxColor);
+	ImGui::ColorEdit3("Vertices Normals Color", NormalsColor);
+	ImGui::ColorEdit3("Faces Normals Color", FacesNormalsColor);
+	ImGui::ColorEdit3("Model Color", ModelColor);
+	if(scene.GetModelCount())
+	scene.GetActiveModel().SetColors(BoundingBoxColor, FacesNormalsColor, NormalsColor, ModelColor);
 	// TODO: Add more controls as needed
 	
 	ImGui::End();
@@ -266,8 +277,12 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		static int WTranslateX = 0;
 		static int WTranslateY = 0;
 		static int WTranslateZ = 0;
-		static float Angle=0;
-		static float WAngle=0;
+		static float AngleX=0;
+		static float AngleY=0;
+		static float AngleZ=0;
+		static float WAngleX=0;
+		static float WAngleY=0;
+		static float WAngleZ=0;
 		ImGui::Begin("Transformations Window");
 		ImGui::ListBox("World Or Local", &SelectedTransform, TransformItems, IM_ARRAYSIZE(TransformItems),2);
 		ImGui::ListBox("Choose Transformation",&SelectedItem,items,IM_ARRAYSIZE(items),3);
@@ -283,8 +298,20 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				break;
 			case 1:
 				ImGui::ListBox("Choose Axis to rotate around", &SelectedAxis, Axis, IM_ARRAYSIZE(Axis), 3);
-				ImGui::SliderFloat("Rotation Angle", &Angle,0,360);
-				Transformation = (SelectedAxis == 0 ? Transformations::XRotationTransformation(Angle) : SelectedAxis == 1 ? Transformations::YRotationTransformation(Angle) : Transformations::ZRotationTransformation(Angle));
+				if (SelectedAxis == 0) {
+					ImGui::SliderFloat("Rotation Angle", &AngleX, 0, 360);
+					Transformation = Transformations::XRotationTransformation(AngleX);
+				}
+				if (SelectedAxis == 1)
+				{
+					ImGui::SliderFloat("Rotation Angle", &AngleY, 0, 360);
+					Transformation = Transformations::YRotationTransformation(AngleY);
+				}
+				if (SelectedAxis == 2)
+				{
+					ImGui::SliderFloat("Rotation Angle", &AngleZ, 0, 360);
+					Transformation = Transformations::ZRotationTransformation(AngleZ);
+				}
 				scene.GetActiveModel().SetRotationMatrix(Transformation, false, SelectedAxis + 1);
 				scene.GetActiveModel().Set_R_m();
 				break;
@@ -313,8 +340,20 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				break;
 			case 1:
 				ImGui::ListBox("Choose World Axis to rotate around", &SelectedAxis, Axis, IM_ARRAYSIZE(Axis), 3);
-				ImGui::SliderFloat("Rotation Angle", &WAngle,0,360);
-				Transformation = (SelectedAxis == 0 ? Transformations::XRotationTransformation(WAngle) : SelectedAxis == 1 ? Transformations::YRotationTransformation(WAngle) : Transformations::ZRotationTransformation(WAngle));
+				if (SelectedAxis == 0) {
+					ImGui::SliderFloat("Rotation Angle", &WAngleX, 0, 360);
+					Transformation = Transformations::XRotationTransformation(WAngleX);
+				}
+				if (SelectedAxis == 1)
+				{
+					ImGui::SliderFloat("Rotation Angle", &WAngleY, 0, 360);
+					Transformation = Transformations::YRotationTransformation(WAngleY);
+				}
+				if (SelectedAxis == 2)
+				{
+					ImGui::SliderFloat("Rotation Angle", &WAngleZ, 0, 360);
+					Transformation = Transformations::ZRotationTransformation(WAngleZ);
+				}
 				scene.GetActiveModel().SetRotationMatrix(Transformation, true, SelectedAxis + 1);
 				scene.GetActiveModel().Set_R_w();
 				break;
@@ -344,8 +383,12 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			WTranslateX = 0;
 			WTranslateY = 0;
 			WTranslateZ = 0;
-			Angle = 0;
-			WAngle = 0;
+			AngleX = 0;
+			AngleY = 0;
+			AngleZ = 0;
+			WAngleX = 0;
+			WAngleY = 0;
+			WAngleZ = 0;
 			scene.GetActiveModel().ResetModel();
 		}
 		if (ImGui::Button("Show/Hide Bounding Box"))

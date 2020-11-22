@@ -24,10 +24,11 @@ glm::vec2 Utils::Vec2fFromStream(std::istream& issLine)
 std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 {
 	ModelParameters model;
-	glm::vec3 Vertex;
+	glm::vec3 Vertex, VertexNormal;
 	glm::mat4x4 Transformation;
 	std::ifstream ifile(filePath.c_str());
 	float Min_X = FLT_MAX, Max_X = FLT_MIN, Max_Y = FLT_MIN, Min_Y = FLT_MAX, Max_Z = FLT_MIN, Min_Z = FLT_MAX,MaxIndex;
+	float NormalMin_X = FLT_MAX, NormalMax_X = FLT_MIN, NormalMax_Y = FLT_MIN, NormalMin_Y = FLT_MAX, NormalMax_Z = FLT_MIN, NormalMin_Z = FLT_MAX,NormalMaxIndex;
 	//parameters to assign a scaling values
 	// while not end of file
 	while (!ifile.eof())
@@ -65,7 +66,22 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 		}
 		else if (lineType == "vn")
 		{
-			model.normals.push_back(Utils::Vec3fFromStream(issLine));
+			VertexNormal = Utils::Vec3fFromStream(issLine);
+			if (VertexNormal.x > NormalMax_X)
+				NormalMax_X = VertexNormal.x;
+			if (VertexNormal.x < NormalMin_X)
+				NormalMin_X = VertexNormal.x;
+
+			if (VertexNormal.y > NormalMax_Y)
+				NormalMax_Y = VertexNormal.y;
+			if (VertexNormal.y < NormalMin_Y)
+				NormalMin_Y = VertexNormal.y;
+
+			if (VertexNormal.z > NormalMax_Z)
+				NormalMax_Z = VertexNormal.z;
+			if (VertexNormal.z < NormalMin_Z)
+				NormalMin_Z = VertexNormal.z;
+			model.normals.push_back(VertexNormal);
 		}
 		else if (lineType == "vt")
 		{
@@ -95,13 +111,23 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 	model.leftBottomFar = glm::vec4(Min_X, Min_Y, Min_Z, 1);
 	model.rightBottomFar = glm::vec4(Max_X, Min_Y, Min_Z, 1);
 	model.modelName = GetFileName(filePath);
-		MaxIndex = Max_X > Max_Y ? Max_X : Max_Y;
-		MaxIndex = MaxIndex > Max_Z ? MaxIndex : Max_Z;
-		float ScalingParameter = 330 / MaxIndex;
-		glm::mat4x4 scaling = Transformations::ScalingTransformation(ScalingParameter, ScalingParameter, ScalingParameter);
-		glm::mat4x4 translateObjectToCenter = Transformations::TranslationTransformation(-Min_X, -Min_Y, -Min_Z);
-		Transformation = scaling * translateObjectToCenter;
-		model.preTransformation = Transformation;
+	NormalMaxIndex = NormalMax_X > NormalMax_Y ? NormalMax_X : NormalMax_Y;
+	NormalMaxIndex = NormalMaxIndex > NormalMax_Z ? NormalMaxIndex : NormalMax_Z;
+	float NormalScalingParameter = 50 / NormalMaxIndex;
+
+	MaxIndex = Max_X > Max_Y ? Max_X : Max_Y;
+	MaxIndex = MaxIndex > Max_Z ? MaxIndex : Max_Z;
+
+	float ScalingParameter = 330 / MaxIndex;
+	glm::mat4x4 scaling = Transformations::ScalingTransformation(ScalingParameter, ScalingParameter, ScalingParameter);
+	glm::mat4x4 translateObjectToCenter = Transformations::TranslationTransformation(-Min_X, -Min_Y, -Min_Z);
+
+	glm::mat4x4 Normalscaling = Transformations::ScalingTransformation(NormalScalingParameter, NormalScalingParameter, NormalScalingParameter);
+	glm::mat4x4 NormalstranslateObjectToCenter = Transformations::TranslationTransformation(-NormalMin_X, -NormalMin_Y, -NormalMin_Z);
+
+	Transformation = scaling * translateObjectToCenter;
+	model.preTransformation = Transformation;
+	model.NormalsPreTransformation = Normalscaling * NormalstranslateObjectToCenter;
 	return std::make_shared<MeshModel>(model);
 }
 
