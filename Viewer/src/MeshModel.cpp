@@ -131,6 +131,12 @@ void MeshModel::ResetModel()
 	this->S_w = Transformations::Identity4X4Matrix();
 	this->R_w= Transformations::Identity4X4Matrix();
 	this->T_w = Transformations::Identity4X4Matrix();
+	this->M_Rotation_X = Transformations::Identity4X4Matrix();
+	this->M_Rotation_Y = Transformations::Identity4X4Matrix();
+	this->M_Rotation_Z = Transformations::Identity4X4Matrix();
+	this->W_Rotation_X = Transformations::Identity4X4Matrix();
+	this->W_Rotation_Y = Transformations::Identity4X4Matrix();
+	this->W_Rotation_Z = Transformations::Identity4X4Matrix();
 	this->Transformation = Transformations::Identity4X4Matrix();
 }
 
