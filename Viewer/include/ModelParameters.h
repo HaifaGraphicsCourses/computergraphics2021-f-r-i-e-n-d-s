@@ -1,8 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <string>
-#include "MeshModel.h"
-#include<map>
+#include <Face.h>
 
 class ModelParameters
 {

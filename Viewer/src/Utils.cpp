@@ -3,9 +3,8 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-
 #include "Utils.h"
-#include "Transformations.h"
+
 
 glm::vec3 Utils::Vec3fFromStream(std::istream& issLine)
 {

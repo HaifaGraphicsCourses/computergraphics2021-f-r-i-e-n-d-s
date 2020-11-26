@@ -3,6 +3,7 @@
 #include <string>
 #include "MeshModel.h"
 #include "ModelParameters.h"
+#include "Transformations.h"
 
 class Utils
 {

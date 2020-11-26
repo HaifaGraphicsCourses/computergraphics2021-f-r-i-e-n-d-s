@@ -2,8 +2,11 @@
 #include <iostream>
 #include "Renderer.h"
 
+MeshModel::MeshModel()
+{
+}
 
-MeshModel::MeshModel(ModelParameters model) :
+MeshModel::MeshModel(ModelParameters& model) :
 	faces_(model.faces),
 	vertices_(model.vertices),
 	normals_(model.normals),
@@ -17,11 +20,6 @@ MeshModel::MeshModel(ModelParameters model) :
 	leftBottomFar_(model.leftBottomFar),
 	rightBottomFar_(model.rightBottomFar)
 {
-	VerticesCheck=std::vector<bool>(vertices_.size());
-	for (int i = 0; i < VerticesCheck.size(); i++)
-	{
-		VerticesCheck[i] = false;
-	}
 }
 
 MeshModel::~MeshModel()
@@ -67,26 +65,32 @@ const glm::vec3 MeshModel::GetVertex(int index)const {
 	return vertices_[index-1];
 }
 
-bool MeshModel::GetVertexCheck(int index)
-{
-	return VerticesCheck[index - 1];
-}
-
-void MeshModel::SetVertexCheck(bool val, int index)
-{
-	VerticesCheck[index - 1] = val;
-}
-
 const glm::mat4x4& MeshModel::GetPreTransformation() {
 	return PreTransformation;
 }
 
 void MeshModel::SetTransformation() {
-	this->Transformation = S_w * R_w * T_w * S_m * T_m *R_m ;
+	this->Transformation = WorldTransformation * ModelTransformation;//S_w * R_w * T_w * S_m * T_m *R_m ;
+}
+
+void MeshModel::SetWorldTransformation(glm::mat4x4 Transformation) {
+	WorldTransformation = Transformation;
+}
+
+void MeshModel::SetModelTransformation(glm::mat4x4 Transformation) {
+	ModelTransformation = Transformation;
 }
 
 const glm::mat4x4& MeshModel::GetTransformation()const {
 	return this->Transformation;
+}
+
+glm::mat4x4 MeshModel::GetWorldTransformation() {
+	return WorldTransformation;
+}
+
+glm::mat4x4 MeshModel::GetModelTransformation() {
+	return ModelTransformation;
 }
 
 void MeshModel::Set_S_w(glm::mat4x4& Transformation) {
@@ -118,9 +122,29 @@ glm::mat4x4 MeshModel::Get_R_m()
 	return R_m;
 }
 
+glm::mat4x4 MeshModel::Get_S_m()
+{
+	return S_m;
+}
+
+glm::mat4x4 MeshModel::Get_T_m()
+{
+	return T_m;
+}
+
 glm::mat4x4 MeshModel::Get_R_w()
 {
 	return R_w;
+}
+
+glm::mat4x4 MeshModel::Get_S_w()
+{
+	return S_w;
+}
+
+glm::mat4x4 MeshModel::Get_T_w()
+{
+	return T_w;
 }
 
 void MeshModel::ResetModel()
@@ -137,6 +161,8 @@ void MeshModel::ResetModel()
 	this->W_Rotation_X = Transformations::Identity4X4Matrix();
 	this->W_Rotation_Y = Transformations::Identity4X4Matrix();
 	this->W_Rotation_Z = Transformations::Identity4X4Matrix();
+	this->WorldTransformation = Transformations::Identity4X4Matrix();
+	this->ModelTransformation = Transformations::Identity4X4Matrix();
 	this->Transformation = Transformations::Identity4X4Matrix();
 }
 
