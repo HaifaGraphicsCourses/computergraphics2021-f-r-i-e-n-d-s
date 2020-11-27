@@ -24,11 +24,15 @@ public:
 	void SetEye(glm::vec3 eye);
 	void SetAt(glm::vec3 at);
 	void SetUp(glm::vec3 at);
-	void SetWTransformation(glm::mat4x4 T);
-	void SetCTransformation(glm::mat4x4 T);
+	void SetWTransformation();
+	void SetCTransformation();
 	void SetTransformations();
 	void SetRotationMatrix(glm::mat4x4& Transformation, bool IsWorld, int Axis);
 	void ResetTransformations();
+	void SetCTranslate(glm::mat4x4 T);
+	void SetWTranslate(glm::mat4x4 T);
+	float GetFar();
+	glm::mat4x4 GetC_inv();
 	
 
 private:
@@ -50,6 +54,7 @@ private:
 	glm::mat4x4 projection_transformation_;
 	glm::mat4x4 WorldTransformation=Transformations::Identity4X4Matrix();
 	glm::mat4x4 CameraTransformation=Transformations::Identity4X4Matrix();
+	glm::mat4x4 C_inv = Transformations::Identity4X4Matrix();
 	glm::mat4x4 C = Transformations::Identity4X4Matrix();
 	glm::mat4x4 WRotationX=Transformations::Identity4X4Matrix();
 	glm::mat4x4 WRotationY=Transformations::Identity4X4Matrix();

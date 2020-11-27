@@ -58,6 +58,9 @@ public:
 	glm::vec3& GetFN();
 	glm::vec3& GetVN();
 	glm::vec3& GetMC();
+	float GetMinOrtho();
+	float GetMaxOrtho();
+	float GetInitOrtho();
 private:
 	std::vector<bool> VerticesCheck;
 	std::vector<Face> faces_;
@@ -96,5 +99,6 @@ private:
 	glm::vec3 FacesNormalsColor_;
 	glm::vec3 NormalsColor_;
 	glm::vec3 ModelColor_;
+	float minOrtho, maxOrtho, startingOrtho;
 
 };

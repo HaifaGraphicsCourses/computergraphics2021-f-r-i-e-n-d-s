@@ -294,9 +294,11 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			show_another_window = false;
 		ImGui::End();
 	}
+	std::string name;
 	//My Transformations Window
 	if(scene.GetModelCount()>0)
 	{
+		name=scene.GetActiveModel().GetModelName();
 		auto model = scene.GetActiveModel();
 		const static char* items[] = { "Scale","Rotate","Translate"};
 		const static char* TransformItems[] = {"World Transformation","Local Transformation"};
@@ -459,44 +461,32 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 		ImGui::Begin("Camera Window");
 		static int Projection = 1;
-		static float eye[3]={0,0,100};
+		static float eye[3]={0,0,0.5};
 		static float at[3]={0,0,0};
 		static float up[3]={0,1,0};
-        static float cameraTranslationX;
-        static float cameraTranslationY;
-        static float cameraTranslationZ;
-        static float cameraRotationX;
-        static float cameraRotationY;
-        static float cameraRotationZ; 
-        static float worldTranslationX;
-        static float worldTranslationY;
-        static float worldTranslationZ;
-        static float worldRotationX;
-        static float worldRotationY;
-        static float worldRotationZ;
-		static int IsWorld;
-		static int TransformationType;
-		static float OrthoWidth=0.5;
+        static float cameraTranslationX, cameraTranslationY, cameraTranslationZ;
+        static float cameraRotationX, cameraRotationY, cameraRotationZ;
+        static float worldTranslationX, worldTranslationY, worldTranslationZ;
+        static float worldRotationX, worldRotationY, worldRotationZ;
+		static int IsWorld, TransformationType;
+		static float OrthoWidth= scene.GetActiveModel().GetInitOrtho();
+		static float minOrtho=scene.GetActiveModel().GetMinOrtho(),maxOrtho=scene.GetActiveModel().GetMaxOrtho();
 		static float fovy=(45.f);
 		static float Near=-0.1;
 		static float Far=1000;
-
 		ImGui::Text("Choose Projection"); ImGui::SameLine();
 		ImGui::RadioButton("Perspective", &Projection, 0); ImGui::SameLine();
 		ImGui::RadioButton("Orthographic", &Projection, 1);
 		if (Projection) 
 		{
 			scene.GetActiveCamera().SetIsOrthographic(true);
-			ImGui::SliderFloat("Orho Width",&OrthoWidth, 0.355, 100);
+			ImGui::SliderFloat("Orho Width",&OrthoWidth, minOrtho, maxOrtho);
 			scene.GetActiveCamera().SetOrthographicWidth(OrthoWidth);
 		}
 		else
 		{
-			//scene.GetActiveCamera().SetEye(glm::vec3());
-			//scene.GetActiveCamera().SetAt(glm::vec3());
-			//scene.GetActiveCamera().SetUp(glm::vec3());
 			scene.GetActiveCamera().SetIsOrthographic(false);
-			ImGui::SliderFloat("Fov", &fovy,1,180);
+			ImGui::SliderFloat("Fov", &fovy,20,120);
 			scene.GetActiveCamera().SetFovy(fovy);
 			//perspective
 		}
@@ -522,11 +512,6 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			ImGui::RadioButton("Translate", &TransformationType, 0);
 			ImGui::SameLine();
 			ImGui::RadioButton("Rotate", &TransformationType, 1);
-			glm::mat4x4 CameraTrans = Transformations::Identity4X4Matrix();
-			glm::mat4x4 WorldTrans = Transformations::Identity4X4Matrix();
-			glm::mat4x4 WorldTranslate= Transformations::Identity4X4Matrix();
-			glm::mat4x4 CameraTranslate= Transformations::Identity4X4Matrix();
-
 			if (IsWorld)
 			{
 				if (TransformationType)
@@ -537,16 +522,15 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 					scene.GetActiveCamera().SetRotationMatrix(Transformations::XRotationTransformation(worldRotationX), true, 1);
 					scene.GetActiveCamera().SetRotationMatrix(Transformations::YRotationTransformation(worldRotationY), true, 2);
 					scene.GetActiveCamera().SetRotationMatrix(Transformations::ZRotationTransformation(worldRotationZ), true, 3);
-
 				}
 				else
 				{
 					ImGui::SliderFloat("Translate in X", &worldTranslationX, -200, 200);
 					ImGui::SliderFloat("Translate in y", &worldTranslationY, -200, 200);
 					ImGui::SliderFloat("Translate in Z", &worldTranslationZ, -200, 200);
-					WorldTranslate = Transformations::TranslationTransformation(worldTranslationX/1000, worldTranslationY/1000, worldTranslationZ/1000);
+					scene.GetActiveCamera().SetWTranslate(Transformations::TranslationTransformation(worldTranslationX/1000, worldTranslationY/1000, worldTranslationZ/1000));
 				}
-				scene.GetActiveCamera().SetWTransformation(WorldTranslate);
+				scene.GetActiveCamera().SetWTransformation();
 			}
 			else
 			{
@@ -564,9 +548,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 					ImGui::SliderFloat("Translate in x", &cameraTranslationX, -200, 200);
 					ImGui::SliderFloat("Translate in y", &cameraTranslationY, -200, 200);
 					ImGui::SliderFloat("Translate in z", &cameraTranslationZ, -200, 200);
-					CameraTranslate = Transformations::TranslationTransformation(cameraTranslationX/1000, cameraTranslationY/1000, cameraTranslationZ/1000);
+					scene.GetActiveCamera().SetCTranslate(Transformations::TranslationTransformation(cameraTranslationX/1000, cameraTranslationY/1000, cameraTranslationZ/1000));
 				}
-				scene.GetActiveCamera().SetCTransformation(CameraTranslate);
+				scene.GetActiveCamera().SetCTransformation();
 			}
 			scene.GetActiveCamera().SetTransformations();
 			if (ImGui::Button("Reset Transformations"))

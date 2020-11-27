@@ -18,8 +18,88 @@ MeshModel::MeshModel(ModelParameters& model) :
 	leftBottomNear_(model.leftBottomNear),
 	rightBottomNear_(model.rightBottomNear),
 	leftBottomFar_(model.leftBottomFar),
-	rightBottomFar_(model.rightBottomFar)
+	rightBottomFar_(model.rightBottomFar),
+	model_name_(model.modelName)
 {
+    std::string name = GetModelName();
+	if (!name.compare("banana.obj"))
+	{
+		startingOrtho = 0.5;
+		minOrtho = 0.355;
+		maxOrtho = 1;
+	}
+	if (!name.compare("beethoven.obj"))
+	{
+		startingOrtho = 30;
+		minOrtho = 20;
+		maxOrtho = 70;
+	}
+	if (!name.compare("bishop.obj"))
+	{
+		startingOrtho = 0.5;
+		minOrtho = 0.355;
+		maxOrtho = 1;
+	}
+	if (!name.compare("blob.obj"))
+	{
+		startingOrtho = 200;
+		minOrtho = 150;
+		maxOrtho = 300;
+	}
+	if (!name.compare("bunny.obj"))
+	{
+		startingOrtho =10;
+		minOrtho = 3;
+		maxOrtho = 20;
+	}
+	if (!name.compare("camera.obj"))
+	{
+		startingOrtho = 15;
+		minOrtho = 10;
+		maxOrtho = 30;
+	}
+	if (!name.compare("chain.obj"))
+	{
+		startingOrtho = 15;
+		minOrtho = 10;
+		maxOrtho = 30;
+	}
+	if (!name.compare("cow.obj"))
+	{
+		startingOrtho = 30;
+		minOrtho = 10;
+		maxOrtho = 50;
+	}
+	if (!name.compare("demo.obj"))
+	{
+		startingOrtho = 20;
+		minOrtho = 10;
+		maxOrtho = 100;
+	}
+	if (!name.compare("dolphin.obj"))
+	{
+		startingOrtho = 1000;
+		minOrtho = 500;
+		maxOrtho = 2000;
+	}
+	if (!name.compare("feline.obj"))
+	{
+		startingOrtho = 10;
+		minOrtho = 1;
+		maxOrtho = 20;
+	}
+	if (!name.compare("pawn.obj"))
+	{
+		startingOrtho = 0.5;
+		minOrtho = 0.355;
+		maxOrtho = 1;
+	}
+	if (!name.compare("teapot.obj"))
+	{
+		startingOrtho = 10;
+		minOrtho = 6.5;
+		maxOrtho = 30;
+	}
 }
 
 MeshModel::~MeshModel()
@@ -299,3 +379,16 @@ glm::vec3& MeshModel::GetVN()
 
 glm::vec3& MeshModel::GetMC() 
 { return ModelColor_; }
+
+float MeshModel::GetMinOrtho()
+{
+	return minOrtho;
+}
+float MeshModel::GetMaxOrtho()
+{
+	return maxOrtho;
+}
+float MeshModel::GetInitOrtho() 
+{
+	return startingOrtho;
+}
