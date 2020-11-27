@@ -18,3 +18,41 @@
 ![GIF1](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/NormalsGIF.gif)
 ## ===================================================================
 # Branch 4
+## First of all, we will show orthographic projection with low zoom and then with high zoom (orhto width is the parameter of the zooming).
+### How i implemented the zooming parameter: given a new ortho width by the user we must maintain the original aspect ratio so what we do is:
+### `new_width = ortho_width `
+### `new_height = ortho_width/aspectRatio`
+### and ofcourse `left= -new_width/2 , right= new_width/2 , top=new_height/2 , bottom=-new_height/2`;
+ *In all the pictures the bounding box is beeing drawn in red in order to see the difference between the orthographic and perspective.*
+ 
+![OrthoWide](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/OrhtoWide.png)
+
+![OrthoZoom](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/OrthoZoom.png)
+
+## Now We will see the perspective projection first with low zoom then with high zoom.
+
+![PerspectiveWide](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/PerspectiveWide.png)
+
+![PerspectiveZoom](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/PerspectiveZoom.png)
+
+##### If we take a look at the bounding box we would see the difference between the orthographic projection and the perspective which is in the perspective we can see what happens on the z axis. for example applying TranslateModel(0,0,200) in the model frame on perspective projection would show us that the object is "getting closer",while on the other side applying the same transformation on the orthographic projection wouldn't show us anything.
+## ===================================================================
+# Branch 5
+*The Axes are: X drawn in white and Y drawn in yello.*
+#### First of all zooming is being done on the picutre by changing the fovy value. Then we translate the camera in Z. this difference is because the camera's location is on 0.2,0.2,0.2 which means eye=(0.2, 0.2, 0.2) but if we change it to (0,0,0.5) then there is no difference between translation in z axis and zooming using the fovy.
+![ZoomingVsDistance](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/Branch5.gif)
+## ===================================================================
+# Branch 6
+![Branch6](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/Branch6.gif)
+## ===================================================================
+# Branch 7
+![SetCamera](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/SetCamera(aaa).JPG)
+## ===================================================================
+# Branch 9
+#### First picture is the starting case and the second is after resizing the window shows how the model maintains its aspect ratio and stays in the center of the screen
+![BeforeResize](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/BeforeResize.png)
+![AfterResize](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/AfterResize.png)
+## ===================================================================
+# Branch 10
+
+
