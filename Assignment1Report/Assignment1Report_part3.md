@@ -24,17 +24,11 @@
 ### `new_height = ortho_width/aspectRatio`
 ### and ofcourse `left= -new_width/2 , right= new_width/2 , top=new_height/2 , bottom=-new_height/2`;
  *In all the pictures the bounding box is beeing drawn in red in order to see the difference between the orthographic and perspective.*
- 
 ![OrthoWide](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/OrhtoWide.png)
-
-![OrthoZoom](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/OrthoZoom.png)
-
+![OrthoZoom](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/OrhtoZoom.png)
 ## Now We will see the perspective projection first with low zoom then with high zoom.
-
 ![PerspectiveWide](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/PerspectiveWide.png)
-
 ![PerspectiveZoom](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/PerspectiveZoom.png)
-
 ##### If we take a look at the bounding box we would see the difference between the orthographic projection and the perspective which is in the perspective we can see what happens on the z axis. for example applying TranslateModel(0,0,200) in the model frame on perspective projection would show us that the object is "getting closer",while on the other side applying the same transformation on the orthographic projection wouldn't show us anything.
 ## ===================================================================
 # Branch 5
