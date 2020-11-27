@@ -198,3 +198,12 @@ float Camera::GetFar()
 {
 	return Far;
 }
+
+void Camera::SetWidth(float w)
+{
+	width = w;
+}
+void Camera::SetHeight(float h)
+{
+	height = h;
+}
