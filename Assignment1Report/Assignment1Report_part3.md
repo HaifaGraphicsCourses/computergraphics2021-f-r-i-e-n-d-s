@@ -25,7 +25,7 @@
 ### and ofcourse `left= -new_width/2 , right= new_width/2 , top=new_height/2 , bottom=-new_height/2`;
  *In all the pictures the bounding box is beeing drawn in red in order to see the difference between the orthographic and perspective.*
 ![OrthoWide](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/OrhtoWide.png)
-![OrthoZoom](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/OrhtoZoom.png)
+![OrthoZoom](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/OrhtoZoom.jpg)
 ## Now We will see the perspective projection first with low zoom then with high zoom.
 ![PerspectiveWide](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/PerspectiveWide.png)
 ![PerspectiveZoom](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/PerspectiveZoom.png)
@@ -48,5 +48,12 @@
 ![AfterResize](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/AfterResize.png)
 ## ===================================================================
 # Branch 10
-
-
+#### A small description about the GUI and a screenshot:
+In the picture shown down low showing the camera window which allows the user to move between Perspective projection or orthographic projection and if orthogrphic is chosen then the first sliderFloat would be the ortho width (now I paid attention to the typo but will change it in the code) which if changed it changes the height with it to maintain the aspectratio, if projection was chosen the sliderfloat changes to control over the fovy
+A tree node which opens to control the values of eye at and up for the lookat function and applied only after clicking the look at button.
+Then a tree node for the camera transformations where the user can choose whether to do a local or world transformation then translation or rotation and apply the appropriate values(rotation angles for x,y,z).
+The second window is choosing the colors for the model,normals per face,normals per vertex,bounding box and background color.
+The last window is the transformations for the model which starts by choosing world or local transformation then the transformation type and appropriate values.
+The transformations are done incrementally, this means when moving one of the sliders the transformation is applied.
+A reset button which resets the model's transformations and ofcourse buttons for showing or hiding the bounding box,normals per face,normals per vertes.
+![GUI](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/Branch10.gif) 

@@ -3,11 +3,11 @@
 #include <glm/gtx/transform.hpp>
 #include <Transformations.h>
 
-Camera::Camera()
+Camera::Camera(glm::vec3 Preffered_Eye)
 {
 	this->width = 1920;
 	this->height = 1080;
-	this->eye = glm::vec3(0, 0, 0.5);
+	this->eye = glm::vec3(Preffered_Eye[0], Preffered_Eye[1], Preffered_Eye[2]);
 	this->at = glm::vec3(0, 0, 0);
 	this->up = glm::vec3(0, 1, 0);
 	WorldTransformation = Transformations::Identity4X4Matrix();

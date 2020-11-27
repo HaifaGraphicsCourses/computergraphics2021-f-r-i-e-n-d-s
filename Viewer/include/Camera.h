@@ -5,7 +5,7 @@
 class Camera
 {
 public:
-	Camera();
+	Camera(glm::vec3 Preffered_eye);
 	virtual ~Camera();
 	void SetCameraLookAt();
 	glm::mat4x4 GetLookAt();

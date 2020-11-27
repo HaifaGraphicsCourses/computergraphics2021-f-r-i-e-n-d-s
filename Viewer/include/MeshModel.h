@@ -61,6 +61,7 @@ public:
 	float GetMinOrtho();
 	float GetMaxOrtho();
 	float GetInitOrtho();
+	glm::vec3 GetPreffered_Eye();
 private:
 	std::vector<bool> VerticesCheck;
 	std::vector<Face> faces_;
@@ -99,6 +100,7 @@ private:
 	glm::vec3 FacesNormalsColor_;
 	glm::vec3 NormalsColor_;
 	glm::vec3 ModelColor_;
+	glm::vec3 Preffered_eye;
 	float minOrtho, maxOrtho, startingOrtho;
 
 };

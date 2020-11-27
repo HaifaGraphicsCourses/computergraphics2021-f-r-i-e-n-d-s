@@ -166,9 +166,11 @@ void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& 
 	{
 		renderer.SetViewportHeight(frameBufferHeight);
 		renderer.SetViewportWidth(frameBufferWidth);
-		scene.GetActiveCamera().SetWidth(frameBufferWidth);
-		scene.GetActiveCamera().SetHeight(frameBufferHeight);
-		scene.GetActiveCamera().SetAspectRatio(frameBufferWidth,frameBufferHeight);
+		if (scene.GetCameraCount()) {
+			scene.GetActiveCamera().SetWidth(frameBufferWidth);
+			scene.GetActiveCamera().SetHeight(frameBufferHeight);
+			scene.GetActiveCamera().SetAspectRatio(frameBufferWidth, frameBufferHeight);
+		}
 		// TODO: Set new aspect ratio
 	}
 
@@ -211,7 +213,6 @@ void Cleanup(GLFWwindow* window)
 
 void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 {
-	scene.AddCamera(std::make_shared<Camera>());
 	/**
 	 * MeshViewer menu
 	 */
@@ -302,7 +303,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	//My Transformations Window
 	if(scene.GetModelCount()>0)
 	{
-		name=scene.GetActiveModel().GetModelName();
+		scene.AddCamera(std::make_shared<Camera>(scene.GetActiveModel().GetPreffered_Eye()));
 		auto model = scene.GetActiveModel();
 		const static char* items[] = { "Scale","Rotate","Translate"};
 		const static char* TransformItems[] = {"World Transformation","Local Transformation"};
@@ -465,7 +466,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 
 		ImGui::Begin("Camera Window");
 		static int Projection = 1;
-		static float eye[3]={0,0,0.5};
+		static float eye[3] = { scene.GetActiveModel().GetPreffered_Eye()[0],scene.GetActiveModel().GetPreffered_Eye()[1],scene.GetActiveModel().GetPreffered_Eye()[2] };
 		static float at[3]={0,0,0};
 		static float up[3]={0,1,0};
         static float cameraTranslationX, cameraTranslationY, cameraTranslationZ;

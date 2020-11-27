@@ -24,78 +24,91 @@ MeshModel::MeshModel(ModelParameters& model) :
     std::string name = GetModelName();
 	if (!name.compare("banana.obj"))
 	{
+		Preffered_eye = glm::vec3(0, 0, 0.5);
 		startingOrtho = 0.5;
 		minOrtho = 0.355;
 		maxOrtho = 1;
 	}
 	if (!name.compare("beethoven.obj"))
 	{
+		Preffered_eye = glm::vec3(0, 0, 20);
 		startingOrtho = 30;
 		minOrtho = 20;
 		maxOrtho = 70;
 	}
 	if (!name.compare("bishop.obj"))
 	{
+		Preffered_eye = glm::vec3(0, 0, 0.5);
 		startingOrtho = 0.5;
 		minOrtho = 0.355;
 		maxOrtho = 1;
 	}
 	if (!name.compare("blob.obj"))
 	{
+		Preffered_eye = glm::vec3(0, 0, 1000);
 		startingOrtho = 200;
 		minOrtho = 150;
 		maxOrtho = 300;
 	}
 	if (!name.compare("bunny.obj"))
 	{
+		Preffered_eye = glm::vec3(0, 0, 4);
 		startingOrtho =10;
 		minOrtho = 3;
 		maxOrtho = 20;
 	}
 	if (!name.compare("camera.obj"))
 	{
+		Preffered_eye = glm::vec3(0, 0, 10);
 		startingOrtho = 15;
 		minOrtho = 10;
 		maxOrtho = 30;
 	}
 	if (!name.compare("chain.obj"))
 	{
+		Preffered_eye = glm::vec3(0, 0, 8);
 		startingOrtho = 15;
 		minOrtho = 10;
 		maxOrtho = 30;
 	}
 	if (!name.compare("cow.obj"))
 	{
+		Preffered_eye = glm::vec3(0, 0, 11);
 		startingOrtho = 30;
 		minOrtho = 10;
 		maxOrtho = 50;
 	}
 	if (!name.compare("demo.obj"))
 	{
+		Preffered_eye = glm::vec3(0, 0,15);
 		startingOrtho = 20;
 		minOrtho = 10;
 		maxOrtho = 100;
 	}
 	if (!name.compare("dolphin.obj"))
 	{
+		Preffered_eye = glm::vec3(0, 0, 1000);
 		startingOrtho = 1000;
 		minOrtho = 500;
 		maxOrtho = 2000;
 	}
 	if (!name.compare("feline.obj"))
 	{
+		Preffered_eye = glm::vec3(0, 0, 10);
 		startingOrtho = 10;
 		minOrtho = 1;
 		maxOrtho = 20;
 	}
 	if (!name.compare("pawn.obj"))
 	{
+		Preffered_eye = glm::vec3(0, 0, 0.5);
 		startingOrtho = 0.5;
 		minOrtho = 0.355;
 		maxOrtho = 1;
 	}
 	if (!name.compare("teapot.obj"))
 	{
+		Preffered_eye = glm::vec3(0, 0, 10);
 		startingOrtho = 10;
 		minOrtho = 6.5;
 		maxOrtho = 30;
@@ -391,4 +404,8 @@ float MeshModel::GetMaxOrtho()
 float MeshModel::GetInitOrtho() 
 {
 	return startingOrtho;
+}
+glm::vec3 MeshModel::GetPreffered_Eye()
+{
+	return Preffered_eye;
 }
