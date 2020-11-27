@@ -203,6 +203,7 @@ void Camera::SetWidth(float w)
 {
 	width = w;
 }
+
 void Camera::SetHeight(float h)
 {
 	height = h;
