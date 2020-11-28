@@ -56,4 +56,4 @@ The second window is choosing the colors for the model,normals per face,normals 
 The last window is the transformations for the model which starts by choosing world or local transformation then the transformation type and appropriate values.
 The transformations are done incrementally, this means when moving one of the sliders the transformation is applied.
 A reset button which resets the model's transformations and ofcourse buttons for showing or hiding the bounding box,normals per face,normals per vertes.
-![GUI](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/Branch10.png) 
+![GUI](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/GuiPic.png)
