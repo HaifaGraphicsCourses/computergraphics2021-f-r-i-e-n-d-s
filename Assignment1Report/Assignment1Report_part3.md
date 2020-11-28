@@ -25,7 +25,7 @@
 ### and ofcourse `left= -new_width/2 , right= new_width/2 , top=new_height/2 , bottom=-new_height/2`;
  *In all the pictures the bounding box is beeing drawn in red in order to see the difference between the orthographic and perspective.*
 ![OrthoWide](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/OrhtoWide.png)
-![OrthoZoom](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/OrhtoZoom.png)
+![OrthoZoom](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/ZoomingOrhto.png)
 ## Now We will see the perspective projection first with low zoom then with high zoom.
 ![PerspectiveWide](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/PerspectiveWide.png)
 ![PerspectiveZoom](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/PerspectiveZoom.png)
