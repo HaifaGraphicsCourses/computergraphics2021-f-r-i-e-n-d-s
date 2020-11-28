@@ -50,7 +50,7 @@ void Camera::SetOrthographicWidth(float Orthowidth)
 	this->left = -Orthowidth / 2;
 	this->right = Orthowidth / 2;
 	this->bottom = -this->height/2;
-	this->top = this->height / 2;
+	this->top = this->height / 2;	
 	UpdateOrthographicMat();
 }
 

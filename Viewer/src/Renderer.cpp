@@ -337,7 +337,7 @@ void Renderer::Render(Scene& scene)
 	if (scene.GetModelCount() > 0) {
 		auto model = scene.GetActiveModel();
 		glm::mat4x4 Transformation = model.GetTransformation();
-		glm::mat4x4 Lookat = scene.GetActiveCamera().GetLookAt();
+		glm::mat4x4 Lookat = scene.GetActiveCamera().GetLookAt();                      
 		glm::mat4x4 projectionTransformation =(scene.GetActiveCamera().GetProjectionTransformation());
 		glm::mat4x4 ViewPortTransformation = Transformations::ScalingTransformation(half_width, half_height, 1) * Transformations::TranslationTransformation(1, 1, 0);
 		glm::mat4x4 C_inv = scene.GetActiveCamera().GetC_inv();
@@ -350,9 +350,9 @@ void Renderer::Render(Scene& scene)
 			glm::vec3 v3Temp = model.GetVertex(VertexIndex3);
 			glm::vec3 faceNormal = normalize(cross((v1Temp - v2Temp), glm::vec3(v1Temp - v3Temp)));
 			int Nindex1 = face.GetNormalIndex(0), Nindex2 = face.GetNormalIndex(1), Nindex3 = face.GetNormalIndex(2);
-			glm::vec4 v1=projectionTransformation * Lookat *C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex1), 1);
-			glm::vec4 v2=projectionTransformation * Lookat *C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex2), 1);
-			glm::vec4 v3=projectionTransformation * Lookat *C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex3), 1);
+			glm::vec4 v1 = projectionTransformation * Lookat * C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex1), 1);
+			glm::vec4 v2 = projectionTransformation * Lookat * C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex2), 1);
+			glm::vec4 v3 = projectionTransformation * Lookat * C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex3), 1);
 			glm::vec4 origin = projectionTransformation * Lookat * C_inv * glm::vec4(0, 0, 0, 1);
 			glm::vec4 XAxis = Lookat  * C_inv * glm::vec4(1, 0, 0, 1);
 			glm::vec4 YAxis = Lookat  * C_inv * glm::vec4(0, 1, 0, 1);
