@@ -24,6 +24,7 @@ MeshModel::MeshModel(ModelParameters& model) :
     std::string name = GetModelName();
 	if (!name.compare("banana.obj"))
 	{
+		TranslateFactor = 1000;
 		Preffered_eye = glm::vec3(0, 0, 0.5);
 		startingOrtho = 0.5;
 		minOrtho = 0.355;
@@ -31,6 +32,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 	}
 	if (!name.compare("beethoven.obj"))
 	{
+		TranslateFactor = 20;
 		Preffered_eye = glm::vec3(0, 0, 20);
 		startingOrtho = 30;
 		minOrtho = 20;
@@ -38,6 +40,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 	}
 	if (!name.compare("bishop.obj"))
 	{
+		TranslateFactor = 1000;
 		Preffered_eye = glm::vec3(0, 0, 0.5);
 		startingOrtho = 0.5;
 		minOrtho = 0.355;
@@ -45,6 +48,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 	}
 	if (!name.compare("blob.obj"))
 	{
+		TranslateFactor = 2;
 		Preffered_eye = glm::vec3(0, 0, 1000);
 		startingOrtho = 200;
 		minOrtho = 150;
@@ -52,6 +56,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 	}
 	if (!name.compare("bunny.obj"))
 	{
+		TranslateFactor = 55;
 		Preffered_eye = glm::vec3(0, 0, 4);
 		startingOrtho =10;
 		minOrtho = 3;
@@ -59,6 +64,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 	}
 	if (!name.compare("camera.obj"))
 	{
+		TranslateFactor = 35;
 		Preffered_eye = glm::vec3(0, 0, 10);
 		startingOrtho = 15;
 		minOrtho = 10;
@@ -66,6 +72,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 	}
 	if (!name.compare("chain.obj"))
 	{
+		TranslateFactor = 35;
 		Preffered_eye = glm::vec3(0, 0, 8);
 		startingOrtho = 15;
 		minOrtho = 10;
@@ -73,13 +80,15 @@ MeshModel::MeshModel(ModelParameters& model) :
 	}
 	if (!name.compare("cow.obj"))
 	{
+		TranslateFactor = 30;
 		Preffered_eye = glm::vec3(0, 0, 11);
-		startingOrtho = 30;
+		startingOrtho = 17;
 		minOrtho = 10;
 		maxOrtho = 50;
 	}
 	if (!name.compare("demo.obj"))
 	{
+		TranslateFactor = 33;
 		Preffered_eye = glm::vec3(0, 0,15);
 		startingOrtho = 20;
 		minOrtho = 10;
@@ -87,6 +96,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 	}
 	if (!name.compare("dolphin.obj"))
 	{
+		TranslateFactor = 1;
 		Preffered_eye = glm::vec3(0, 0, 1000);
 		startingOrtho = 1000;
 		minOrtho = 500;
@@ -94,6 +104,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 	}
 	if (!name.compare("feline.obj"))
 	{
+		TranslateFactor = 20;
 		Preffered_eye = glm::vec3(0, 0, 10);
 		startingOrtho = 10;
 		minOrtho = 1;
@@ -101,6 +112,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 	}
 	if (!name.compare("pawn.obj"))
 	{
+		TranslateFactor = 1000;
 		Preffered_eye = glm::vec3(0, 0, 0.5);
 		startingOrtho = 0.5;
 		minOrtho = 0.355;
@@ -108,6 +120,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 	}
 	if (!name.compare("teapot.obj"))
 	{
+		TranslateFactor = 50;
 		Preffered_eye = glm::vec3(0, 0, 10);
 		startingOrtho = 10;
 		minOrtho = 6.5;
@@ -408,4 +421,8 @@ float MeshModel::GetInitOrtho()
 glm::vec3 MeshModel::GetPreffered_Eye()
 {
 	return Preffered_eye;
+}
+float MeshModel::GetTranslateFactor()
+{
+	return TranslateFactor;
 }

@@ -221,9 +221,35 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	// Menu Bar
 	if (ImGui::BeginMainMenuBar())
 	{
-		if (ImGui::BeginMenu("File"))
+		if (ImGui::BeginMenu("Choose Model"))
 		{
-			if (ImGui::MenuItem("Open", "CTRL+O"))
+			if (ImGui::MenuItem("Banana"))
+				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\banana.obj"));
+			if (ImGui::MenuItem("Beethoven"))
+				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\beethoven.obj"));
+			if (ImGui::MenuItem("Bishop"))
+				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\bishop.obj"));
+			if (ImGui::MenuItem("Blob"))
+				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\blob.obj"));
+			if (ImGui::MenuItem("Bunny"))
+				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\bunny.obj"));
+			if (ImGui::MenuItem("Camera"))
+				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\camera.obj"));
+			if (ImGui::MenuItem("Chain"))
+				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\chain.obj"));
+			if (ImGui::MenuItem("Cow"))
+				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\cow.obj"));
+			if (ImGui::MenuItem("Demo"))
+				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\demo.obj"));
+			if (ImGui::MenuItem("Dolphin"))
+				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\dolphin.obj"));
+			if (ImGui::MenuItem("Feline"))
+				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\feline.obj"));
+			if (ImGui::MenuItem("Pawn"))
+				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\pawn.obj"));
+			if (ImGui::MenuItem("Teapot"))
+				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\teapot.obj"));
+			if (ImGui::MenuItem("Other", "CTRL+O"))
 			{
 				nfdchar_t* outPath = NULL;
 				nfdresult_t result = NFD_OpenDialog("obj;", NULL, &outPath);
@@ -238,11 +264,13 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				else
 				{
 				}
-
 			}
 			ImGui::EndMenu();
 		}
-
+		if (ImGui::Button("Clear Model"))
+		{
+			scene.ClearActiveModel();
+		}
 		// TODO: Add more menubar items (if you want to)
 		ImGui::EndMainMenuBar();
 	}
@@ -330,6 +358,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		static float WAngleX=0;
 		static float WAngleY=0;
 		static float WAngleZ=0;
+		static float TranslateFac=scene.GetActiveModel().GetTranslateFactor();
 		ImGui::Begin("Transformations Window");
 		ImGui::ListBox("World Or Local", &SelectedTransform, TransformItems, IM_ARRAYSIZE(TransformItems),2);
 		ImGui::ListBox("Choose Transformation",&SelectedItem,items,IM_ARRAYSIZE(items),3);
@@ -366,7 +395,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				ImGui::SliderFloat("Translate Factor X", &TranslateX, -220, 220);
 				ImGui::SliderFloat("Translate Factor Y", &TranslateY, -220, 220);
 				ImGui::SliderFloat("Translate Factor Z", &TranslateZ, -220, 220);
-				Transformation = Transformations::TranslationTransformation(TranslateX/1000, TranslateY/1000, TranslateZ/1000);
+				Transformation = Transformations::TranslationTransformation(TranslateX/ TranslateFac, TranslateY/ TranslateFac, TranslateZ/ TranslateFac);
 			    scene.GetActiveModel().Set_T_m(Transformation);
 				break;
 			default:
@@ -408,7 +437,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				ImGui::SliderFloat("World Translate Factor X", &WTranslateX, -220,220);
 				ImGui::SliderFloat("World Translate Factor Y", &WTranslateY, -220,220);
 				ImGui::SliderFloat("World Translate Factor Z", &WTranslateZ, -220,220);
-				Transformation = Transformations::TranslationTransformation(WTranslateX/1000, WTranslateY/1000, WTranslateZ/1000);
+				Transformation = Transformations::TranslationTransformation(WTranslateX/ TranslateFac, WTranslateY/ TranslateFac, WTranslateZ/ TranslateFac);
 				scene.GetActiveModel().Set_T_w(Transformation);
 				break;
 			default:

@@ -25,6 +25,7 @@ public:
 
 	void SetActiveModelIndex(int index);
 	int GetActiveModelIndex() const;
+	void ClearActiveModel();
 	
 private:
 	std::vector<std::shared_ptr<MeshModel>> mesh_models_;

@@ -1,21 +1,27 @@
 # Branch 1
-## Showing GIF of scaling and translating the model in the world frame
-![GIF1](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/Scaling%26Translating2.gif)
-## Showing GIF of rotating the model in the model frame in 360 degrees
-![GIF1](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/LocalRotating.gif)
+## Showing screenshots for rotating the model in the model frame in 360 degrees in increments of 45 degrees:
+![0Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/0Degrees.jpg)
+![45Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/45Degrees.jpg)
+![90Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/90Degrees.jpg)
+![135Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/135Degrees.jpg)
+![180Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/180Degrees.jpg)
+![225Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/225Degrees.jpg)
+![270Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/270Degrees.jpg)
+![315Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/315Degrees.jpg)
+![360Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/360Degrees.jpg)
 ## ===================================================================
 # Branch 2
-## Choosing T1=Translate(500,0,0) and T2= Rotate in Y from 0-360 On banana model
-### first we show the GIF displaying T1 in model frame and T2 in world frame
-![GIF1](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/T1ModelT2World.gif)
-### Now displaying the GIF where T1 is in world frame and T2 is in model frame
-![GIF1](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/T1WorldT2Model.gif)
+## Choosing T1=Translate(105,-110,0) and T2= Rotate in Z in 66 Degrees On the cow model
+### first we show the screenshot displaying T1 in model frame and T2 in world frame
+![T1MT2W](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/T1ModelT2World.jpg)
+### Now displaying the screenshot where T1 is in world frame and T2 is in model frame
+![T1WT2M](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/T1WorldT2Model.jpg)
 ## ===================================================================
 # Branch 3
-## First we show a simple GIF showing the bounding box moving with the model and the reset button
-![GIF1](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/BB&Reset.gif)
-## The bellow GIF shows the normals per face(in purple) and normals per vertex (in white) and how they move with the model
-![GIF1](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/NormalsGIF.gif)
+## The bellow picture shows the normals per face(in purple) and normals per vertex (in dark pink) and the bounding box (in red) without any transformations applied
+![BBNFNV](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/BBNFNV.jpg)
+## The bellow picture displays the model after apllying translation in x and rotation in y and x
+![BBNFNV_transformed](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/BBNFNV_transformed.jpg)
 ## ===================================================================
 # Branch 4
 ## First of all, we will show orthographic projection with low zoom and then with high zoom (orhto width is the parameter of the zooming).
@@ -33,11 +39,14 @@
 ## ===================================================================
 # Branch 5
 *The Axes are: X drawn in white and Y drawn in yello.*
-#### First of all zooming is being done on the picutre by changing the fovy value. Then we translate the camera in Z. this difference is because the camera's location is on 0.2,0.2,0.2 which means eye=(0.2, 0.2, 0.2) but if we change it to (0,0,0.5) then there is no difference between translation in z axis and zooming using the fovy.
-![ZoomingVsDistance](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/Branch5.gif)
+#### First of all zooming is being done on the model by changing the fovy value. Then we translate the camera in Z. this difference is because the camera's location is on 0.2,0.2,0.2 which means eye=(0.2, 0.2, 0.2) but if we change it to (0,0,0.5) then there is no difference between translation in z axis and zooming using the fovy.
+![Zooming](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/ZoomingPer.jpeg)
+![Distance](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/DistancePer.jpeg)
 ## ===================================================================
 # Branch 6
-![Branch6](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/Branch6.gif)
+### First we show a picture of translating(55,44,0) in camera frame then rotate(0,0,66) in world frame then Translating in world frame and rotating in camera frame both with the same parameters
+![Camera_World](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/T1CameraT2World.jpeg)
+![World_Camera](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/T1WorldT2Camera.jpeg)
 ## ===================================================================
 # Branch 7
 ![SetCamera](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/SetCamera(aaa).JPG)

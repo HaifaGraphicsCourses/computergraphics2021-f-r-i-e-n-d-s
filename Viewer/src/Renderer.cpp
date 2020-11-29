@@ -354,9 +354,8 @@ void Renderer::Render(Scene& scene)
 			glm::vec4 v2 = projectionTransformation * Lookat * C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex2), 1);
 			glm::vec4 v3 = projectionTransformation * Lookat * C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex3), 1);
 			glm::vec4 origin = projectionTransformation * Lookat * C_inv * glm::vec4(0, 0, 0, 1);
-			glm::vec4 XAxis = Lookat  * C_inv * glm::vec4(1, 0, 0, 1);
-			glm::vec4 YAxis = Lookat  * C_inv * glm::vec4(0, 1, 0, 1);
-			glm::vec4 ZAxis = Lookat  * C_inv * glm::vec4(0, 0, 1, 1);
+			glm::vec4 XAxis = projectionTransformation * Lookat  * C_inv * glm::vec4(1, 0, 0, 1);
+			glm::vec4 YAxis = projectionTransformation * Lookat  * C_inv * glm::vec4(0, 1, 0, 1);
 			if (!scene.GetActiveCamera().GetIsOrthographic())
 			{
 				v1 /= v1.w;
@@ -365,7 +364,6 @@ void Renderer::Render(Scene& scene)
 				origin /= origin.w;
 				XAxis /= XAxis.w;
 				YAxis /= YAxis.w;
-				ZAxis /= ZAxis.w;
 			}
 			v1 = ViewPortTransformation * v1;
 			v2 = ViewPortTransformation * v2;
@@ -373,7 +371,6 @@ void Renderer::Render(Scene& scene)
 			origin.x = (origin.x + 1) * half_width;
 			XAxis.x = (XAxis.x + 1) * half_width;
 			YAxis.x = (YAxis.x + 1) * half_width;
-			ZAxis.x = (ZAxis.x + 1) * half_width;
 			origin.y =(origin.y + 1)* half_height;
 			XAxis.y = (XAxis.y + 1) * half_height;
 			YAxis.y = (YAxis.y + 1) * half_height;

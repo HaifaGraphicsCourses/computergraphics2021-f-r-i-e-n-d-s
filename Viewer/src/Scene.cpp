@@ -8,7 +8,11 @@ Scene::Scene() :
 {
 
 }
-
+void Scene::ClearActiveModel()
+{
+	mesh_models_[active_model_index_].reset();
+	mesh_models_.clear();
+}
 void Scene::AddModel(const std::shared_ptr<MeshModel>& mesh_model)
 {
 	mesh_models_.push_back(mesh_model);
