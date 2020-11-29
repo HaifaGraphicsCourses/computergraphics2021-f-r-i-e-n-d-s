@@ -1,27 +1,27 @@
 # Branch 1
 ## Showing screenshots for rotating the model in the model frame in 360 degrees in increments of 45 degrees:
-![0Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/0Degrees.jpg)
-![45Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/45Degrees.jpg)
-![90Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/90Degrees.jpg)
-![135Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/135Degrees.jpg)
-![180Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/180Degrees.jpg)
-![225Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/225Degrees.jpg)
-![270Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/270Degrees.jpg)
-![315Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/315Degrees.jpg)
-![360Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/360Degrees.jpg)
+![0Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/0Degrees.JPG)
+![45Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/45Degrees.JPG)
+![90Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/90Degrees.JPG)
+![135Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/135Degrees.JPG)
+![180Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/180Degrees.JPG)
+![225Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/225Degrees.JPG)
+![270Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/270Degrees.JPG)
+![315Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/315Degrees.JPG)
+![360Degrees](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/360Degrees.JPG)
 ## ===================================================================
 # Branch 2
 ## Choosing T1=Translate(105,-110,0) and T2= Rotate in Z in 66 Degrees On the cow model
 ### first we show the screenshot displaying T1 in model frame and T2 in world frame
-![T1MT2W](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/T1ModelT2World.jpg)
+![T1MT2W](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/T1ModelT2World.JPG)
 ### Now displaying the screenshot where T1 is in world frame and T2 is in model frame
-![T1WT2M](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/T1WorldT2Model.jpg)
+![T1WT2M](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/T1WorldT2Model.JPG)
 ## ===================================================================
 # Branch 3
 ## The bellow picture shows the normals per face(in purple) and normals per vertex (in dark pink) and the bounding box (in red) without any transformations applied
-![BBNFNV](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/BBNFNV.jpg)
+![BBNFNV](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/BBNFNV.JPG)
 ## The bellow picture displays the model after apllying translation in x and rotation in y and x
-![BBNFNV_transformed](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/BBNFNV_transformed.jpg)
+![BBNFNV_transformed](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/BBNFNV_transformed.JPG)
 ## ===================================================================
 # Branch 4
 ## First of all, we will show orthographic projection with low zoom and then with high zoom (orhto width is the parameter of the zooming).
@@ -40,13 +40,13 @@
 # Branch 5
 *The Axes are: X drawn in white and Y drawn in yello.*
 #### First of all zooming is being done on the model by changing the fovy value. Then we translate the camera in Z. this difference is because the camera's location is on 0.2,0.2,0.2 which means eye=(0.2, 0.2, 0.2) but if we change it to (0,0,0.5) then there is no difference between translation in z axis and zooming using the fovy.
-![Zooming](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/ZoomingPer.jpeg)
-![Distance](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/DistancePer.jpeg)
+![Zooming](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/ZoomingPer.JPG)
+![Distance](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/DistancePer.JPG)
 ## ===================================================================
 # Branch 6
 ### First we show a picture of translating(55,44,0) in camera frame then rotate(0,0,66) in world frame then Translating in world frame and rotating in camera frame both with the same parameters
-![Camera_World](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/T1CameraT2World.jpeg)
-![World_Camera](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/T1WorldT2Camera.jpeg)
+![Camera_World](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/T1CameraT2World.JPG)
+![World_Camera](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/T1WorldT2Camera.JPG)
 ## ===================================================================
 # Branch 7
 ![SetCamera](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/SetCamera(aaa).JPG)
