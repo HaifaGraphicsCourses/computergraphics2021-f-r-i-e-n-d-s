@@ -213,6 +213,7 @@ void Cleanup(GLFWwindow* window)
 
 void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 {
+	static float OrthoWidth;
 	/**
 	 * MeshViewer menu
 	 */
@@ -223,39 +224,66 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	{
 		if (ImGui::BeginMenu("Choose Model"))
 		{
-			if (ImGui::MenuItem("Banana"))
+			if (ImGui::MenuItem("Banana")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\banana.obj"));
-			if (ImGui::MenuItem("Beethoven"))
+				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+			}
+			if (ImGui::MenuItem("Beethoven")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\beethoven.obj"));
-			if (ImGui::MenuItem("Bishop"))
+				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+			}
+			if (ImGui::MenuItem("Bishop")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\bishop.obj"));
-			if (ImGui::MenuItem("Blob"))
+				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+			}
+			if (ImGui::MenuItem("Blob")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\blob.obj"));
-			if (ImGui::MenuItem("Bunny"))
+				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+			}
+			if (ImGui::MenuItem("Bunny")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\bunny.obj"));
-			if (ImGui::MenuItem("Camera"))
+				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+			}
+			if (ImGui::MenuItem("Camera")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\camera.obj"));
-			if (ImGui::MenuItem("Chain"))
+				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+			}
+			if (ImGui::MenuItem("Chain")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\chain.obj"));
-			if (ImGui::MenuItem("Cow"))
+				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+			}
+			if (ImGui::MenuItem("Cow")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\cow.obj"));
-			if (ImGui::MenuItem("Demo"))
+				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+			}
+			if (ImGui::MenuItem("Demo")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\demo.obj"));
-			if (ImGui::MenuItem("Dolphin"))
+				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+			}
+			if (ImGui::MenuItem("Dolphin")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\dolphin.obj"));
-			if (ImGui::MenuItem("Feline"))
+				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+			}
+			if (ImGui::MenuItem("Feline")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\feline.obj"));
-			if (ImGui::MenuItem("Pawn"))
+				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+			}
+			if (ImGui::MenuItem("Pawn")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\pawn.obj"));
-			if (ImGui::MenuItem("Teapot"))
+				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+			}
+			if (ImGui::MenuItem("Teapot")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\teapot.obj"));
-			if (ImGui::MenuItem("Other", "CTRL+O"))
+				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+			}
+				if (ImGui::MenuItem("Other", "CTRL+O"))
 			{
 				nfdchar_t* outPath = NULL;
 				nfdresult_t result = NFD_OpenDialog("obj;", NULL, &outPath);
 				if (result == NFD_OKAY)
 				{
 					scene.AddModel(Utils::LoadMeshModel(outPath));
+					OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
 					free(outPath);
 				}
 				else if (result == NFD_CANCEL)
@@ -358,7 +386,6 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		static float WAngleX=0;
 		static float WAngleY=0;
 		static float WAngleZ=0;
-		static float TranslateFac=scene.GetActiveModel().GetTranslateFactor();
 		ImGui::Begin("Transformations Window");
 		ImGui::ListBox("World Or Local", &SelectedTransform, TransformItems, IM_ARRAYSIZE(TransformItems),2);
 		ImGui::ListBox("Choose Transformation",&SelectedItem,items,IM_ARRAYSIZE(items),3);
@@ -395,7 +422,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				ImGui::SliderFloat("Translate Factor X", &TranslateX, -220, 220);
 				ImGui::SliderFloat("Translate Factor Y", &TranslateY, -220, 220);
 				ImGui::SliderFloat("Translate Factor Z", &TranslateZ, -220, 220);
-				Transformation = Transformations::TranslationTransformation(TranslateX/ TranslateFac, TranslateY/ TranslateFac, TranslateZ/ TranslateFac);
+				Transformation = Transformations::TranslationTransformation(TranslateX/ scene.GetActiveModel().GetTranslateFactor(), TranslateY/ scene.GetActiveModel().GetTranslateFactor(), TranslateZ/ scene.GetActiveModel().GetTranslateFactor());
 			    scene.GetActiveModel().Set_T_m(Transformation);
 				break;
 			default:
@@ -437,7 +464,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				ImGui::SliderFloat("World Translate Factor X", &WTranslateX, -220,220);
 				ImGui::SliderFloat("World Translate Factor Y", &WTranslateY, -220,220);
 				ImGui::SliderFloat("World Translate Factor Z", &WTranslateZ, -220,220);
-				Transformation = Transformations::TranslationTransformation(WTranslateX/ TranslateFac, WTranslateY/ TranslateFac, WTranslateZ/ TranslateFac);
+				Transformation = Transformations::TranslationTransformation(WTranslateX/ scene.GetActiveModel().GetTranslateFactor(), WTranslateY/ scene.GetActiveModel().GetTranslateFactor(), WTranslateZ/ scene.GetActiveModel().GetTranslateFactor());
 				scene.GetActiveModel().Set_T_w(Transformation);
 				break;
 			default:
@@ -503,8 +530,6 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
         static float worldTranslationX, worldTranslationY, worldTranslationZ;
         static float worldRotationX, worldRotationY, worldRotationZ;
 		static int IsWorld, TransformationType;
-		static float OrthoWidth= scene.GetActiveModel().GetInitOrtho();
-		static float minOrtho=scene.GetActiveModel().GetMinOrtho(),maxOrtho=scene.GetActiveModel().GetMaxOrtho();
 		static float fovy=(45.f);
 		static float Near=-0.1;
 		static float Far=1000;
@@ -514,7 +539,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		if (Projection) 
 		{
 			scene.GetActiveCamera().SetIsOrthographic(true);
-			ImGui::SliderFloat("Orho Width",&OrthoWidth, minOrtho, maxOrtho);
+			ImGui::SliderFloat("Orho Width",&OrthoWidth, scene.GetActiveModel().GetMinOrtho(), scene.GetActiveModel().GetMaxOrtho());
 			scene.GetActiveCamera().SetOrthographicWidth(OrthoWidth);
 		}
 		else

@@ -26,104 +26,91 @@ MeshModel::MeshModel(ModelParameters& model) :
 	{
 		TranslateFactor = 1000;
 		Preffered_eye = glm::vec3(0, 0, 0.5);
-		startingOrtho = 0.5;
 		minOrtho = 0.355;
-		maxOrtho = 1;
+		maxOrtho = 1.145;
 	}
 	if (!name.compare("beethoven.obj"))
 	{
 		TranslateFactor = 20;
 		Preffered_eye = glm::vec3(0, 0, 20);
-		startingOrtho = 30;
-		minOrtho = 20;
-		maxOrtho = 70;
+		minOrtho = 10;
+		maxOrtho = 80;
 	}
 	if (!name.compare("bishop.obj"))
 	{
 		TranslateFactor = 1000;
 		Preffered_eye = glm::vec3(0, 0, 0.5);
-		startingOrtho = 0.5;
 		minOrtho = 0.355;
-		maxOrtho = 1;
+		maxOrtho = 1.145;
 	}
 	if (!name.compare("blob.obj"))
 	{
 		TranslateFactor = 2;
 		Preffered_eye = glm::vec3(0, 0, 1000);
-		startingOrtho = 200;
 		minOrtho = 150;
-		maxOrtho = 300;
+		maxOrtho = 450;
 	}
 	if (!name.compare("bunny.obj"))
 	{
 		TranslateFactor = 55;
 		Preffered_eye = glm::vec3(0, 0, 4);
-		startingOrtho =10;
 		minOrtho = 3;
-		maxOrtho = 20;
+		maxOrtho = 27;
 	}
 	if (!name.compare("camera.obj"))
 	{
 		TranslateFactor = 35;
 		Preffered_eye = glm::vec3(0, 0, 10);
-		startingOrtho = 15;
-		minOrtho = 10;
-		maxOrtho = 30;
+		minOrtho = 5;
+		maxOrtho = 40;
 	}
 	if (!name.compare("chain.obj"))
 	{
 		TranslateFactor = 35;
 		Preffered_eye = glm::vec3(0, 0, 8);
-		startingOrtho = 15;
 		minOrtho = 10;
-		maxOrtho = 30;
+		maxOrtho = 35;
 	}
 	if (!name.compare("cow.obj"))
 	{
 		TranslateFactor = 30;
 		Preffered_eye = glm::vec3(0, 0, 11);
-		startingOrtho = 17;
-		minOrtho = 10;
+		minOrtho = 1;
 		maxOrtho = 50;
 	}
 	if (!name.compare("demo.obj"))
 	{
 		TranslateFactor = 33;
 		Preffered_eye = glm::vec3(0, 0,15);
-		startingOrtho = 20;
 		minOrtho = 10;
-		maxOrtho = 100;
+		maxOrtho = 50;
 	}
 	if (!name.compare("dolphin.obj"))
 	{
 		TranslateFactor = 1;
 		Preffered_eye = glm::vec3(0, 0, 1000);
-		startingOrtho = 1000;
 		minOrtho = 500;
-		maxOrtho = 2000;
+		maxOrtho = 2500;
 	}
 	if (!name.compare("feline.obj"))
 	{
 		TranslateFactor = 20;
 		Preffered_eye = glm::vec3(0, 0, 10);
-		startingOrtho = 10;
 		minOrtho = 1;
-		maxOrtho = 20;
+		maxOrtho = 29;
 	}
 	if (!name.compare("pawn.obj"))
 	{
 		TranslateFactor = 1000;
 		Preffered_eye = glm::vec3(0, 0, 0.5);
-		startingOrtho = 0.5;
 		minOrtho = 0.355;
-		maxOrtho = 1;
+		maxOrtho = 1.145;
 	}
 	if (!name.compare("teapot.obj"))
 	{
 		TranslateFactor = 50;
 		Preffered_eye = glm::vec3(0, 0, 10);
-		startingOrtho = 10;
-		minOrtho = 6.5;
+		minOrtho = 0;
 		maxOrtho = 30;
 	}
 }
@@ -410,18 +397,17 @@ float MeshModel::GetMinOrtho()
 {
 	return minOrtho;
 }
+
 float MeshModel::GetMaxOrtho()
 {
 	return maxOrtho;
 }
-float MeshModel::GetInitOrtho() 
-{
-	return startingOrtho;
-}
+
 glm::vec3 MeshModel::GetPreffered_Eye()
 {
 	return Preffered_eye;
 }
+
 float MeshModel::GetTranslateFactor()
 {
 	return TranslateFactor;

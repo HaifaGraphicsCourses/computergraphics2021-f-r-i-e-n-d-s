@@ -354,8 +354,8 @@ void Renderer::Render(Scene& scene)
 			glm::vec4 v2 = projectionTransformation * Lookat * C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex2), 1);
 			glm::vec4 v3 = projectionTransformation * Lookat * C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex3), 1);
 			glm::vec4 origin = projectionTransformation * Lookat * C_inv * glm::vec4(0, 0, 0, 1);
-			glm::vec4 XAxis = projectionTransformation * Lookat  * C_inv * glm::vec4(1, 0, 0, 1);
-			glm::vec4 YAxis = projectionTransformation * Lookat  * C_inv * glm::vec4(0, 1, 0, 1);
+			glm::vec4 XAxis = Lookat  * C_inv * glm::vec4(1, 0, 0, 1);
+			glm::vec4 YAxis = Lookat  * C_inv * glm::vec4(0, 1, 0, 1);
 			if (!scene.GetActiveCamera().GetIsOrthographic())
 			{
 				v1 /= v1.w;

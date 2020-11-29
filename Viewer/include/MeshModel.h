@@ -60,7 +60,6 @@ public:
 	glm::vec3& GetMC();
 	float GetMinOrtho();
 	float GetMaxOrtho();
-	float GetInitOrtho();
 	float GetTranslateFactor();
 	glm::vec3 GetPreffered_Eye();
 private:
@@ -103,6 +102,6 @@ private:
 	glm::vec3 ModelColor_;
 	glm::vec3 Preffered_eye;
 	float TranslateFactor;
-	float minOrtho, maxOrtho, startingOrtho;
+	float minOrtho, maxOrtho;
 
 };
