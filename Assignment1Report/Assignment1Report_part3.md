@@ -53,8 +53,12 @@
 ## ===================================================================
 # Branch 9
 #### First picture is the starting case and the second is after resizing the window shows how the model maintains its aspect ratio and stays in the center of the screen
+#### *But I'am not sure whether you want the model to get bigger/smaller and maintain it's location in the screen or you want just the window to get smaller or bigger and the model in it's same size and location so i have pictures with both situations*
+#### Currently in the code I have the last picture which is the model keeps its location and size no matter the window size.
+#### Did that because I want the bonus and that is my last submission at 30/11/2020 21:43 and I dont have a definite answer.
 ![BeforeResize](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/BeforeResize.png)
 ![AfterResize](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/AfterResize.png)
+![AfterResizeOption2](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/afterResizing.png)
 ## ===================================================================
 # Branch 10
 #### A small description about the GUI and a screenshot:
