@@ -58,7 +58,7 @@
 #### Did that because I want the bonus and that is my last submission at 30/11/2020 21:43 and I dont have a definite answer.
 ![BeforeResize](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/BeforeResize.png)
 ![AfterResize](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/AfterResize.png)
-![AfterResizeOption2](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/afterResizing.png)
+![AfterResizeOption2](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/afterResizingOption2.png)
 ## ===================================================================
 # Branch 10
 #### A small description about the GUI and a screenshot:
