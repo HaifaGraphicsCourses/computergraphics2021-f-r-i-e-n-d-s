@@ -10,7 +10,6 @@ MeshModel::MeshModel(ModelParameters& model) :
 	faces_(model.faces),
 	vertices_(model.vertices),
 	normals_(model.normals),
-	PreTransformation(model.preTransformation),
 	leftTopNear_(model.leftTopNear),
 	rightTopNear_(model.rightTopNear),
 	leftTopFar_(model.leftTopFar),
