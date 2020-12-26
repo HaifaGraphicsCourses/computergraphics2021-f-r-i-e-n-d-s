@@ -24,13 +24,13 @@ MeshModel::MeshModel(ModelParameters& model) :
 	if (!name.compare("banana.obj"))
 	{
 		TranslateFactor = 1000;
-		Preffered_eye = glm::vec3(0, 0, 0.5);
+		Preffered_eye = glm::vec3(0, 0, 0.4);
 		minOrtho = 0.355;
 		maxOrtho = 1.145;
 	}
 	if (!name.compare("beethoven.obj"))
 	{
-		TranslateFactor = 20;
+		TranslateFactor = 2;
 		Preffered_eye = glm::vec3(0, 0, 20);
 		minOrtho = 10;
 		maxOrtho = 80;
@@ -410,4 +410,12 @@ glm::vec3 MeshModel::GetPreffered_Eye()
 float MeshModel::GetTranslateFactor()
 {
 	return TranslateFactor;
+}
+void MeshModel::SetColorMethod(int meth)
+{
+	colorMethod = meth;
+}
+int MeshModel::GetColorMethod()
+{
+	return colorMethod;
 }

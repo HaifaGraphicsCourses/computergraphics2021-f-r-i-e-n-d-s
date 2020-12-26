@@ -4,6 +4,9 @@
 #include "Transformations.h"
 #include "Face.h"
 #include "ModelParameters.h"
+#define GRAYSCALE 999
+#define RANDOM_COLORED 990
+#define MODEL_COLOR 900
 
 class MeshModel
 {
@@ -62,6 +65,8 @@ public:
 	float GetMaxOrtho();
 	float GetTranslateFactor();
 	glm::vec3 GetPreffered_Eye();
+	void SetColorMethod(int meth);
+	int GetColorMethod();
 private:
 	std::vector<bool> VerticesCheck;
 	std::vector<Face> faces_;
@@ -103,5 +108,6 @@ private:
 	glm::vec3 Preffered_eye;
 	float TranslateFactor;
 	float minOrtho, maxOrtho;
+	int colorMethod=GRAYSCALE;
 
 };

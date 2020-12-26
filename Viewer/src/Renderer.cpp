@@ -31,13 +31,13 @@ void Renderer::PutPixel(int i, int j, const glm::vec3& color)
 	color_buffer_[INDEX(viewport_width_, i, j, 2)] = color.z;
 }
 
-std::vector<glm::ivec2> Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec2& p2,glm::vec3& color)
+void Renderer::DrawLine(const glm::vec3& p1, const glm::vec3& p2,glm::vec3& color)
 {
 	// TODO: Implement bresenham algorithm
-	std::vector<glm::ivec2> Lines;
 	int x = p1.x, y = p1.y, ReflectFlag = 0, LoopVar = p2.x;
 	double deltaP = (double)(p2.x - p1.x), deltaQ = (double)(p2.y - p1.y);
 	double a = deltaQ / deltaP, e = (-1) * deltaP;
+	glm::vec3 z;
 	if (a == -1)
 	{
 		if (deltaP > 0)
@@ -45,7 +45,6 @@ std::vector<glm::ivec2> Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec
 			while (x < p2.x)
 			{
 				PutPixel(x, y, color);
-				Lines.push_back(glm::ivec2(x, y));
 				x = x + 1;
 				y = y - 1;
 			}
@@ -56,7 +55,6 @@ std::vector<glm::ivec2> Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec
 			while (x > p2.x)
 			{
 				PutPixel(x, y, color);
-				Lines.push_back(glm::ivec2(x, y));
 				x = x - 1;
 				y = y + 1;
 			}
@@ -69,15 +67,13 @@ std::vector<glm::ivec2> Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec
 		while (x <= p2.x)
 		{
 			PutPixel(x, y, color);
-			Lines.push_back(glm::ivec2(x, y));
 			x = x + 1;
 		}
 		else
 		{
 			while (x >= p2.x)
 			{
-				PutPixel(x, y, color);
-				Lines.push_back(glm::ivec2(x, y));
+                PutPixel(x, y, color);
 				x = x - 1;
 			}
 		}
@@ -88,14 +84,12 @@ std::vector<glm::ivec2> Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec
 				while (y <= p2.y)
 				{
 					PutPixel(x, y, color);
-					Lines.push_back(glm::ivec2(x, y));
 					y = y + 1;
 				}
 			else
 				while (y >= p2.y)
 				{
 					PutPixel(x, y, color);
-					Lines.push_back(glm::ivec2(x, y));
 					y = y - 1;
 				}
 		}
@@ -115,7 +109,6 @@ std::vector<glm::ivec2> Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec
 					e = e - (2 * deltaP);
 				}
 				PutPixel(y, x, color);
-				Lines.push_back(glm::ivec2(y, x));
 				x = x + 1;
 				e = e + (2 * deltaQ);
 			}
@@ -135,8 +128,7 @@ std::vector<glm::ivec2> Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec
 					y = y - 1;
 					e = e - (2 * deltaP);
 				}
-				PutPixel(x, y, color);
-				Lines.push_back(glm::ivec2(x, y));
+			    PutPixel(x, y, color);
 				x = x + 1;
 				e = e + (2 * deltaQ);
 			}
@@ -153,7 +145,6 @@ std::vector<glm::ivec2> Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec
 						e = e - (2 * deltaP);
 					}
 					PutPixel(x, y, color);
-					Lines.push_back(glm::ivec2(x, y));
 					x = x - 1;
 					e = e + (2 * deltaQ);
 				}
@@ -177,7 +168,6 @@ std::vector<glm::ivec2> Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec
 					e = e - (2 * deltaP);
 				}
 				PutPixel(y, x, color);
-				Lines.push_back(glm::ivec2(y, x));
 				x = x + 1;
 				e = e + (2 * deltaQ);
 			}
@@ -196,7 +186,6 @@ std::vector<glm::ivec2> Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec
 					e = e - (2 * deltaP);
 				}
 				PutPixel(x, y, color);
-				Lines.push_back(glm::ivec2(x, y));
 				x = x + 1;
 				e = e + (2 * deltaQ);
 			}
@@ -204,7 +193,6 @@ std::vector<glm::ivec2> Renderer::DrawLine(const glm::ivec2& p1, const glm::ivec
 		else
 			DrawLine(p2, p1, color);
 	}
-	return Lines;
 }
 
 void Renderer::CreateBuffers(const int w,const int h)
@@ -216,13 +204,6 @@ void Renderer::CreateBuffers(const int w,const int h)
 	ClearZ_Buffer();
 }
 
-//##############################
-//##OpenGL stuff. Don't touch.##
-//##############################
-
-// Basic tutorial on how opengl works:
-// http://www.opengl-tutorial.org/beginners-tutorials/tutorial-2-the-first-triangle/
-// don't linger here for now, we will have a few tutorials about opengl later.
 void Renderer::InitOpenGLRendering()
 {
 	// Creates a unique identifier for an opengl texture.
@@ -331,12 +312,15 @@ void Renderer::SwapBuffers()
 
 void Renderer::ClearZ_Buffer()
 {
+	MinZ = FLT_MAX;
+	MaxZ = FLT_MIN;
 	for (int i = 0; i < viewport_width_; i++)
 	{
 		for (int j = 0; j < viewport_height_; j++)
 		{
-			//i*w+j
-			Z_Buffer[(i*viewport_height_) +j]= FLT_MAX;
+			if (i < 0) return; if (i >= viewport_width_) return;
+			if (j < 0) return; if (j >= viewport_height_) return;
+			Z_Buffer[Z_INDEX(viewport_width_,i,j)]= FLT_MAX;
 		}
 	}
 }
@@ -362,17 +346,13 @@ void Renderer::Render(Scene& scene)
 	std::vector<glm::ivec2> VerticesCont;
 	glm::vec3 Vertex;
 	glm::vec4 Vertex1, Vertex2, Vertex3;
-	glm::ivec2 vv1(960, 527);
-	glm::ivec2 vv2(1056, 620);
-	glm::ivec2 vv3(960, 714);
 	glm::vec3 color(255, 0, 0);
-	
 	if (scene.GetModelCount() > 0) {
 		auto model = scene.GetActiveModel();
 		glm::mat4x4 Transformation = model.GetTransformation();
 		glm::mat4x4 Lookat = scene.GetActiveCamera().GetLookAt();                      
 		glm::mat4x4 projectionTransformation =(scene.GetActiveCamera().GetProjectionTransformation());
-		glm::mat4x4 ViewPortTransformation = Transformations::ScalingTransformation(half_width, half_height, 1) * Transformations::TranslationTransformation(1, 1, 0);
+		glm::mat4x4 ViewPortTransformation = Transformations::ScalingTransformation(half_width, half_height, 1) * Transformations::TranslationTransformation(1, 1, 1);
 		glm::mat4x4 C_inv = scene.GetActiveCamera().GetC_inv();
 		for (int i = 0; i < model.GetFacesCount(); i++)
 		{
@@ -389,15 +369,17 @@ void Renderer::Render(Scene& scene)
 			glm::vec4 origin = projectionTransformation * Lookat * C_inv * glm::vec4(0, 0, 0, 1);
 			glm::vec4 XAxis = Lookat  * C_inv * glm::vec4(1, 0, 0, 1);
 			glm::vec4 YAxis = Lookat  * C_inv * glm::vec4(0, 1, 0, 1);
+			
 			if (!scene.GetActiveCamera().GetIsOrthographic())
 			{
-				v1 /= v1.w;
-				v2 /= v2.w;
-				v3 /= v3.w;
+				v1/= v1.w;
+				v2/= v2.w;
+				v3/= v3.w;
 				origin /= origin.w;
 				XAxis /= XAxis.w;
 				YAxis /= YAxis.w;
 			}
+
 			v1 = ViewPortTransformation * v1;
 			v2 = ViewPortTransformation * v2;
 			v3 = ViewPortTransformation * v3;
@@ -410,21 +392,16 @@ void Renderer::Render(Scene& scene)
 			glm::vec4 vn1 = Transformations::ScalingTransformation(100,100,100) * model.Get_R_w() * model.Get_R_m() * glm::vec4(model.GetNormals(Nindex1),1);
 			glm::vec4 vn2 = Transformations::ScalingTransformation(100,100,100) * model.Get_R_w() * model.Get_R_m() * glm::vec4(model.GetNormals(Nindex2),1);
 			glm::vec4 vn3 = Transformations::ScalingTransformation(100,100,100) * model.Get_R_w() * model.Get_R_m() * glm::vec4(model.GetNormals(Nindex3),1);
-			
 			//Draw X and Y Axes
-			DrawLine(glm::ivec2(origin.x, origin.y), glm::ivec2(XAxis.x, XAxis.y), glm::vec3(255, 255,255));
-			DrawLine(glm::ivec2(origin.x, origin.y), glm::ivec2(YAxis.x, YAxis.y), glm::vec3(255, 50, 0));
-			
-			//Draw the model
-			DrawTriangle(glm::vec3(v1.x, v1.y,v1.z), glm::vec3(v2.x, v2.y,v2.z), glm::vec3(v3.x, v3.y,v3.z), model.GetMC());
-			//ScanConversion(glm::ivec2(v1.x, v1.y), glm::ivec2(v2.x, v2.y), glm::ivec2(v3.x, v3.y), model.GetMC());
-
+			DrawLine(glm::vec3(origin.x, origin.y,origin.z), glm::vec3(XAxis.x, XAxis.y,XAxis.z), glm::vec3(255, 255,255));
+			DrawLine(glm::vec3(origin.x, origin.y,origin.z), glm::vec3(YAxis.x, YAxis.y,YAxis.z), glm::vec3(255, 50, 0));
+			FillZ_Buffer(glm::vec3(v1.x, v1.y, v1.z), glm::vec3(v2.x, v2.y, v2.z), glm::vec3(v3.x, v3.y, v3.z),scene.GetActiveModel().GetColorMethod());
 			//Draw the normal per vertex
 			if (model.GetNormalsFlag())
 			{
-					DrawLine(glm::ivec2(v1.x, v1.y), glm::ivec2(vn1.x + v1.x, vn1.y + v1.y), model.GetVN());
-					DrawLine(glm::ivec2(v2.x, v2.y), glm::ivec2(vn2.x + v2.x, vn2.y + v2.y), model.GetVN());
-					DrawLine(glm::ivec2(v3.x, v3.y), glm::ivec2(vn3.x + v3.x, vn3.y + v3.y), model.GetVN());
+					DrawLine(glm::vec3(v1.x, v1.y,v1.z), glm::vec3(vn1.x + v1.x, vn1.y + v1.y,vn1.z+vn2.z), model.GetVN());
+					DrawLine(glm::vec3(v2.x, v2.y,v2.z), glm::vec3(vn2.x + v2.x, vn2.y + v2.y,vn1.z+vn2.z), model.GetVN());
+					DrawLine(glm::vec3(v3.x, v3.y,v3.z), glm::vec3(vn3.x + v3.x, vn3.y + v3.y,vn1.z+vn2.z), model.GetVN());
 			}
 
 			//Draw normals per face
@@ -432,9 +409,11 @@ void Renderer::Render(Scene& scene)
 			{
 				glm::vec3 FaceCenter = (v1 + v2 + v3) / 3.0f;
 				glm::vec4 FaceNormal = Transformations::ScalingTransformation(100, 100, 100) * model.Get_R_w() * model.Get_R_m() * glm::vec4(faceNormal, 1) + glm::vec4(FaceCenter, 0);
-				DrawLine(glm::ivec2(FaceCenter.x, FaceCenter.y), glm::ivec2(FaceNormal.x, FaceNormal.y), model.GetFN());
+				DrawLine(glm::vec3(FaceCenter.x, FaceCenter.y,FaceCenter.z), glm::vec3(FaceNormal.x, FaceNormal.y,FaceNormal.z), model.GetFN());
 			}
 		}
+		if(scene.GetActiveModel().GetColorMethod()!=RANDOM_COLORED)
+		DrawTriangles(scene.GetActiveModel().GetColorMethod(), scene.GetActiveModel().GetMC());
 		//Draw the bounding box
 		if (model.GetBoundingBoxFlag())
 		{
@@ -465,18 +444,18 @@ void Renderer::Render(Scene& scene)
 			leftBottomFar		   = ViewPortTransformation * leftBottomFar	;
 			rightBottomFar		   = ViewPortTransformation * rightBottomFar;
 			rightBottomNear		   = ViewPortTransformation * rightBottomNear;
-			DrawLine(glm::ivec2(leftTopNear.x, leftTopNear.y), glm::vec4(rightTopNear.x, rightTopNear.y , 0, 0), model.GetBB());
-			DrawLine(glm::ivec2(leftTopNear.x, leftTopNear.y), glm::vec4(leftTopFar.x, leftTopFar.y, 0, 0), model.GetBB());
-			DrawLine(glm::ivec2(leftTopFar.x,  leftTopFar.y), glm::vec4(rightTopFar.x, rightTopFar.y, 0, 0), model.GetBB());
-			DrawLine( glm::ivec2(rightTopFar.x, rightTopFar.y), glm::vec4(rightTopNear.x, rightTopNear.y, 0, 0), model.GetBB());
-			DrawLine( glm::ivec2(leftTopNear.x, leftTopNear.y), glm::vec4(leftBottomNear.x, leftBottomNear.y, 0, 0), model.GetBB());
-			DrawLine( glm::ivec2(leftTopFar.x, leftTopFar.y), glm::vec4(leftBottomFar.x, leftBottomFar.y, 0, 0), model.GetBB());
-			DrawLine( glm::ivec2(rightTopFar.x, rightTopFar.y), glm::vec4(rightBottomFar.x, rightBottomFar.y, 0, 0), model.GetBB());
-			DrawLine( glm::ivec2(rightTopNear.x, rightTopNear.y), glm::vec4(rightBottomNear.x, rightBottomNear.y, 0, 0), model.GetBB());
-			DrawLine( glm::ivec2(leftBottomNear.x, leftBottomNear.y), glm::vec4(rightBottomNear.x, rightBottomNear.y, 0, 0), model.GetBB());
-			DrawLine( glm::ivec2(leftBottomNear.x, leftBottomNear.y), glm::vec4(leftBottomFar.x, leftBottomFar.y, 0, 0), model.GetBB());
-			DrawLine( glm::ivec2(leftBottomFar.x, leftBottomFar.y), glm::vec4(rightBottomFar.x, rightBottomFar.y, 0, 0), model.GetBB());
-			DrawLine( glm::ivec2(rightBottomFar.x, rightBottomFar.y), glm::vec4(rightBottomNear.x, rightBottomNear.y, 0, 0), model.GetBB());
+			DrawLine( glm::vec3(leftTopNear.x, leftTopNear.y,leftTopNear.z), glm::vec3(rightTopNear.x, rightTopNear.y , 0), model.GetBB());
+			DrawLine(glm::vec3(leftTopNear.x, leftTopNear.y, leftTopNear.z), glm::vec3(leftTopFar.x, leftTopFar.y, leftTopFar.z), model.GetBB());
+			DrawLine(glm::vec3(leftTopFar.x, leftTopFar.y, leftTopFar.z), glm::vec3(rightTopFar.x, rightTopFar.y, rightTopFar.z), model.GetBB());
+			DrawLine(glm::vec3(rightTopFar.x, rightTopFar.y, rightTopFar.z), glm::vec3(rightTopNear.x, rightTopNear.y, 0), model.GetBB());
+			DrawLine(glm::vec3(leftTopNear.x, leftTopNear.y, leftTopNear.z), glm::vec3(leftBottomNear.x, leftBottomNear.y, 0), model.GetBB());
+			DrawLine(glm::vec3(leftTopFar.x, leftTopFar.y, leftTopFar.z), glm::vec3(leftBottomFar.x, leftBottomFar.y, leftBottomFar.z), model.GetBB());
+			DrawLine(glm::vec3(rightTopFar.x, rightTopFar.y, rightTopFar.z), glm::vec3(rightBottomFar.x, rightBottomFar.y, rightBottomFar.z), model.GetBB());
+			DrawLine( glm::vec3(rightTopNear.x, rightTopNear.y, rightTopNear.z), glm::vec3(rightBottomNear.x, rightBottomNear.y, rightBottomNear.z), model.GetBB());
+			DrawLine( glm::vec3(leftBottomNear.x, leftBottomNear.y, leftBottomNear.z), glm::vec3(rightBottomNear.x, rightBottomNear.y, rightBottomNear.z), model.GetBB());
+			DrawLine( glm::vec3(leftBottomNear.x, leftBottomNear.y, leftBottomNear.z), glm::vec3(leftBottomFar.x, leftBottomFar.y, leftBottomFar.z), model.GetBB());
+			DrawLine(glm::vec3(leftBottomFar.x, leftBottomFar.y, leftBottomFar.z), glm::vec3(rightBottomFar.x, rightBottomFar.y, rightBottomFar.z), model.GetBB());
+			DrawLine(glm::vec3(rightBottomFar.x, rightBottomFar.y, rightBottomFar.z), glm::vec3(rightBottomNear.x, rightBottomNear.y, rightBottomNear.z), model.GetBB());
 		}
 		// draw the bounding box
 	}
@@ -508,130 +487,108 @@ glm::vec3 Renderer::RandColor()
 	return glm::vec3(static_cast <float> (rand() / static_cast <float>(RAND_MAX)), static_cast <float> (rand() / static_cast <float>(RAND_MAX)), static_cast <float> (rand() / static_cast <float>(RAND_MAX)));
 }
 
-void Renderer::DrawTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3,glm::vec3 color)
+void Renderer::DrawTriangles(const int& colorMeth, glm::vec3 color)
 {
-	int Start = 0, end = 0;
-	const int top = v1.y > v2.y ? std::max(v1.y, v3.y) : std::max(v2.y, v3.y);
-	const int bottom = v1.y < v2.y ? std::min(v1.y, v3.y) : std::min(v2.y, v3.y);
-	const int left = v1.x < v2.x ? std::min(v1.x, v3.x) : std::min(v2.x, v3.x);
-	const int right = v1.x > v2.x ? std::max(v1.x, v3.x) : std::max(v2.x, v3.x);
-	bool L12, L13, L23;
-	bool edgeFound = false;
-	glm::vec3 z1, z2;
-	DrawLine(v1, v2, color);
-	DrawLine(v1, v3, color);
-	DrawLine(v3, v2, color);
-	glm::vec3 Tricolor = RandColor();
-	for (int y = bottom + 1; y < top; y++)
+	for (int i = 0; i < viewport_width_; i++)
 	{
-		edgeFound = false;
-		for (int x = left; x <= right; x++)
+		for (int j = 0; j < viewport_height_; j++)
 		{
-			if (x < 0 || x >= viewport_width_) return;
-			if (y < 0 || y >= viewport_height_) return;
+			float z = Z_Buffer[Z_INDEX(viewport_width_, i, j)];
+			if (z != FLT_MAX)
+			{
+				// convert from [minZ,maxZ] to [0,1] f(z)=a*(z-minZ)
+				//float a = (1 / (MaxZ - MinZ));
+				//float c = a * (z - MinZ);
+				if (colorMeth == GRAYSCALE)
+				{
 
-			if (color_buffer_[INDEX(viewport_width_, x, y, 0)] == color.x && color_buffer_[INDEX(viewport_width_, x, y, 1)] == color.y && color_buffer_[INDEX(viewport_width_, x, y, 2)] == color.z && !edgeFound)
-			{
-				edgeFound = true;
-				Start = x + 1;
-			}
-			else
-				if (color_buffer_[INDEX(viewport_width_, x, y, 0)] == color.x && color_buffer_[INDEX(viewport_width_, x, y, 1)] == color.y && color_buffer_[INDEX(viewport_width_, x, y, 2)] == color.z && edgeFound)
-					end = x;
-		}
-		for (int i = Start; i < end; i++)
-		{
-			IntersectionLines(v1, v2, v3, y, L12, L13, L23);
-			if (L12 && L13)
-			{
-				if (std::min(v1.x, v2.x) <= Start && Start <= std::max(v1.x, v2.x))
-				{
-					z1 = CalcZ(Start, y, v1, v2);
-					z2 = CalcZ(end, y, v1, v3);
+					float a = 1 / (MaxZ - MinZ);
+					float b = -1 * a * MinZ;
+					float c = 1 - (a * z + b);
+					//float a = (1 / (MaxZ - MinZ));
+					//float c = a * (z - MinZ);
+					glm::vec3 Gray(c, c, c);
+					PutPixel(i, j, Gray);
 				}
 				else
+				if (colorMeth == MODEL_COLOR)
 				{
-					z1 = CalcZ(end, y, v1, v2);
-					z2 = CalcZ(Start, y, v1, v3);
+					float alpha = (z - MinZ)/(MaxZ - MinZ);
+					PutPixel(i,j,(alpha*color));
 				}
-			}
-			if (L12 && L23)
-			{
-				if (std::min(v1.x, v2.x) <= Start && Start <= std::max(v1.x, v2.x))
-				{
-					z1 = CalcZ(Start, y, v1, v2);
-					z2 = CalcZ(end, y, v2, v3);
-				}
-				else
-				{
-					z1 = CalcZ(end, y, v1, v2);
-					z2 = CalcZ(Start, y, v2, v3);
-				}
-			}
-			if (L23 && L13)
-			{
-				if (std::min(v3.x, v2.x) <= Start && Start <= std::max(v3.x, v2.x))
-				{
-					z1 = CalcZ(Start, y, v3, v2);
-					z2 = CalcZ(end, y, v1, v3);
-				}
-				else
-				{
-					z1 = CalcZ(end, y, v3, v2);
-					z2 = CalcZ(Start, y, v1, v3);
-				}
-			}
-			glm::vec3 z = CalcZ(i, y, z1, z2);
-			if (z.z < GetZ(i, y))
-			{
-				PutPixel(i, y, Tricolor);
-				PutZ(i, y, z.z);
 			}
 		}
 	}
 }
 
-glm::vec3 Renderer::CalcZ(int i, int  j, const glm::vec3& p1, const glm::vec3& p2)
+float Renderer::CalcArea(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3)
 {
-	float partialX = i - p1.x;
-	float partialY = j - p1.y;
-	float distanceP1P2 = std::sqrt((p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y)); 
-	float alpha = (std::sqrt(partialX * partialX + partialY * partialY)) / distanceP1P2;
-	return alpha * p2 + (1 - alpha) * p1;
+	return abs(((v2.x - v1.x) * (v3.y - v1.y) - (v3.x - v1.x) * (v2.y - v1.y)) / 2.0);
+}
+
+void Renderer::CalcZ(glm::vec3& P, const glm::vec3& v1, const glm::vec3& v2,const glm::vec3& v3)
+{
+	float A;
+	float A1 = CalcArea(P, v1, v2);
+	float A2 = CalcArea(P, v1, v3);
+	float A3 = CalcArea(P, v3, v2);
+	A = A1 + A2 + A3;
+	P.z = ((A1 / A) * v1.z) + ((A2 / A) * v2.z) + ((A3 / A) * v3.z);
+}
+
+float Renderer::sign(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3)
+{
+	return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+}
+
+bool Renderer::ptInTriangle(const glm::vec3& pt, const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3) {
+	float d1, d2, d3;
+	bool has_neg, has_pos;
+
+	d1 = sign(pt, v1, v2);
+	d2 = sign(pt, v2, v3);
+	d3 = sign(pt, v3, v1);
+	has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+	has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+	return !(has_neg && has_pos);
 }
 
 float Renderer::GetZ(int i, int j) const
 {
-	return Z_Buffer[(i*viewport_height_)+j];
+	if (i < 0) return FLT_MAX; if (i >= viewport_width_) return FLT_MAX;
+	if (j < 0) return FLT_MAX; if (j >= viewport_height_) return FLT_MAX;
+	return Z_Buffer[Z_INDEX(viewport_width_,i,j)];
 }
 
 void Renderer::PutZ(int i, int j, float z)
 {
-	Z_Buffer[(i*viewport_height_)+j] = z;
+	if (i < 0) return; if (i >= viewport_width_) return;
+	if (j < 0) return; if (j >= viewport_height_) return;
+	this->Z_Buffer[Z_INDEX(viewport_width_, i, j)] = z;
 }
 
-void Renderer::IntersectionLines(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, int y, bool& L12, bool& L13, bool& L23)
+void Renderer::FillZ_Buffer(const glm::vec3& v1,const glm::vec3& v2,const glm::vec3& v3,const int& colorMeth)
 {
-	L12 = L13 = L23 = -1;
-	float maxX = std::max(std::max(v1.x, v2.x), v3.x);
+	float minY = std::min(std::min(v1.y, v2.y), v3.y);
+	float maxY = std::max(std::max(v1.y, v2.y), v3.y);
 	float minX = std::min(std::min(v1.x, v2.x), v3.x);
-
-	float m12 = (v1.y - v2.y) / (v1.x - v2.x);
-	float m13 = (v1.y - v3.y) / (v1.x - v3.x);
-	float m23 = (v3.y - v2.y) / (v3.x - v2.x);
-	
-	float b12 = v1.y - m12 * v1.x;
-	float b13 = v1.y - m13 * v1.x;
-	float b23 = v2.y - m23 * v2.x;
-
-	float x12 = (y - b12) / m12;
-	float x13 = (y - b13) / m13;
-	float x23 = (y - b23) / m23;
-
-	if (x12 >= minX && x12 <= maxX)
-		L12 = x12;
-	if (x13 >= minX && x13 <= maxX)
-		L13 = x13;
-	if (x23 > minX && x23 <= maxX)
-		L23 = x23;
+	float maxX = std::max(std::max(v1.x, v2.x), v3.x);
+	glm::vec3 RandomColor = RandColor();
+	for (int y = minY; y < maxY; y++)
+		for (int x = minX; x < maxX; x++)
+		{
+			if (ptInTriangle(glm::vec3(x, y, 0), v1, v2, v3))
+			{
+				glm::vec3 P(x, y, 1);
+				CalcZ(P, v1, v2, v3);
+				if (P.z < GetZ(x, y))
+				{
+					MaxZ = std::max(MaxZ, P.z);
+					MinZ = std::min(MinZ, P.z);
+					PutZ(x, y, P.z);
+					if (colorMeth == RANDOM_COLORED)
+						PutPixel(x, y, RandomColor);
+				}
+			}
+		}
 }

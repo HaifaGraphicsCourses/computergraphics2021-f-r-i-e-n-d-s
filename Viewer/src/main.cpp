@@ -1,4 +1,7 @@
 #define _USE_MATH_DEFINES
+#define GRAYSCALE 999
+#define RANDOM_COLORED 990
+#define MODEL_COLOR 900
 #include <cmath>
 #include <imgui/imgui.h>
 #include <stdio.h>
@@ -75,7 +78,7 @@ ImGuiIO& SetupDearImgui(GLFWwindow* window);
 void StartFrame();
 void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& io);
 void Cleanup(GLFWwindow* window);
-void DrawImguiMenus(ImGuiIO& io, Scene& scene);
+void DrawImguiMenus(ImGuiIO& io, Scene& scene,Renderer& renderer);
 
 void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
@@ -102,7 +105,7 @@ int main(int argc, char **argv)
         glfwPollEvents();
 		StartFrame();
 		glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
-		DrawImguiMenus(io, scene);
+		DrawImguiMenus(io, scene,renderer);
 		RenderFrame(window, scene, renderer, io);
     }
 
@@ -193,6 +196,7 @@ void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& 
 		}
 	}
 	renderer.ClearColorBuffer(clear_color);
+	renderer.ClearZ_Buffer();
 	renderer.Render(scene);
 	renderer.SwapBuffers();
 
@@ -211,7 +215,7 @@ void Cleanup(GLFWwindow* window)
 	glfwTerminate();
 }
 
-void DrawImguiMenus(ImGuiIO& io, Scene& scene)
+void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 {
 	static float OrthoWidth;
 	/**
@@ -230,7 +234,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			}
 			if (ImGui::MenuItem("Beethoven")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\beethoven.obj"));
-				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 2;
 			}
 			if (ImGui::MenuItem("Bishop")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\bishop.obj"));
@@ -297,6 +301,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		}
 		if (ImGui::Button("Clear Model"))
 		{
+			scene.GetActiveCamera().ResetTransformations();
+			scene.GetActiveModel().ResetModel();
+			renderer.ClearZ_Buffer();
 			scene.ClearActiveModel();
 		}
 		// TODO: Add more menubar items (if you want to)
@@ -309,8 +316,22 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	ImGui::ColorEdit3("Vertices Normals Color", NormalsColor);
 	ImGui::ColorEdit3("Faces Normals Color", FacesNormalsColor);
 	ImGui::ColorEdit3("Model Color", ModelColor);
-	if(scene.GetModelCount())
-	scene.GetActiveModel().SetColors(BoundingBoxColor, FacesNormalsColor, NormalsColor, ModelColor);
+	if (scene.GetModelCount())
+		scene.GetActiveModel().SetColors(BoundingBoxColor, FacesNormalsColor, NormalsColor, ModelColor);
+	if (scene.GetModelCount())
+	{
+		if (ImGui::Button("Grayscale Model"))
+			scene.GetActiveModel().SetColorMethod(GRAYSCALE);
+		ImGui::SameLine();
+		if (ImGui::Button("Random Colored Model"))
+			scene.GetActiveModel().SetColorMethod(RANDOM_COLORED);
+		ImGui::SameLine();
+		if (ImGui::Button("Chosen Color Model"))
+			scene.GetActiveModel().SetColorMethod(MODEL_COLOR);
+	}
+
+
+
 	// TODO: Add more controls as needed
 	
 	ImGui::End();
@@ -519,7 +540,6 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			scene.GetActiveModel().SetNormalsFlag();
 		ImGui::PopStyleColor();
 		ImGui::End();
-
 		ImGui::Begin("Camera Window");
 		static int Projection = 1;
 		static float eye[3] = { scene.GetActiveModel().GetPreffered_Eye()[0],scene.GetActiveModel().GetPreffered_Eye()[1],scene.GetActiveModel().GetPreffered_Eye()[2] };
@@ -544,6 +564,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		}
 		else
 		{
+			renderer.ClearZ_Buffer();
 			scene.GetActiveCamera().SetIsOrthographic(false);
 			ImGui::SliderFloat("Fov", &fovy,20,120);
 			scene.GetActiveCamera().SetFovy(fovy);

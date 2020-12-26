@@ -20,6 +20,7 @@ private:
 	std::vector<int> vertex_indices_;
 	std::vector<int> normal_indices_;
 	std::vector<int> texture_indices_;
+	std::vector<glm::vec3> FaceVertices;
 	glm::vec3 FaceNormal;
 	glm::vec3 FaceCenter;
 };
