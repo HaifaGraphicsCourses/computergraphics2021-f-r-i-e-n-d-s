@@ -507,7 +507,7 @@ void Renderer::DrawTriangles(const int& colorMeth, glm::vec3 color)
 					float c = 1 - (a * z + b);
 					//float a = (1 / (MaxZ - MinZ));
 					//float c = a * (z - MinZ);
-					glm::vec3 Gray(c, c, c);
+					glm::vec3 Gray(c/3, c/3, c/3);
 					PutPixel(i, j, Gray);
 				}
 				else
@@ -580,6 +580,7 @@ void Renderer::FillZ_Buffer(const glm::vec3& v1,const glm::vec3& v2,const glm::v
 			if (ptInTriangle(glm::vec3(x, y, 0), v1, v2, v3))
 			{
 				glm::vec3 P(x, y, 1);
+				//PutPixel(x, y, RandomColor);
 				CalcZ(P, v1, v2, v3);
 				if (P.z < GetZ(x, y))
 				{

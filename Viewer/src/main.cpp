@@ -550,7 +550,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
         static float worldTranslationX, worldTranslationY, worldTranslationZ;
         static float worldRotationX, worldRotationY, worldRotationZ;
 		static int IsWorld, TransformationType;
-		static float fovy=(45.f);
+		static float fovy=(90.f);
 		static float Near=-0.1;
 		static float Far=1000;
 		ImGui::Text("Choose Projection"); ImGui::SameLine();

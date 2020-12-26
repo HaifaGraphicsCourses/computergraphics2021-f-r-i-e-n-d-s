@@ -31,7 +31,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 	if (!name.compare("beethoven.obj"))
 	{
 		TranslateFactor = 2;
-		Preffered_eye = glm::vec3(0, 0, 20);
+		Preffered_eye = glm::vec3(0, 0, 40);
 		minOrtho = 10;
 		maxOrtho = 80;
 	}
