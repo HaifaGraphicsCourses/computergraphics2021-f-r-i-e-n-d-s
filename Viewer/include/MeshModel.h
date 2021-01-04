@@ -4,6 +4,8 @@
 #include "Transformations.h"
 #include "Face.h"
 #include "ModelParameters.h"
+#include "Enums.h"
+
 #define GRAYSCALE 999
 #define RANDOM_COLORED 990
 #define MODEL_COLOR 900
@@ -56,17 +58,24 @@ public:
 	void SetModelTransformation(glm::mat4x4 Transformation);
 	glm::mat4x4 GetWorldTransformation();
 	glm::mat4x4 GetModelTransformation();
-	void SetColors(float* BB, float* FN, float* VN, float* MC);
+	void SetColors(float* BB, float* FN, float* VN);
 	glm::vec3& GetBB();
 	glm::vec3& GetFN();
 	glm::vec3& GetVN();
-	glm::vec3& GetMC();
 	float GetMinOrtho();
 	float GetMaxOrtho();
 	float GetTranslateFactor();
 	glm::vec3 GetPreffered_Eye();
 	void SetColorMethod(int meth);
 	int GetColorMethod();
+	glm::vec3 GetDiffuseColor();
+	glm::vec3 GetAmbientColor();
+	glm::vec3 GetSpecularColor();
+	void SetDiffuseColor(glm::vec3& collor);
+	void SetAmbientColor(glm::vec3& collor);
+	void SetSpecularColor(glm::vec3& collor);
+	glm::vec4 GetModelCenter();
+
 private:
 	std::vector<bool> VerticesCheck;
 	std::vector<Face> faces_;
@@ -104,10 +113,15 @@ private:
 	glm::vec3 BoundingBoxColor_;
 	glm::vec3 FacesNormalsColor_;
 	glm::vec3 NormalsColor_;
-	glm::vec3 ModelColor_;
+	glm::vec3 DModelColor;
+	glm::vec3 AModelColor;
+	glm::vec3 SModelColor;
 	glm::vec3 Preffered_eye;
 	float TranslateFactor;
 	float minOrtho, maxOrtho;
 	int colorMethod=GRAYSCALE;
+	glm::vec3 ModelCenter;
+
+	
 
 };

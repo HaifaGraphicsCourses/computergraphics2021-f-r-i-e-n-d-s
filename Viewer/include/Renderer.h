@@ -16,7 +16,7 @@ public:
 	void SetViewportWidth(int w);
 	void SetViewportHeight(int h);
 	glm::vec3 RandColor();
-	void DrawTriangles(const int& colorMeth, glm::vec3 color);
+	void DrawTriangles(Scene& scene);
 	void ClearZ_Buffer();
 	void CalcZ(glm::vec3& P, const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3);
 	float GetZ(int i, int j) const;
@@ -24,7 +24,13 @@ public:
 	bool ptInTriangle(const glm::vec3& p, const glm::vec3& p0, const glm::vec3& p1, const glm::vec3& p2);
 	float CalcArea(const glm::vec3& v, const glm::vec3& u, const glm::vec3& w);
 	float sign(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3);
-	void FillZ_Buffer(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3,const int& colorMeth);
+	void FillZ_Buffer(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3,const int& colorMeth, glm::vec3 FaceNormal, Scene& scene);
+	void DrawLight(Light& light, Camera& cam);
+	glm::vec3 GetAmbientColor(const glm::vec3& Acolor, const glm::vec3& LightAcolor);
+	glm::vec3 GetSpecularColor(glm::vec3& p, glm::vec3& n, const glm::vec3& eye,Light& light, const glm::vec3& Scolor,Camera& cam, glm::mat4x4& Graphicpiplinemat, glm::mat4x4& viewport);
+	glm::vec3 GetDiffuseColor(glm::vec3& p, glm::vec3& n, Scene& scene, glm::mat4x4& Graphicpiplinemat, glm::mat4x4& viewport, const bool& isOrtho);
+	glm::vec3 GetColor(glm::vec3 normal, glm::vec3 LightDirection, Scene& scene);
+
 	
 private:
 	void PutPixel(const int i, const int j, const glm::vec3& color);
@@ -34,6 +40,7 @@ private:
 	void InitOpenGLRendering();
 	float* color_buffer_;
 	float* Z_Buffer;
+	glm::vec3* Normals;
 	float MinZ=FLT_MAX;
 	float MaxZ=FLT_MIN;
 	int viewport_width_;

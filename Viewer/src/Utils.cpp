@@ -85,7 +85,6 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 		}
 	}
 	model.modelName=Utils::GetFileName(filePath);
-	//float modelBoundingBox[] = { Max_X, Min_X, Max_Y, Min_Y, Max_Z,Min_Z };
 	model.leftTopNear = glm::vec4(Min_X, Max_Y, Max_Z, 1);
 	model.rightTopNear = glm::vec4(Max_X, Max_Y, Max_Z, 1);
 	model.leftTopFar = glm::vec4(Min_X, Max_Y, Min_Z, 1);
@@ -95,10 +94,9 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 	model.leftBottomFar = glm::vec4(Min_X, Min_Y, Min_Z, 1);
 	model.rightBottomFar = glm::vec4(Max_X, Min_Y, Min_Z, 1);
 	model.modelName = GetFileName(filePath);
-
+	model.modelCenter=glm::vec3((Max_X + Min_X) / 2, (Max_Y + Min_Y) / 2, (Min_Z + Max_Z) / 2);
 	MaxIndex = Max_X > Max_Y ? Max_X : Max_Y;
 	MaxIndex = MaxIndex > Max_Z ? MaxIndex : Max_Z;
-
 	float ScalingParameter = 330 / MaxIndex;
 	glm::mat4x4 scaling = Transformations::ScalingTransformation(ScalingParameter, ScalingParameter, ScalingParameter);
 	glm::mat4x4 translateObjectToCenter = Transformations::TranslationTransformation(-Min_X, -Min_Y, -Min_Z);

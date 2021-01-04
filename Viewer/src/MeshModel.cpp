@@ -18,9 +18,11 @@ MeshModel::MeshModel(ModelParameters& model) :
 	rightBottomNear_(model.rightBottomNear),
 	leftBottomFar_(model.leftBottomFar),
 	rightBottomFar_(model.rightBottomFar),
-	model_name_(model.modelName)
+	model_name_(model.modelName),
+	ModelCenter(model.modelCenter)
 {
     std::string name = GetModelName();
+
 	if (!name.compare("banana.obj"))
 	{
 		TranslateFactor = 1000;
@@ -370,12 +372,11 @@ int MeshModel::GetVertexCount()
 	return vertices_.size();
 }
 
-void MeshModel::SetColors(float* BB, float* FN, float* VN, float* MC)
+void MeshModel::SetColors(float* BB, float* FN, float* VN)
 {
 	BoundingBoxColor_ = glm::vec3(BB[0],BB[1],BB[2]);
 	FacesNormalsColor_ = glm::vec3(FN[0], FN[1], FN[2]);
 	NormalsColor_ = glm::vec3(VN[0], VN[1], VN[2]);
-	ModelColor_ = glm::vec3(MC[0], MC[1], MC[2]);
 }
 
 glm::vec3& MeshModel::GetBB() 
@@ -388,9 +389,6 @@ glm::vec3& MeshModel::GetFN()
 
 glm::vec3& MeshModel::GetVN() 
 { return NormalsColor_; }
-
-glm::vec3& MeshModel::GetMC() 
-{ return ModelColor_; }
 
 float MeshModel::GetMinOrtho()
 {
@@ -419,3 +417,11 @@ int MeshModel::GetColorMethod()
 {
 	return colorMethod;
 }
+
+glm::vec3 MeshModel::GetDiffuseColor() { return DModelColor; }
+glm::vec3 MeshModel::GetAmbientColor() { return AModelColor; }
+glm::vec3 MeshModel::GetSpecularColor() { return SModelColor; }
+void MeshModel::SetDiffuseColor(glm::vec3& color) { DModelColor = color; }
+void MeshModel::SetAmbientColor(glm::vec3& color) { AModelColor = color; }
+void MeshModel::SetSpecularColor(glm::vec3& color) { SModelColor = color; }
+glm::vec4 MeshModel::GetModelCenter() { return glm::vec4(ModelCenter, 1); }
