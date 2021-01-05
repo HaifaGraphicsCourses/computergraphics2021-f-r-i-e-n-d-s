@@ -24,14 +24,15 @@ public:
 	void SetLightType(LightType type);
 	void SetAmbientLightColor(glm::vec3 color);
 	void SetSpecularLightColor(glm::vec3 color);
-	void SetRotationMatrix(glm::mat4x4& Transformation, bool IsWorld, int Axis);
-	void SetTranslationMatrix(const glm::mat4x4& Transformation, bool IsWorld);
+	void SetRotationMatrix(glm::mat4x4 Transformation, bool IsWorld, int Axis);
+	void SetTranslationMatrix( glm::mat4x4 Transformation, bool IsWorld);
 	void SetWorldTransformation();
 	void SetLocalTransformation();
 	void ResetTransformations();
 	void SetAlpha(int a);
 	int GetAlpha();
-	void UpdatePosition();
+	void SetShadingtype(ShadingType type);
+	ShadingType GetShadingtype();
 
 private:
 	glm::vec3 DlightColor;
@@ -40,6 +41,7 @@ private:
 	glm::vec3 lightDirection;
 	glm::vec4 lightPosition;
 	LightType lightType;
+	ShadingType shadingType;
 	int alpha;
 	glm::mat4x4 WorldTransformation = Transformations::Identity4X4Matrix();
 	glm::mat4x4 LocalTransformation = Transformations::Identity4X4Matrix();

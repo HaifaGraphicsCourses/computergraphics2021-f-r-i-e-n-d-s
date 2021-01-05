@@ -7,21 +7,24 @@ Light::Light()
 	AlightColor = glm::vec3(0.37, 0.37, 0.37);
 	SlightColor = glm::vec3(0.37, 0.37, 0.37);
 	lightDirection = glm::vec3(0, 0, -1);
-	lightPosition = glm::vec4(-0.06,0,0, 1);
+	lightPosition = glm::vec4();
 }
 
 const glm::vec3& Light::GetDiffuseLightColor() const
 {
 	return DlightColor;
 }
+
 const glm::vec3& Light::GetAmbientLightColor() const
 {
 	return AlightColor;
 }
+
 const glm::vec3& Light::GetSpecularLightColor() const
 {
 	return SlightColor;
 }
+
 const glm::vec3& Light::GetLightDirection() const
 {
 	return lightDirection;
@@ -41,10 +44,12 @@ void Light::SetDiffuseLightColor(glm::vec3 color)
 {
 	DlightColor = color;
 }
+
 void Light::SetAmbientLightColor(glm::vec3 color)
 {
 	AlightColor = color;
 }
+
 void Light::SetSpecularLightColor(glm::vec3 color)
 {
 	SlightColor = color;
@@ -65,7 +70,7 @@ void Light::SetLightType(LightType type)
 	lightType = type;
 }
 
-void Light::SetRotationMatrix(glm::mat4x4& Transformation, bool IsWorld, int Axis)
+void Light::SetRotationMatrix(glm::mat4x4 Transformation, bool IsWorld, int Axis)
 {
 	if (IsWorld)
 	{
@@ -97,7 +102,7 @@ void Light::SetRotationMatrix(glm::mat4x4& Transformation, bool IsWorld, int Axi
 	}
 }
 
-void Light::SetTranslationMatrix(const glm::mat4x4& Transformation, bool IsWorld)
+void Light::SetTranslationMatrix(glm::mat4x4 Transformation, bool IsWorld)
 {
 	if (IsWorld)
 		WTranslate = Transformation;
@@ -138,15 +143,23 @@ void Light::ResetTransformations()
 	WTranslate = Transformations::Identity4X4Matrix();
 	LTranslate = Transformations::Identity4X4Matrix();
 }
+
 void Light::SetAlpha(int a)
 {
 	alpha = a;
 }
+
 int  Light::GetAlpha()
 {
 	return alpha;
 }
-void Light::UpdatePosition()
+
+void Light::SetShadingtype(ShadingType type)
 {
-	lightPosition = WorldTransformation * LocalTransformation * lightPosition;
+	shadingType = type;
+}
+
+ShadingType Light::GetShadingtype()
+{
+	return shadingType;
 }

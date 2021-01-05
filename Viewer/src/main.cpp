@@ -219,21 +219,13 @@ void Cleanup(GLFWwindow* window)
 void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 {
 	static float OrthoWidth;
-	/**
-	 * MeshViewer menu
-	 */
+	static int Shadingtype=0;
 	ImGui::Begin("MeshViewer Menu");
-	
 	// Menu Bar
 	if (ImGui::BeginMainMenuBar())
 	{
 		if (ImGui::BeginMenu("Choose Model"))
 		{
-			//if (ImGui::MenuItem("Sphere"))
-			//{
-			//	scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\sphere.obj"));
-			//	OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
-			//}
 			if (ImGui::MenuItem("Banana")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\banana.obj"));
 				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
@@ -312,7 +304,6 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			renderer.ClearZ_Buffer();
 			scene.ClearActiveModel();
 		}
-		// TODO: Add more menubar items (if you want to)
 		ImGui::EndMainMenuBar();
 	}
 
@@ -322,9 +313,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 	ImGui::ColorEdit3("Vertices Normals Color", NormalsColor);
 	ImGui::ColorEdit3("Faces Normals Color", FacesNormalsColor);
 	if (scene.GetModelCount())
-		scene.GetActiveModel().SetColors(BoundingBoxColor, FacesNormalsColor,NormalsColor);
-	if (scene.GetModelCount())
 	{
+		scene.GetActiveModel().SetColors(BoundingBoxColor, FacesNormalsColor, NormalsColor);
 		if (ImGui::Button("Grayscale Model"))
 			scene.GetActiveModel().SetColorMethod(GRAYSCALE);
 		ImGui::SameLine();
@@ -333,6 +323,18 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		ImGui::SameLine();
 		if (ImGui::Button("Chosen Color Model"))
 			scene.GetActiveModel().SetColorMethod(MODEL_COLOR);
+		ImGui::RadioButton("Flat Shading", &Shadingtype, 0);
+		ImGui::SameLine(); ImGui::RadioButton("Gouraud Shading", &Shadingtype, 1);
+		ImGui::SameLine(); ImGui::RadioButton("Phong Shading", &Shadingtype, 2);
+		if (scene.GetLightCount())
+		{
+			if (!Shadingtype)
+				scene.GetActiveLight().SetShadingtype(ShadingType::FLAT);
+			if (Shadingtype==1)
+				scene.GetActiveLight().SetShadingtype(ShadingType::GORAUD);
+			if (Shadingtype==2)
+				scene.GetActiveLight().SetShadingtype(ShadingType::PHONG);
+		}
 	}
 
 
@@ -459,7 +461,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			case 2:
 				ImGui::SliderFloat("Translate Factor X", &TranslateX, -220, 220);
 				ImGui::SliderFloat("Translate Factor Y", &TranslateY, -220, 220);
-				ImGui::SliderFloat("Translate Factor Z", &TranslateZ, -2200, 2200);
+				ImGui::SliderFloat("Translate Factor Z", &TranslateZ, -220, 220);
 				Transformation = Transformations::TranslationTransformation(TranslateX/ scene.GetActiveModel().GetTranslateFactor(), TranslateY/ scene.GetActiveModel().GetTranslateFactor(), TranslateZ/ scene.GetActiveModel().GetTranslateFactor());
 			    scene.GetActiveModel().Set_T_m(Transformation);
 				break;
@@ -501,7 +503,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			case 2:
 				ImGui::SliderFloat("World Translate Factor X", &WTranslateX, -220,220);
 				ImGui::SliderFloat("World Translate Factor Y", &WTranslateY, -220,220);
-				ImGui::SliderFloat("World Translate Factor Z", &WTranslateZ, -2200,2200);
+				ImGui::SliderFloat("World Translate Factor Z", &WTranslateZ, -220,220);
 				Transformation = Transformations::TranslationTransformation(WTranslateX/ scene.GetActiveModel().GetTranslateFactor(), WTranslateY/ scene.GetActiveModel().GetTranslateFactor(), WTranslateZ/ scene.GetActiveModel().GetTranslateFactor());
 				scene.GetActiveModel().Set_T_w(Transformation);
 				break;
@@ -604,7 +606,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 						(*new_light).SetLightType(LightType::POINT);
 					else
 						(*new_light).SetLightType(LightType::PARALLEL);
-					(*new_light).SetLightPosition(scene.GetActiveModel().GetModelCenter());
+					(*new_light).SetLightPosition(glm::vec4(0.1,0,0,1));
 					scene.AddLight(new_light);
 				}
 				ImGui::TreePop();
@@ -667,8 +669,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 							{
 								ImGui::SliderFloat("Translate in X", &WTranslateX_, -200, 200);
 								ImGui::SliderFloat("Translate in y", &WTranslateY_, -200, 200);
-								ImGui::SliderFloat("Translate in Z", &WTranslateZ_, -200, 200);
-								scene.GetActiveLight().SetTranslationMatrix(Transformations::TranslationTransformation(WTranslateX_/1000, WTranslateY_/1000, WTranslateZ_/1000), true);
+								ImGui::SliderFloat("Translate in Z", &WTranslateZ_, -1000, 1000);
+								scene.GetActiveLight().SetTranslationMatrix(Transformations::TranslationTransformation(WTranslateX_/scene.GetActiveModel().GetTranslateFactor() , WTranslateY_ / scene.GetActiveModel().GetTranslateFactor(), 100 * WTranslateZ_), true);
 							}
 							else
 								if (TransformationType_)
@@ -698,12 +700,11 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 								{
 									ImGui::SliderFloat("Translate in X", &TranslateX_, -200, 200);
 									ImGui::SliderFloat("Translate in y", &TranslateY_, -200, 200);
-									ImGui::SliderFloat("Translate in Z", &TranslateZ_, -200, 200);
-									scene.GetActiveLight().SetTranslationMatrix(Transformations::TranslationTransformation(TranslateX_ / 1000, TranslateY_ / 1000, TranslateZ_ / 1000), false);
+									ImGui::SliderFloat("Translate in Z", &TranslateZ_, -1000, 1000);
+									scene.GetActiveLight().SetTranslationMatrix(Transformations::TranslationTransformation(TranslateX_/ scene.GetActiveModel().GetTranslateFactor(), TranslateY_/ scene.GetActiveModel().GetTranslateFactor(), 100*TranslateZ_ ), false);
 								}
 							scene.GetActiveLight().SetLocalTransformation();
 						}
-						//scene.GetActiveLight().UpdatePosition();
 						if (ImGui::Button("Reset Light Transformations"))
 						{
 							scene.GetActiveLight().ResetTransformations();
