@@ -391,9 +391,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		//*******************************************************************************MODEL WINDOW***********************************************************************
 		auto model = scene.GetActiveModel();
 		glm::vec3 DModelC, SModelC, AModelC;
-		static float DModelColor[3];
-		static float AModelColor[3];
-		static float SModelColor[3];
+		static float DModelColor[3] = { 0.5,0.285,0.285 };
+		static float AModelColor[3] = {0.0625 ,0.3,0.57 };
+		static float SModelColor[3]={};
 		const static char* items[] = { "Scale","Rotate","Translate"};
 		const static char* TransformItems[] = {"World Transformation","Local Transformation"};
 		const static char* Axis[] = { "X Axis","Y Axis","Z Axis" };
@@ -606,7 +606,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 						(*new_light).SetLightType(LightType::POINT);
 					else
 						(*new_light).SetLightType(LightType::PARALLEL);
-					(*new_light).SetLightPosition(glm::vec4(0.1,0,0,1));
+					(*new_light).SetLightPosition(model.GetModelCenter());
 					scene.AddLight(new_light);
 				}
 				ImGui::TreePop();
@@ -669,8 +669,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 							{
 								ImGui::SliderFloat("Translate in X", &WTranslateX_, -200, 200);
 								ImGui::SliderFloat("Translate in y", &WTranslateY_, -200, 200);
-								ImGui::SliderFloat("Translate in Z", &WTranslateZ_, -1000, 1000);
-								scene.GetActiveLight().SetTranslationMatrix(Transformations::TranslationTransformation(WTranslateX_/scene.GetActiveModel().GetTranslateFactor() , WTranslateY_ / scene.GetActiveModel().GetTranslateFactor(), 100 * WTranslateZ_), true);
+								ImGui::SliderFloat("Translate in Z", &WTranslateZ_, -200, 200);
+								scene.GetActiveLight().SetTranslationMatrix(Transformations::TranslationTransformation(WTranslateX_/scene.GetActiveModel().GetTranslateFactor() , WTranslateY_ / scene.GetActiveModel().GetTranslateFactor(),WTranslateZ_), true);
 							}
 							else
 								if (TransformationType_)
@@ -700,8 +700,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 								{
 									ImGui::SliderFloat("Translate in X", &TranslateX_, -200, 200);
 									ImGui::SliderFloat("Translate in y", &TranslateY_, -200, 200);
-									ImGui::SliderFloat("Translate in Z", &TranslateZ_, -1000, 1000);
-									scene.GetActiveLight().SetTranslationMatrix(Transformations::TranslationTransformation(TranslateX_/ scene.GetActiveModel().GetTranslateFactor(), TranslateY_/ scene.GetActiveModel().GetTranslateFactor(), 100*TranslateZ_ ), false);
+									ImGui::SliderFloat("Translate in Z", &TranslateZ_, -200, 200);
+									scene.GetActiveLight().SetTranslationMatrix(Transformations::TranslationTransformation(TranslateX_/ scene.GetActiveModel().GetTranslateFactor(), TranslateY_/ scene.GetActiveModel().GetTranslateFactor(), TranslateZ_ ), false);
 								}
 							scene.GetActiveLight().SetLocalTransformation();
 						}
