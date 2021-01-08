@@ -16,6 +16,16 @@ void Scene::ClearActiveModel()
 	mesh_models_.clear();
 }
 
+void Scene::SetFog(bool fog)
+{
+	Fog = fog;
+}
+
+bool Scene::GetFog()
+{
+	return Fog;
+}
+
 void Scene::AddModel(const std::shared_ptr<MeshModel>& mesh_model)
 {
 	mesh_models_.push_back(mesh_model);
@@ -100,8 +110,68 @@ void Scene::SetActiveLightIndex(int index)
 {
 	active_light_index_ = index;
 }
+
 int Scene::GetActiveLightIndex()
 {
 	return active_light_index_;
 }
 
+void Scene::SetFogEnd(float value)
+{
+	FogEnd = value;
+}
+
+const float Scene::GetFogEnd() const
+{
+	return FogEnd;
+}
+
+void Scene::SetFogStart(float value)
+{
+	FogStart = value;
+}
+
+const float Scene::GetFogStart() const
+{
+	return FogStart;
+}
+
+void Scene::SetIsLinearFog(bool value)
+{
+	LinearFog = value;
+}
+
+const bool Scene::GetIsLinearFog() const
+{
+	return LinearFog;
+}
+
+void Scene::SetFogDensity(float value)
+{
+	FogDensity = value;
+}
+
+const float Scene::GetFogDensity() const
+{
+	return FogDensity;
+}
+
+void Scene::SetColoring(int type)
+{
+	Coloring = type;
+}
+
+int Scene::GetColoring()
+{
+	return Coloring;
+}
+
+void Scene::SetShadingtype(ShadingType type)
+{
+	shadingType = type;
+}
+
+ShadingType Scene::GetShadingtype()
+{
+	return shadingType;
+}

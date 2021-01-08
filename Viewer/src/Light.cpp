@@ -70,19 +70,19 @@ void Light::SetLightType(LightType type)
 	lightType = type;
 }
 
-void Light::SetRotationMatrix(glm::mat4x4 Transformation, bool IsWorld, int Axis)
+void Light::SetRotationMatrix(float angle, bool IsWorld, int Axis)
 {
 	if (IsWorld)
 	{
 		switch (Axis) {
 		case 1:
-			WRotationX = Transformation;
+			WRotationX = angle;
 			break;
 		case 2:
-			WRotationY = Transformation;
+			WRotationY = angle;
 			break;
 		case 3:
-			WRotationZ = Transformation;
+			WRotationZ = angle;
 			break;
 		}
 	}
@@ -90,34 +90,43 @@ void Light::SetRotationMatrix(glm::mat4x4 Transformation, bool IsWorld, int Axis
 	{
 		switch (Axis) {
 		case 1:
-			LRotationX = Transformation;
+			LRotationX = angle;
 			break;
 		case 2:
-			LRotationY = Transformation;
+			LRotationY = angle;
 			break;
 		case 3:
-			LRotationZ = Transformation;
+			LRotationZ = angle;
 			break;
 		}
 	}
 }
 
-void Light::SetTranslationMatrix(glm::mat4x4 Transformation, bool IsWorld)
+void Light::SetTranslationMatrix(float Tx, float Ty, float Tz, bool IsWorld)
 {
 	if (IsWorld)
-		WTranslate = Transformation;
+	{
+			WTranslateX = Tx;
+			WTranslateY = Ty;
+			WTranslateZ = Tz;
+	}
 	else
-		LTranslate = Transformation;
+	{
+		LTranslateX = Tx;
+		LTranslateY = Ty;
+		LTranslateZ = Tz;
+	}
 }
 
 void Light::SetWorldTransformation()
 {
-	WorldTransformation = WRotationX * WRotationY * WRotationZ * WTranslate;
+	WorldTransformation = Transformations::XRotationTransformation(WRotationX) * Transformations::XRotationTransformation(WRotationY) * Transformations::XRotationTransformation(WRotationZ) * Transformations::TranslationTransformation(WTranslateX, WTranslateY, WTranslateZ);
 }
 
 void Light::SetLocalTransformation()
 {
-	LocalTransformation =LRotationX * LRotationY * LRotationZ * LTranslate;
+	LocalTransformation = WorldTransformation = Transformations::XRotationTransformation(LRotationX) * Transformations::XRotationTransformation(LRotationY) * Transformations::XRotationTransformation(LRotationZ) * Transformations::TranslationTransformation(LTranslateX, LTranslateY, LTranslateZ);
+
 }
 
 glm::mat4x4 Light::GetWorldTransformation()const
@@ -134,14 +143,18 @@ void Light::ResetTransformations()
 {
 	WorldTransformation = Transformations::Identity4X4Matrix();
 	LocalTransformation = Transformations::Identity4X4Matrix();
-	WRotationX = Transformations::Identity4X4Matrix();
-	WRotationY = Transformations::Identity4X4Matrix();
-	WRotationZ = Transformations::Identity4X4Matrix();
-	LRotationX = Transformations::Identity4X4Matrix();
-	LRotationY = Transformations::Identity4X4Matrix();
-	LRotationZ = Transformations::Identity4X4Matrix();
-	WTranslate = Transformations::Identity4X4Matrix();
-	LTranslate = Transformations::Identity4X4Matrix();
+	WRotationX = 0.f;
+	WRotationY = 0.f;
+	WRotationZ = 0.f;
+	LRotationX = 0.f;
+	LRotationY = 0.f;
+	LRotationZ = 0.f;
+	WTranslateX = 0.f;
+	WTranslateY = 0.f;
+	WTranslateZ = 0.f;
+	LTranslateX = 0.f;
+	LTranslateY = 0.f;
+	LTranslateZ = 0.f;
 }
 
 void Light::SetAlpha(int a)
@@ -154,12 +167,27 @@ int  Light::GetAlpha()
 	return alpha;
 }
 
-void Light::SetShadingtype(ShadingType type)
-{
-	shadingType = type;
+float Light::GetWRotationX() {
+	return WRotationX;
 }
-
-ShadingType Light::GetShadingtype()
-{
-	return shadingType;
+float Light::GetWRotationY() {
+	return WRotationY;
 }
+float Light::GetWRotationZ() {
+	return WRotationZ;
+}
+float Light::GetLRotationX() {
+	return LRotationX;
+}
+float Light::GetLRotationY() {
+	return LRotationY;
+}
+float Light::GetLRotationZ() {
+	return LRotationZ;
+}
+float Light::GetWTranslateX() { return WTranslateX; }
+float Light::GetWTranslateY() { return WTranslateY; }
+float Light::GetWTranslateZ() { return WTranslateZ; }
+float Light::GetLTranslateX() { return LTranslateX; }
+float Light::GetLTranslateY() { return LTranslateY; }
+float Light::GetLTranslateZ() { return LTranslateZ; }

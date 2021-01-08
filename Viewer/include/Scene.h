@@ -33,14 +33,35 @@ public:
 
 	void SetActiveModelIndex(int index);
 	int GetActiveModelIndex() const;
-
 	void ClearActiveModel();
+	void SetFog(bool fog);
+	bool GetFog();
+	void SetFogEnd(float value);
+	const float GetFogEnd() const;
+	void SetFogStart(float value);
+	const float GetFogStart() const;
+	void SetIsLinearFog(bool value);
+	const bool GetIsLinearFog() const;
+	void SetFogDensity(float value);
+	const float GetFogDensity() const;
+	void SetColoring(int type);
+	int GetColoring();
+	void SetShadingtype(ShadingType type);
+	ShadingType GetShadingtype();
+
 	
 private:
+	bool Fog=false;
+	bool LinearFog=true;
+	float FogStart = -1;
+	float FogEnd = 1;
+	float FogDensity = -3;
 	std::vector<std::shared_ptr<MeshModel>> mesh_models_;
 	std::vector<std::shared_ptr<Camera>> cameras_;
 	std::vector<std::shared_ptr<Light>> lights_;
 	int active_camera_index_;
 	int active_model_index_;
 	int active_light_index_;
+	int Coloring;
+	ShadingType shadingType;
 };

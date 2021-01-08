@@ -39,7 +39,6 @@ void Renderer::DrawLine(const glm::vec3& p1, const glm::vec3& p2,glm::vec3& colo
 	int x = p1.x, y = p1.y, ReflectFlag = 0, LoopVar = p2.x;
 	double deltaP = (double)(p2.x - p1.x), deltaQ = (double)(p2.y - p1.y);
 	double a = deltaQ / deltaP, e = (-1) * deltaP;
-	glm::vec3 z;
 	if (a == -1)
 	{
 		if (deltaP > 0)
@@ -322,7 +321,10 @@ void Renderer::ClearZ_Buffer()
 		{
 			if (i < 0) return; if (i >= viewport_width_) return;
 			if (j < 0) return; if (j >= viewport_height_) return;
-			Z_Buffer[Z_INDEX(viewport_width_,i,j)]= FLT_MAX;
+			Z_Buffer[Z_INDEX(viewport_width_, i, j)] = FLT_MAX;
+			color_buffer_[INDEX(viewport_width_, i, j, 0)] = 0.f;
+			color_buffer_[INDEX(viewport_width_, i, j, 1)] = 0.f;
+			color_buffer_[INDEX(viewport_width_, i, j, 2)] = 0.f;
 		}
 	}
 }
@@ -340,15 +342,17 @@ void Renderer::ClearColorBuffer(const glm::vec3& color)
 
 void Renderer::Render(Scene& scene)
 {
-	int half_width = viewport_width_/2 ;
-	int half_height = viewport_height_/2 ;
-	int VertexIndex1, VertexIndex2, VertexIndex3;
+	ClearZ_Buffer();
+	MaxC = FLT_MIN;
+	int half_width = viewport_width_ / 2;
+	int half_height = viewport_height_ / 2;
 	bool Lighting = false;
 	std::vector<int> VerticesIndices;
 	std::vector<glm::ivec2> VerticesCont;
-	glm::vec3 Vertex;
-	glm::vec4 Vertex1, Vertex2, Vertex3;
-	glm::vec3 color(255, 0, 0);
+	glm::vec3 color(0.f, 0.f, 0.f);
+	glm::vec3 c1;
+	glm::vec3 c2;
+	glm::vec3 c3;
 	glm::vec3 FaceCenter;
 	glm::vec4 FaceNormal;
 	glm::vec4 LightPosition;
@@ -358,7 +362,7 @@ void Renderer::Render(Scene& scene)
 		for (int i = 0; i < scene.GetLightCount(); i++)
 		{
 			auto& light = scene.GetLight(i);
-			DrawLight(light,scene);
+			DrawLight(light, scene);
 		}
 	}
 	if (scene.GetModelCount() > 0) {
@@ -377,7 +381,33 @@ void Renderer::Render(Scene& scene)
 				glm::vec3 v1Temp = model.GetVertex(VertexIndex1);
 				glm::vec3 v2Temp = model.GetVertex(VertexIndex2);
 				glm::vec3 v3Temp = model.GetVertex(VertexIndex3);
-				glm::vec3 faceNormal = normalize(cross((v1Temp - v2Temp), glm::vec3(v1Temp - v3Temp)));
+				glm::vec4 v1 = projectionTransformation * Lookat * C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex1), 1);
+				glm::vec4 v2 = projectionTransformation * Lookat * C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex2), 1);
+				glm::vec4 v3 = projectionTransformation * Lookat * C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex3), 1);
+				if (!scene.GetActiveCamera().GetIsOrthographic())
+				{
+					v1 /= v1.w;
+					v2 /= v2.w;
+					v3 /= v3.w;
+				}
+				v1 = ViewPortTransformation * v1;
+				v2 = ViewPortTransformation * v2;
+				v3 = ViewPortTransformation * v3;
+				FillZ_Buffer(v1, v2, v3, scene);
+			}
+		}
+		for (int i = 0; i < scene.GetModelCount(); i++)
+		{
+			auto model = scene.GetModel(i);
+			glm::mat4x4 Transformation = model.GetTransformation();
+			for (int i = 0; i < model.GetFacesCount(); i++)
+			{
+				Face face = model.GetFace(i);
+				int VertexIndex1 = face.GetVertexIndex(0), VertexIndex2 = face.GetVertexIndex(1), VertexIndex3 = face.GetVertexIndex(2);
+				glm::vec3 v1Temp = model.GetVertex(VertexIndex1);
+				glm::vec3 v2Temp = model.GetVertex(VertexIndex2);
+				glm::vec3 v3Temp = model.GetVertex(VertexIndex3);
+				glm::vec3 faceNormal = normalize(cross((v1Temp - v2Temp), (v1Temp - v3Temp)));
 				FaceNormal = model.Get_R_w() * model.Get_R_m() * glm::vec4(faceNormal, 1);
 				int Nindex1 = face.GetNormalIndex(0), Nindex2 = face.GetNormalIndex(1), Nindex3 = face.GetNormalIndex(2);
 				glm::vec4 v1 = projectionTransformation * Lookat * C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex1), 1);
@@ -385,8 +415,8 @@ void Renderer::Render(Scene& scene)
 				glm::vec4 v3 = projectionTransformation * Lookat * C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex3), 1);
 				glm::vec4 origin = projectionTransformation * Lookat * C_inv * glm::vec4(0, 0, 0, 1);
 				glm::vec4 temp = scene.GetActiveModel().GetRightTopFar();
-				glm::vec4 XAxis = projectionTransformation * Lookat * C_inv * glm::vec4(5*temp.x, 0, 0, 1);
-				glm::vec4 YAxis = projectionTransformation * Lookat * C_inv * glm::vec4(0, 1.5*temp.y, 0, 1);
+				glm::vec4 XAxis = projectionTransformation * Lookat * C_inv * glm::vec4(5 * temp.x, 0, 0, 1);
+				glm::vec4 YAxis = projectionTransformation * Lookat * C_inv * glm::vec4(0, 1.5 * temp.y, 0, 1);
 				if (!scene.GetActiveCamera().GetIsOrthographic())
 				{
 					v1 /= v1.w;
@@ -403,68 +433,60 @@ void Renderer::Render(Scene& scene)
 				glm::vec4 vn2 = model.Get_R_w() * model.Get_R_m() * (glm::vec4(model.GetNormals(Nindex2), 1));
 				glm::vec4 vn3 = model.Get_R_w() * model.Get_R_m() * (glm::vec4(model.GetNormals(Nindex3), 1));
 				FaceCenter = (v1 + v2 + v3) / 3.0f;
-				if (scene.GetLightCount())
+				color = glm::vec3(0.f, 0.f, 0.f);
+				c1 = glm::vec3(0.f, 0.f, 0.f);
+				c2 = glm::vec3(0.f, 0.f, 0.f);
+				c3 = glm::vec3(0.f, 0.f, 0.f);
+				FillZ_Buffer(v1, v2, v3, scene);
+				for (int i = 0; i < scene.GetLightCount(); i++)
 				{
-					glm::mat4x4 LightTransformations = scene.GetActiveLight().GetWorldTransformation() * scene.GetActiveLight().GetLocalTransformation();
-					LightPosition = projectionTransformation * Lookat * C_inv * LightTransformations * scene.GetActiveLight().GetLightPosition();
+					Light& light = scene.GetLight(i);
+					glm::mat4x4 LightTransformations = light.GetWorldTransformation() * light.GetLocalTransformation();
+					LightPosition = projectionTransformation * Lookat * C_inv * LightTransformations * light.GetLightPosition();
 					if (!scene.GetActiveCamera().GetIsOrthographic())
 						LightPosition /= LightPosition.w;
 					LightPosition = ViewPortTransformation * LightPosition;
-					if (scene.GetActiveLight().GetShadingtype() == ShadingType::FLAT)
+					if (scene.GetShadingtype() == ShadingType::FLAT)
 					{
-						if (scene.GetActiveLight().GetLightType() == LightType::POINT)
+						if (light.GetLightType() == LightType::POINT)
 							LightDirection = glm::normalize(glm::vec3(FaceCenter) - glm::vec3(LightPosition));
-						//else
-						//	LightDirection=
-						color = GetDiffuseColor(FaceNormal, LightDirection, scene);
-						color += GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), scene.GetActiveLight().GetAmbientLightColor());
-						color += GetSpecularColor(LightDirection, FaceNormal, scene.GetActiveCamera().GetEye(), scene.GetActiveLight(), scene.GetActiveModel().GetSpecularColor());
-						color.x = color.x > 1.f ? 1.f : color.x;
-						color.y = color.y > 1.f ? 1.f : color.y;
-						color.z = color.z > 1.f ? 1.f : color.z;
+						else
+							LightDirection = normalize(light.GetLightDirection());
+						color += GetDiffuseColor(FaceNormal, LightDirection, scene);
+						color += GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), light.GetAmbientLightColor());
+						color += GetSpecularColor(LightDirection, FaceNormal, scene.GetActiveCamera().GetEye(), light, scene.GetActiveModel().GetSpecularColor());
 					}
-
-					else if (scene.GetActiveLight().GetShadingtype() == ShadingType::GORAUD)
+					else if (scene.GetShadingtype() == ShadingType::GORAUD)
 					{
 						Lighting = true;
 						glm::vec3 LightDirection1, LightDirection3, LightDirection2;
-						if (scene.GetActiveLight().GetLightType() == LightType::POINT) 
+						if (light.GetLightType() == LightType::POINT)
 						{
 							LightDirection1 = glm::normalize(glm::vec3(v1.x, v1.y, v1.z) - glm::vec3(LightPosition.x, LightPosition.y, LightPosition.z));
 							LightDirection2 = glm::normalize(glm::vec3(v2.x, v2.y, v2.z) - glm::vec3(LightPosition.x, LightPosition.y, LightPosition.z));
 							LightDirection3 = glm::normalize(glm::vec3(v3.x, v3.y, v3.z) - glm::vec3(LightPosition.x, LightPosition.y, LightPosition.z));
 						}
-						//else
-						//	LightDirection=
-						glm::vec3 c1 = GetDiffuseColor((vn1), LightDirection1, scene);
-						c1 += GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), scene.GetActiveLight().GetAmbientLightColor());
-						c1 += GetSpecularColor(LightDirection1, vn1, scene.GetActiveCamera().GetEye(), scene.GetActiveLight(), scene.GetActiveModel().GetSpecularColor());
-						c1.x = c1.x > 1.f ? 1.f : c1.x;
-						c1.y = c1.y > 1.f ? 1.f : c1.y;
-						c1.z = c1.z > 1.f ? 1.f : c1.z;
-						glm::vec3 c2 = GetDiffuseColor(vn2, LightDirection2, scene);
-						c2 += GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), scene.GetActiveLight().GetAmbientLightColor());
-						c2 += GetSpecularColor(LightDirection2, vn2, scene.GetActiveCamera().GetEye(), scene.GetActiveLight(), scene.GetActiveModel().GetSpecularColor());
-						c2.x = c2.x > 1.f ? 1.f : c2.x;
-						c2.y = c2.y > 1.f ? 1.f : c2.y;
-						c2.z = c2.z > 1.f ? 1.f : c2.z;
-						glm::vec3 c3 = GetDiffuseColor(vn3, LightDirection3, scene);
-						c3 += GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), scene.GetActiveLight().GetAmbientLightColor());
-						c3 += GetSpecularColor(LightDirection3, vn3, scene.GetActiveCamera().GetEye(), scene.GetActiveLight(), scene.GetActiveModel().GetSpecularColor());
-						c3.x = c3.x > 1.f ? 1.f : c3.x;
-						c3.y = c3.y > 1.f ? 1.f : c3.y;
-						c3.z = c3.z > 1.f ? 1.f : c3.z;
+						else
+							LightDirection1 = LightDirection2 = LightDirection3 = normalize(light.GetLightDirection());
+						c1 = GetDiffuseColor((vn1), LightDirection1, scene);
+						c1 += GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), light.GetAmbientLightColor());
+						c1 += GetSpecularColor(LightDirection1, vn1, scene.GetActiveCamera().GetEye(), light, scene.GetActiveModel().GetSpecularColor());
+						c2 = GetDiffuseColor(vn2, LightDirection2, scene);
+						c2 += GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), light.GetAmbientLightColor());
+						c2 += GetSpecularColor(LightDirection2, vn2, scene.GetActiveCamera().GetEye(), light, scene.GetActiveModel().GetSpecularColor());
+						c3 = GetDiffuseColor(vn3, LightDirection3, scene);
+						c3 += GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), light.GetAmbientLightColor());
+						c3 += GetSpecularColor(LightDirection3, vn3, scene.GetActiveCamera().GetEye(), light, scene.GetActiveModel().GetSpecularColor());
 						ScanConvert_Gouraud(v1, v2, v3, c1, c2, c3);
-						continue;
 					}
-					else if (scene.GetActiveLight().GetShadingtype() == ShadingType::PHONG)
+					else if (scene.GetShadingtype() == ShadingType::PHONG)
 					{
 						Lighting = true;
-						ScanConvert_Phong(v1, v2, v3, (vn1), (vn2), (vn3), scene, GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), scene.GetActiveLight().GetAmbientLightColor()), LightPosition);
+						ScanConvert_Phong(v1, v2, v3, (vn1), (vn2), (vn3), scene, GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), light.GetAmbientLightColor()), LightPosition, light);
 					}
 				}
-
-				FillZ_Buffer(glm::vec3(v1.x, v1.y, v1.z), glm::vec3(v2.x, v2.y, v2.z), glm::vec3(v3.x, v3.y, v3.z), scene.GetActiveModel().GetColorMethod(), color, scene, Lighting);
+				if (scene.GetShadingtype() == ShadingType::FLAT || scene.GetActiveModel().GetColorMethod() == GRAYSCALE)
+					ScanConvert_Flat(v1, v2, v3, scene.GetActiveModel().GetColorMethod(), color, scene, Lighting);
 
 				//Draw X and Y Axes
 				origin = ViewPortTransformation * origin;
@@ -487,10 +509,8 @@ void Renderer::Render(Scene& scene)
 				if (model.GetFacesNormalsFlag())
 					DrawLine(glm::vec3(FaceCenter.x, FaceCenter.y, FaceCenter.z), glm::vec3(FaceNormal.x, FaceNormal.y, FaceNormal.z), model.GetFN());
 			}
-			//Draw Grayscaled model
-			if (scene.GetActiveModel().GetColorMethod() == GRAYSCALE)
-				DrawTriangles(scene);
-			//Draw the bounding box
+			//DrawTriangles(scene);
+		//Draw the bounding box
 			if (model.GetBoundingBoxFlag())
 			{
 				glm::vec4 leftTopNear = projectionTransformation * Lookat * C_inv * Transformation * model.GetLeftTopNear();
@@ -534,8 +554,11 @@ void Renderer::Render(Scene& scene)
 				DrawLine(glm::vec3(rightBottomFar.x, rightBottomFar.y, rightBottomFar.z), glm::vec3(rightBottomNear.x, rightBottomNear.y, rightBottomNear.z), model.GetBB());
 			}
 		}
+		if (scene.GetActiveModel().GetColorMethod()== GRAYSCALE)
+			ScanConvert_Grayscale();
+		if (scene.GetFog())
+			FogExists(scene);
 	}
-	//DrawLine(glm::vec3(930,580,0),glm::vec3(940,600,0),glm::vec3(255,255,255));
 }
 
 int Renderer::GetViewportWidth() const
@@ -563,33 +586,42 @@ glm::vec3 Renderer::RandColor()
 	return glm::vec3(static_cast <float> (rand() / static_cast <float>(RAND_MAX)), static_cast <float> (rand() / static_cast <float>(RAND_MAX)), static_cast <float> (rand() / static_cast <float>(RAND_MAX)));
 }
 
-void Renderer::DrawTriangles(Scene& scene)
+void Renderer::FogExists(Scene& scene)
 {
-	glm::vec3 n;
-	glm::vec3 color;
-	auto model = scene.GetActiveModel();
-	glm::vec3 Dcolor = model.GetDiffuseColor();
-	glm::vec3 Acolor = model.GetAmbientColor();
-	glm::vec3 Scolor = model.GetSpecularColor();
-	int colorMeth = model.GetColorMethod();
+	scene.SetFogStart(MinZ);
+	scene.SetFogEnd(MaxZ);
+	int half_width = viewport_width_ / 2;
+	int half_height = viewport_height_ / 2;
+	glm::mat4x4 viewportmat= Transformations::ScalingTransformation(half_width, half_height, 1) * Transformations::TranslationTransformation(1, 1, 1);
+	glm::mat4x4 graphicpipline = scene.GetActiveCamera().GetProjectionTransformation() * scene.GetActiveCamera().GetLookAt() * scene.GetActiveCamera().GetC_inv() * glm::inverse(scene.GetActiveCamera().GetC_inv());
+	glm::vec3 c;
 	for (int i = 0; i < viewport_width_; i++)
-	{
 		for (int j = 0; j < viewport_height_; j++)
 		{
 			float z = Z_Buffer[Z_INDEX(viewport_width_, i, j)];
 			if (z != FLT_MAX)
 			{
-				if (colorMeth == GRAYSCALE)
-				{
-					float a = 1 / (MaxZ - MinZ);
-					float b = -1 * a * MinZ;
-					float c =1-(a * z + b);
-					glm::vec3 Gray(c, c, c);
-					PutPixel(i, j, Gray);
-				}
+				c = glm::vec3(color_buffer_[INDEX(viewport_width_, i, j, 0)], color_buffer_[INDEX(viewport_width_, i, j, 1)], color_buffer_[INDEX(viewport_width_, i, j, 2)]);
+				float vertexViewDistance = z;
+				float fogFactor;
+				if (scene.GetIsLinearFog())
+				    {
+						if (!scene.GetActiveCamera().GetIsOrthographic())
+							int x = 3;
+						fogFactor =(scene.GetFogEnd() - vertexViewDistance) / (scene.GetFogEnd() - scene.GetFogStart());
+					}
+				else
+					{
+						fogFactor = std::exp(-(vertexViewDistance*vertexViewDistance*scene.GetFogDensity() * scene.GetFogDensity()));
+						if (fogFactor < 0 || fogFactor > 1)
+							fogFactor = 1;
+					}
+				c = ((1 - fogFactor) * glm::vec3(0.3, 0.3, 0.3) + fogFactor * c);
+				color_buffer_[INDEX(viewport_width_, i, j, 0)] = c.x;
+				color_buffer_[INDEX(viewport_width_, i, j, 1)] = c.y;
+				color_buffer_[INDEX(viewport_width_, i, j, 2)] = c.z;
 			}
 		}
-	}
 }
 
 float Renderer::CalcArea(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3)
@@ -638,7 +670,7 @@ void Renderer::PutZ(int i, int j, float z)
 	this->Z_Buffer[Z_INDEX(viewport_width_, i, j)] = z;
 }
 
-void Renderer::FillZ_Buffer(const glm::vec3& v1,const glm::vec3& v2,const glm::vec3& v3,const int& colorMeth,glm::vec3 color,Scene& scene,bool lighting)
+void Renderer::ScanConvert_Flat(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, const int& colorMeth, glm::vec3 color, Scene& scene, bool lighting)
 {
 	if (lighting)
 		return;
@@ -662,7 +694,37 @@ void Renderer::FillZ_Buffer(const glm::vec3& v1,const glm::vec3& v2,const glm::v
 					if (colorMeth == RANDOM_COLORED)
 						PutPixel(x, y, RandomColor);
 					if (!lighting)
-						PutPixel(x, y, color);
+					{
+						if (x < 0) continue; if (x >= viewport_width_) continue;
+						if (y < 0) continue; if (y >= viewport_height_) continue;
+						color_buffer_[INDEX(viewport_width_, x, y, 0)] = +color.x;
+						color_buffer_[INDEX(viewport_width_, x, y, 1)] = +color.y;
+						color_buffer_[INDEX(viewport_width_, x, y, 2)] = +color.z;
+					}
+				}
+			}
+		}
+}
+
+void Renderer::FillZ_Buffer(const glm::vec3& v1,const glm::vec3& v2,const glm::vec3& v3,Scene& scene)
+{
+	float minY = std::min(std::min(v1.y, v2.y), v3.y);
+	float maxY = std::max(std::max(v1.y, v2.y), v3.y);
+	float minX = std::min(std::min(v1.x, v2.x), v3.x);
+	float maxX = std::max(std::max(v1.x, v2.x), v3.x);
+	glm::vec3 RandomColor = RandColor();
+	for (int y = minY; y < maxY; y++)
+		for (int x = minX; x < maxX; x++)
+		{
+			if (ptInTriangle(glm::vec3(x, y, 0), v1, v2, v3))
+			{
+				glm::vec3 P(x, y, 1);
+				P = CalcZ(P, v1, v2, v3, v1, v2, v3);
+				if (P.z <= GetZ(x, y))
+				{
+					MaxZ = std::max(MaxZ, P.z);
+					MinZ = std::min(MinZ, P.z);
+					PutZ(x, y, P.z);
 				}
 			}
 		}
@@ -679,14 +741,14 @@ void Renderer::DrawLight(Light& light, Scene& scene)
 	glm::mat4x4 projectionTransformation = scene.GetActiveCamera().GetProjectionTransformation();
 	glm::mat4x4 ViewPortTransformation = Transformations::ScalingTransformation(half_width, half_height, 1) * Transformations::TranslationTransformation(1, 1, 1);
 	glm::mat4x4 C_inv = scene.GetActiveCamera().GetC_inv();
+	position = projectionTransformation * Lookat * C_inv * transformation * position;
+	if (!scene.GetActiveCamera().GetIsOrthographic())
+	{
+		position /= position.w;
+	}
+	position = ViewPortTransformation * position;
 	if (light.GetLightType() == LightType::POINT)
 	{
-		position = projectionTransformation * Lookat * C_inv * transformation * position;
-		if (!scene.GetActiveCamera().GetIsOrthographic())
-		{
-			position /= position.w;
-		}
-		position = ViewPortTransformation * position;
 		glm::vec3 v1(position.x, position.y +20, -position.z);
 		glm::vec3 v2(position.x - 20, position.y - 10, -position.z);
 		glm::vec3 v3(position.x + 20, position.y - 10, -position.z);
@@ -707,11 +769,6 @@ void Renderer::DrawLight(Light& light, Scene& scene)
 					}
 				}
 	}
-	//else
-	//{
-	//	glm::vec4 LightDirection = Transformations::ScalingTransformation(100, 100, 100) * glm::vec4(light.GetLightDirection(), 1) + position;
-	//	DrawLine(glm::vec3(position.x, position.y, position.z), glm::vec3(LightDirection.x, LightDirection.y, LightDirection.z),color);
-	//}
 }
 
 glm::vec3 Renderer::GetAmbientColor(const glm::vec3& Acolor,const glm::vec3& LightAcolor)
@@ -738,18 +795,19 @@ glm::vec3 Renderer::GetDiffuseColor(glm::vec3 normal, glm::vec3 I, Scene& scene)
 	return temp * IdotN;
 }
 
-void Renderer::ScanConvert_Phong(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, const glm::vec3& vn1, const glm::vec3& vn2, const glm::vec3& vn3, Scene& scene,glm::vec3 color,glm::vec3 LightPosition)
+void Renderer::ScanConvert_Phong(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, const glm::vec3& vn1, const glm::vec3& vn2, const glm::vec3& vn3, Scene& scene,glm::vec3 color,glm::vec3 LightPosition,Light& light)
 {
 	float minY = std::min(std::min(v1.y, v2.y), v3.y);
 	float maxY = std::max(std::max(v1.y, v2.y), v3.y);
 	float minX = std::min(std::min(v1.x, v2.x), v3.x);
 	float maxX = std::max(std::max(v1.x, v2.x), v3.x);
-	auto& light = scene.GetActiveLight();
 	glm::vec3 eye = scene.GetActiveCamera().GetEye();
 	glm::vec3 Scolor = scene.GetActiveModel().GetSpecularColor();
 	for (int y = minY; y < maxY; y++)
 		for (int x = minX; x < maxX; x++)
 		{
+			if (x < 0) continue; if (x >= viewport_width_) continue;
+			if (y < 0) continue; if (y >= viewport_height_) continue;
 			if (ptInTriangle(glm::vec3(x, y, 0), v1, v2, v3))
 			{
 				glm::vec3 P(x, y, 1);
@@ -757,16 +815,20 @@ void Renderer::ScanConvert_Phong(const glm::vec3& v1, const glm::vec3& v2, const
 				if (P.z <= GetZ(x, y))
 				{
 					glm::vec3 I = normalize(P - LightPosition);
-					PutZ(x, y, P.z);
 					glm::vec3 normal;
 					normal = CalcZ(P, v1, v2, v3, vn1, vn2, vn3);
-					color = GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), scene.GetActiveLight().GetAmbientLightColor());
+					color = GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), light.GetAmbientLightColor());
 					color += GetDiffuseColor(normal, I, scene);
-					color += GetSpecularColor(I, normal, eye, light, Scolor);//scene.GetActiveCamera().GetEye(), scene.GetActiveLight(), scene.GetActiveModel().GetSpecularColor());
-					color.x = color.x > 1.f ? 1.f : color.x;
-					color.y = color.y > 1.f ? 1.f : color.y;
-					color.z = color.z > 1.f ? 1.f : color.z;
-					PutPixel(x, y, color);
+					color += GetSpecularColor(I, normal, eye, light, Scolor);
+					//color.x > MaxC&& color.x > 1.f ? MaxC = color.x : MaxC = MaxC;
+					//color.y > MaxC&& color.y > 1.f ? MaxC = color.y : MaxC = MaxC;
+					//color.z > MaxC&& color.z > 1.f ? MaxC = color.z : MaxC = MaxC;
+					color_buffer_[INDEX(viewport_width_, x, y, 0)] += color.x;
+					color_buffer_[INDEX(viewport_width_, x, y, 1)] += color.y;
+					color_buffer_[INDEX(viewport_width_, x, y, 2)] += color.z;
+					//colors[INDEX(viewport_width_, x, y, 0)]> MaxC&& colors[INDEX(viewport_width_, x, y, 0)] > 1.f ? MaxC = colors[INDEX(viewport_width_, x, y, 0)] : MaxC = MaxC;
+					//colors[INDEX(viewport_width_, x, y, 1)] > MaxC&& colors[INDEX(viewport_width_, x, y, 1)] > 1.f ? MaxC = colors[INDEX(viewport_width_, x, y, 1)] : MaxC = MaxC;
+					//colors[INDEX(viewport_width_, x, y, 2)] > MaxC&& colors[INDEX(viewport_width_, x, y, 2)] > 1.f ? MaxC = colors[INDEX(viewport_width_, x, y, 2)] : MaxC = MaxC;
 				}
 			}
 		}
@@ -782,17 +844,50 @@ void Renderer::ScanConvert_Gouraud(const glm::vec3& v1, const glm::vec3& v2, con
 	for (int y = minY; y < maxY; y++)
 		for (int x = minX; x < maxX; x++)
 		{
+			if (x < 0) continue; if (x >= viewport_width_) continue;
+			if (y < 0) continue; if (y >= viewport_height_) continue;
 			if (ptInTriangle(glm::vec3(x, y, 0), v1, v2, v3))
 			{
 				glm::vec3 P(x, y, 1);
 				P = CalcZ(P, v1, v2, v3, v1, v2, v3);
 				if (P.z <= GetZ(x, y))
 				{
-					PutZ(x, y, P.z);
-					glm::vec3 color;
-					color = CalcZ(P, v1, v2, v3, c1, c2, c3);
-					PutPixel(x, y, color);
+					glm::vec3 color = CalcZ(P, v1, v2, v3, c1, c2, c3);
+					color_buffer_[INDEX(viewport_width_, x, y, 0)] += color.x;
+					color_buffer_[INDEX(viewport_width_, x, y, 1)] += color.y;
+					color_buffer_[INDEX(viewport_width_, x, y, 2)] += color.z;
+					//colors[INDEX(viewport_width_, x, y, 0)] > MaxC && colors[INDEX(viewport_width_, x, y, 0)] > 1.f ? MaxC = colors[INDEX(viewport_width_, x, y, 0)] : MaxC = MaxC;
+					//colors[INDEX(viewport_width_, x, y, 1)] > MaxC && colors[INDEX(viewport_width_, x, y, 1)] > 1.f ? MaxC = colors[INDEX(viewport_width_, x, y, 1)] : MaxC = MaxC;
+					//colors[INDEX(viewport_width_, x, y, 2)] > MaxC && colors[INDEX(viewport_width_, x, y, 2)] > 1.f ? MaxC = colors[INDEX(viewport_width_, x, y, 2)] : MaxC = MaxC;
 				}
 			}
 		}
+}
+
+void Renderer::ScanConvert_Grayscale()
+{
+	for (int i = 0; i < viewport_width_; i++)
+		for (int j = 0; j < viewport_height_; j++)
+		{
+			float z = Z_Buffer[Z_INDEX(viewport_width_, i, j)];
+			if (z != FLT_MAX)
+			{
+				float a = 1 / (MaxZ - MinZ);
+				float b = -1 * a * MinZ;
+				float gray = 1 - (a * z + b);
+				color_buffer_[INDEX(viewport_width_, i, j, 0)] = gray;
+				color_buffer_[INDEX(viewport_width_, i, j, 1)] = gray;
+				color_buffer_[INDEX(viewport_width_, i, j, 2)] = gray;
+			}
+		}
+}
+
+float Renderer::GetMinz()
+{
+	return MinZ;
+}
+
+float Renderer::GetMaxz()
+{
+	return MaxZ;
 }
