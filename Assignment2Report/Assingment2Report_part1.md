@@ -9,7 +9,7 @@
 # Now this picture after transforming the model with the same transformations as before but with the zbuffer no triangles overlap.
 ![GIF1](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/ZBuffer_BananaTransformed.JPG)
 # Now we will show the Cow model being colored in grayscale
-## It's obvious that two of the cow's legs are black colored because they are the "far" legs
+## It's obvious that two of the cow's legs are dark colored because they are the "far" legs
 ![GIF1](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/GrayScale_Cow.JPG)
-# Moving to perspective and applying camera transformation
+# applying camera rotations transformation
 ![GIF1](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/GrayScale_CowTransformed.JPG)
