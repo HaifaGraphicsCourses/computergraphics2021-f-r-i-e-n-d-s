@@ -25,7 +25,7 @@ public:
 	float CalcArea(const glm::vec3& v, const glm::vec3& u, const glm::vec3& w);
 	float sign(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3);
 	void FillZ_Buffer(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, Scene& scene);
-	void DrawLight(Light& light, Scene& scene);
+	void DrawLights(Scene& scene);
 	glm::vec3 GetAmbientColor(const glm::vec3& Acolor, const glm::vec3& LightAcolor);
 	glm::vec3 GetSpecularColor(glm::vec3& I, glm::vec3 n, const glm::vec3& eye, Light& light, const glm::vec3& Scolor);
 	glm::vec3 GetDiffuseColor(glm::vec3 normal, glm::vec3 I, Scene& scene);
@@ -53,4 +53,5 @@ private:
 	int viewport_height_;
 	GLuint gl_screen_tex_;
 	GLuint gl_screen_vtc_;
+	glm::vec4 parallelLights = glm::vec4(1800, 500, 0, 1);
 };

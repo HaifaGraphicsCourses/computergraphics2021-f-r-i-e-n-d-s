@@ -29,6 +29,8 @@ MeshModel::MeshModel(ModelParameters& model) :
 		Preffered_eye = glm::vec3(0, 0, 0.4);
 		minOrtho = 0.355;
 		maxOrtho = 1.145;
+		minDensity = 300;
+		maxDensity = 1000;
 	}
 	if (!name.compare("beethoven.obj"))
 	{
@@ -43,6 +45,8 @@ MeshModel::MeshModel(ModelParameters& model) :
 		Preffered_eye = glm::vec3(0, 0, 0.5);
 		minOrtho = 0.355;
 		maxOrtho = 1.145;
+		minDensity = 400;
+		maxDensity = 1000;
 	}
 	if (!name.compare("blob.obj"))
 	{
@@ -50,6 +54,8 @@ MeshModel::MeshModel(ModelParameters& model) :
 		Preffered_eye = glm::vec3(0, 0, 1000);
 		minOrtho = 150;
 		maxOrtho = 450;
+		minDensity = 1;
+		maxDensity = 10;
 	}
 	if (!name.compare("bunny.obj"))
 	{
@@ -57,6 +63,8 @@ MeshModel::MeshModel(ModelParameters& model) :
 		Preffered_eye = glm::vec3(0, 0, 4);
 		minOrtho = 3;
 		maxOrtho = 27;
+		minDensity = 50;
+		maxDensity = 200;
 	}
 	if (!name.compare("camera.obj"))
 	{
@@ -64,6 +72,8 @@ MeshModel::MeshModel(ModelParameters& model) :
 		Preffered_eye = glm::vec3(0, 0, 10);
 		minOrtho = 5;
 		maxOrtho = 40;
+		minDensity = 20;
+		maxDensity = 100;
 	}
 	if (!name.compare("chain.obj"))
 	{

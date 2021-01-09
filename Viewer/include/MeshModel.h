@@ -75,6 +75,7 @@ public:
 	void SetAmbientColor(glm::vec3& collor);
 	void SetSpecularColor(glm::vec3& collor);
 	glm::vec4 GetModelCenter();
+	float minDensity, maxDensity;
 
 private:
 	std::vector<bool> VerticesCheck;

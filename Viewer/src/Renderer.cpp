@@ -27,13 +27,13 @@ void Renderer::PutPixel(int i, int j, const glm::vec3& color)
 {
 	if (i < 0) return; if (i >= viewport_width_) return;
 	if (j < 0) return; if (j >= viewport_height_) return;
-	
+
 	color_buffer_[INDEX(viewport_width_, i, j, 0)] = color.x;
 	color_buffer_[INDEX(viewport_width_, i, j, 1)] = color.y;
 	color_buffer_[INDEX(viewport_width_, i, j, 2)] = color.z;
 }
 
-void Renderer::DrawLine(const glm::vec3& p1, const glm::vec3& p2,glm::vec3& color)
+void Renderer::DrawLine(const glm::vec3& p1, const glm::vec3& p2, glm::vec3& color)
 {
 	// TODO: Implement bresenham algorithm
 	int x = p1.x, y = p1.y, ReflectFlag = 0, LoopVar = p2.x;
@@ -62,141 +62,142 @@ void Renderer::DrawLine(const glm::vec3& p1, const glm::vec3& p2,glm::vec3& colo
 		}
 	}
 	else
-	if (deltaQ == 0)
-	{
-		if(deltaP>0)
-		while (x <= p2.x)
+		if (deltaQ == 0)
 		{
-			PutPixel(x, y, color);
-			x = x + 1;
-		}
-		else
-		{
-			while (x >= p2.x)
-			{
-                PutPixel(x, y, color);
-				x = x - 1;
-			}
-		}
-	}else
-		if (deltaP == 0)
-		{
-			if (deltaQ > 0)
-				while (y <= p2.y)
+			if (deltaP > 0)
+				while (x <= p2.x)
 				{
 					PutPixel(x, y, color);
-					y = y + 1;
+					x = x + 1;
 				}
 			else
-				while (y >= p2.y)
-				{
-					PutPixel(x, y, color);
-					y = y - 1;
-				}
-		}
-		else
-	if (a > 1 && !(a < -1)) //switch x and y
-	{
-		x = p1.y;
-		y = p1.x;
-		deltaQ = deltaP;
-		deltaP = (p2.y - p1.y);
-		if (deltaQ > 0 && deltaP > 0) {
-			while (x <= p2.y)
 			{
-				if (e > 0)
-				{
-					y = y + 1;
-					e = e - (2 * deltaP);
-				}
-				PutPixel(y, x, color);
-				x = x + 1;
-				e = e + (2 * deltaQ);
-			}
-		}
-		else
-			DrawLine(p2, p1, color);
-	}
-	else
-	if ((a > -1 && a < 0) && !(a < -1)) //reflect 
-	{
-		if (deltaQ < 0) {
-			deltaQ = (-1) * deltaQ;
-			while (x <= p2.x)
-			{
-				if (e > 0)
-				{
-					y = y - 1;
-					e = e - (2 * deltaP);
-				}
-			    PutPixel(x, y, color);
-				x = x + 1;
-				e = e + (2 * deltaQ);
-			}
-		}
-		else
-		{
-			deltaP = (-1) * deltaP;
 				while (x >= p2.x)
 				{
-					if (e > 0)
-					{
-						if (y < p2.y)
-							y = y + 1;
-						e = e - (2 * deltaP);
-					}
 					PutPixel(x, y, color);
 					x = x - 1;
-					e = e + (2 * deltaQ);
 				}
-		}
-	}
-	else
-	if (a < -1)//swtich and reflect
-	{
-		x = p1.y;
-		y = p1.x;
-		deltaQ = deltaP;
-		deltaP = (p2.y - p1.y);
-		LoopVar = p2.y;
-		if (deltaQ < 0) {
-			deltaP = (-1) * deltaP;
-			while (x <= LoopVar)
-			{
-				if (e < 0)
-				{
-					y = y - 1;
-					e = e - (2 * deltaP);
-				}
-				PutPixel(y, x, color);
-				x = x + 1;
-				e = e + (2 * deltaQ);
 			}
 		}
 		else
-			DrawLine(p2, p1, color);
-	}
-	else
-	{
-		if (deltaP > 0 && deltaQ > 0) {
-			while (x <= p2.x)
+			if (deltaP == 0)
 			{
-				if (e > 0)
-				{
-					y = y + 1;
-					e = e - (2 * deltaP);
-				}
-				PutPixel(x, y, color);
-				x = x + 1;
-				e = e + (2 * deltaQ);
+				if (deltaQ > 0)
+					while (y <= p2.y)
+					{
+						PutPixel(x, y, color);
+						y = y + 1;
+					}
+				else
+					while (y >= p2.y)
+					{
+						PutPixel(x, y, color);
+						y = y - 1;
+					}
 			}
-		}
-		else
-			DrawLine(p2, p1, color);
-	}
+			else
+				if (a > 1 && !(a < -1)) //switch x and y
+				{
+					x = p1.y;
+					y = p1.x;
+					deltaQ = deltaP;
+					deltaP = (p2.y - p1.y);
+					if (deltaQ > 0 && deltaP > 0) {
+						while (x <= p2.y)
+						{
+							if (e > 0)
+							{
+								y = y + 1;
+								e = e - (2 * deltaP);
+							}
+							PutPixel(y, x, color);
+							x = x + 1;
+							e = e + (2 * deltaQ);
+						}
+					}
+					else
+						DrawLine(p2, p1, color);
+				}
+				else
+					if ((a > -1 && a < 0) && !(a < -1)) //reflect 
+					{
+						if (deltaQ < 0) {
+							deltaQ = (-1) * deltaQ;
+							while (x <= p2.x)
+							{
+								if (e > 0)
+								{
+									y = y - 1;
+									e = e - (2 * deltaP);
+								}
+								PutPixel(x, y, color);
+								x = x + 1;
+								e = e + (2 * deltaQ);
+							}
+						}
+						else
+						{
+							deltaP = (-1) * deltaP;
+							while (x >= p2.x)
+							{
+								if (e > 0)
+								{
+									if (y < p2.y)
+										y = y + 1;
+									e = e - (2 * deltaP);
+								}
+								PutPixel(x, y, color);
+								x = x - 1;
+								e = e + (2 * deltaQ);
+							}
+						}
+					}
+					else
+						if (a < -1)//swtich and reflect
+						{
+							x = p1.y;
+							y = p1.x;
+							deltaQ = deltaP;
+							deltaP = (p2.y - p1.y);
+							LoopVar = p2.y;
+							if (deltaQ < 0) {
+								deltaP = (-1) * deltaP;
+								while (x <= LoopVar)
+								{
+									if (e < 0)
+									{
+										y = y - 1;
+										e = e - (2 * deltaP);
+									}
+									PutPixel(y, x, color);
+									x = x + 1;
+									e = e + (2 * deltaQ);
+								}
+							}
+							else
+								DrawLine(p2, p1, color);
+						}
+						else
+						{
+							if (deltaP > 0 && deltaQ > 0) {
+								while (x <= p2.x)
+								{
+									if (e > 0)
+									{
+										y = y + 1;
+										e = e - (2 * deltaP);
+									}
+									PutPixel(x, y, color);
+									x = x + 1;
+									e = e + (2 * deltaQ);
+								}
+							}
+							else
+								DrawLine(p2, p1, color);
+						}
 }
 
-void Renderer::CreateBuffers(const int w,const int h)
+void Renderer::CreateBuffers(const int w, const int h)
 {
 	CreateOpenGLBuffer(); //Do not remove this line.
 	color_buffer_ = new float[3 * w * h];
@@ -226,7 +227,7 @@ void Renderer::InitOpenGLRendering()
 	//	     | \ | <--- The exture is drawn over two triangles that stretch over the screen.
 	//	     |__\|
 	// (-1,-1)    (1,-1)
-	const GLfloat vtc[]={
+	const GLfloat vtc[] = {
 		-1, -1,
 		 1, -1,
 		-1,  1,
@@ -235,19 +236,19 @@ void Renderer::InitOpenGLRendering()
 		 1,  1
 	};
 
-	const GLfloat tex[]={
+	const GLfloat tex[] = {
 		0,0,
 		1,0,
 		0,1,
 		0,1,
 		1,0,
-		1,1};
+		1,1 };
 
 	// Makes this buffer the current one.
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 
 	// This is the opengl way for doing malloc on the gpu. 
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vtc)+sizeof(tex), NULL, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vtc) + sizeof(tex), NULL, GL_STATIC_DRAW);
 
 	// memcopy vtc to buffer[0,sizeof(vtc)-1]
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vtc), vtc);
@@ -256,25 +257,25 @@ void Renderer::InitOpenGLRendering()
 	glBufferSubData(GL_ARRAY_BUFFER, sizeof(vtc), sizeof(tex), tex);
 
 	// Loads and compiles a sheder.
-	GLuint program = InitShader( "vshader.glsl", "fshader.glsl" );
+	GLuint program = InitShader("vshader.glsl", "fshader.glsl");
 
 	// Make this program the current one.
 	glUseProgram(program);
 
 	// Tells the shader where to look for the vertex position data, and the data dimensions.
-	GLint  vPosition = glGetAttribLocation( program, "vPosition" );
-	glEnableVertexAttribArray( vPosition );
-	glVertexAttribPointer( vPosition,2,GL_FLOAT,GL_FALSE,0,0 );
+	GLint  vPosition = glGetAttribLocation(program, "vPosition");
+	glEnableVertexAttribArray(vPosition);
+	glVertexAttribPointer(vPosition, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 	// Same for texture coordinates data.
-	GLint  vTexCoord = glGetAttribLocation( program, "vTexCoord" );
-	glEnableVertexAttribArray( vTexCoord );
-	glVertexAttribPointer( vTexCoord,2,GL_FLOAT,GL_FALSE,0,(GLvoid *)sizeof(vtc) );
+	GLint  vTexCoord = glGetAttribLocation(program, "vTexCoord");
+	glEnableVertexAttribArray(vTexCoord);
+	glVertexAttribPointer(vTexCoord, 2, GL_FLOAT, GL_FALSE, 0, (GLvoid*)sizeof(vtc));
 
 	//glProgramUniform1i( program, glGetUniformLocation(program, "texture"), 0 );
 
 	// Tells the shader to use GL_TEXTURE0 as the texture id.
-	glUniform1i(glGetUniformLocation(program, "texture"),0);
+	glUniform1i(glGetUniformLocation(program, "texture"), 0);
 }
 
 void Renderer::CreateOpenGLBuffer()
@@ -322,9 +323,9 @@ void Renderer::ClearZ_Buffer()
 			if (i < 0) return; if (i >= viewport_width_) return;
 			if (j < 0) return; if (j >= viewport_height_) return;
 			Z_Buffer[Z_INDEX(viewport_width_, i, j)] = FLT_MAX;
-			//color_buffer_[INDEX(viewport_width_, i, j, 0)] = 0.f;
-			//color_buffer_[INDEX(viewport_width_, i, j, 1)] = 0.f;
-			//color_buffer_[INDEX(viewport_width_, i, j, 2)] = 0.f;
+			color_buffer_[INDEX(viewport_width_, i, j, 0)] = 0.f;
+			color_buffer_[INDEX(viewport_width_, i, j, 1)] = 0.f;
+			color_buffer_[INDEX(viewport_width_, i, j, 2)] = 0.f;
 		}
 	}
 }
@@ -342,7 +343,6 @@ void Renderer::ClearColorBuffer(const glm::vec3& color)
 
 void Renderer::Render(Scene& scene)
 {
-	ClearZ_Buffer();
 	MaxC = FLT_MIN;
 	int half_width = viewport_width_ / 2;
 	int half_height = viewport_height_ / 2;
@@ -358,45 +358,40 @@ void Renderer::Render(Scene& scene)
 	glm::vec4 LightPosition;
 	glm::vec3 LightDirection;
 	if (scene.GetLightCount())
+		DrawLights(scene);
+	if (scene.GetModelCount() > 0)
 	{
-		for (int i = 0; i < scene.GetLightCount(); i++)
-		{
-			auto& light = scene.GetLight(i);
-			DrawLight(light, scene);
-		}
-	}
-	if (scene.GetModelCount() > 0) {
 		glm::mat4x4 Lookat = scene.GetActiveCamera().GetLookAt();
 		glm::mat4x4 projectionTransformation = (scene.GetActiveCamera().GetProjectionTransformation());
 		glm::mat4x4 ViewPortTransformation = Transformations::ScalingTransformation(half_width, half_height, 1) * Transformations::TranslationTransformation(1, 1, 1);
 		glm::mat4x4 C_inv = scene.GetActiveCamera().GetC_inv();
-		if(scene.GetActiveModel().GetColorMethod()!=RANDOM_COLORED)
-		for (int i = 0; i < scene.GetModelCount(); i++)
-		{
-			auto model = scene.GetModel(i);
-			glm::mat4x4 Transformation = model.GetTransformation();
-			for (int i = 0; i < model.GetFacesCount(); i++)
+		if (scene.GetActiveModel().GetColorMethod() != RANDOM_COLORED)
+			for (int i = 0; i < scene.GetModelCount(); i++)
 			{
-				Face face = model.GetFace(i);
-				int VertexIndex1 = face.GetVertexIndex(0), VertexIndex2 = face.GetVertexIndex(1), VertexIndex3 = face.GetVertexIndex(2);
-				glm::vec3 v1Temp = model.GetVertex(VertexIndex1);
-				glm::vec3 v2Temp = model.GetVertex(VertexIndex2);
-				glm::vec3 v3Temp = model.GetVertex(VertexIndex3);
-				glm::vec4 v1 = projectionTransformation * Lookat * C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex1), 1);
-				glm::vec4 v2 = projectionTransformation * Lookat * C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex2), 1);
-				glm::vec4 v3 = projectionTransformation * Lookat * C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex3), 1);
-				if (!scene.GetActiveCamera().GetIsOrthographic())
+				auto model = scene.GetModel(i);
+				glm::mat4x4 Transformation = model.GetTransformation();
+				for (int i = 0; i < model.GetFacesCount(); i++)
 				{
-					v1 /= v1.w;
-					v2 /= v2.w;
-					v3 /= v3.w;
+					Face face = model.GetFace(i);
+					int VertexIndex1 = face.GetVertexIndex(0), VertexIndex2 = face.GetVertexIndex(1), VertexIndex3 = face.GetVertexIndex(2);
+					glm::vec3 v1Temp = model.GetVertex(VertexIndex1);
+					glm::vec3 v2Temp = model.GetVertex(VertexIndex2);
+					glm::vec3 v3Temp = model.GetVertex(VertexIndex3);
+					glm::vec4 v1 = projectionTransformation * Lookat * C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex1), 1);
+					glm::vec4 v2 = projectionTransformation * Lookat * C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex2), 1);
+					glm::vec4 v3 = projectionTransformation * Lookat * C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex3), 1);
+					if (!scene.GetActiveCamera().GetIsOrthographic())
+					{
+						v1 /= v1.w;
+						v2 /= v2.w;
+						v3 /= v3.w;
+					}
+					v1 = ViewPortTransformation * v1;
+					v2 = ViewPortTransformation * v2;
+					v3 = ViewPortTransformation * v3;
+					FillZ_Buffer(v1, v2, v3, scene);
 				}
-				v1 = ViewPortTransformation * v1;
-				v2 = ViewPortTransformation * v2;
-				v3 = ViewPortTransformation * v3;
-				FillZ_Buffer(v1, v2, v3, scene);
 			}
-		}
 		for (int i = 0; i < scene.GetModelCount(); i++)
 		{
 			auto model = scene.GetModel(i);
@@ -487,7 +482,7 @@ void Renderer::Render(Scene& scene)
 						ScanConvert_Phong(v1, v2, v3, (vn1), (vn2), (vn3), scene, GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), light.GetAmbientLightColor()), LightPosition, light);
 					}
 				}
-				if ((scene.GetShadingtype() == ShadingType::FLAT || scene.GetActiveModel().GetColorMethod() == GRAYSCALE)&&scene.GetActiveModel().GetColorMethod()!=RANDOM_COLORED)
+				if ((scene.GetShadingtype() == ShadingType::FLAT || scene.GetActiveModel().GetColorMethod() == GRAYSCALE) && scene.GetActiveModel().GetColorMethod() != RANDOM_COLORED)
 					ScanConvert_Flat(v1, v2, v3, scene.GetActiveModel().GetColorMethod(), color, scene, Lighting);
 
 				//Draw X and Y Axes
@@ -511,7 +506,7 @@ void Renderer::Render(Scene& scene)
 				if (model.GetFacesNormalsFlag())
 					DrawLine(glm::vec3(FaceCenter.x, FaceCenter.y, FaceCenter.z), glm::vec3(FaceNormal.x, FaceNormal.y, FaceNormal.z), model.GetFN());
 			}
-		//Draw the bounding box
+			//Draw the bounding box
 			if (model.GetBoundingBoxFlag())
 			{
 				glm::vec4 leftTopNear = projectionTransformation * Lookat * C_inv * Transformation * model.GetLeftTopNear();
@@ -555,7 +550,7 @@ void Renderer::Render(Scene& scene)
 				DrawLine(glm::vec3(rightBottomFar.x, rightBottomFar.y, rightBottomFar.z), glm::vec3(rightBottomNear.x, rightBottomNear.y, rightBottomNear.z), model.GetBB());
 			}
 		}
-		if (scene.GetActiveModel().GetColorMethod()== GRAYSCALE)
+		if (scene.GetActiveModel().GetColorMethod() == GRAYSCALE)
 			ScanConvert_Grayscale();
 		if (scene.GetFog())
 			FogExists(scene);
@@ -571,7 +566,7 @@ int Renderer::GetViewportHeight() const
 {
 	return viewport_height_;
 }
- 
+
 void Renderer::SetViewportWidth(int w)
 {
 	viewport_width_ = w;
@@ -593,7 +588,7 @@ void Renderer::FogExists(Scene& scene)
 	scene.SetFogEnd(MaxZ);
 	int half_width = viewport_width_ / 2;
 	int half_height = viewport_height_ / 2;
-	glm::mat4x4 viewportmat= Transformations::ScalingTransformation(half_width, half_height, 1) * Transformations::TranslationTransformation(1, 1, 1);
+	glm::mat4x4 viewportmat = Transformations::ScalingTransformation(half_width, half_height, 1) * Transformations::TranslationTransformation(1, 1, 1);
 	glm::mat4x4 graphicpipline = scene.GetActiveCamera().GetProjectionTransformation() * scene.GetActiveCamera().GetLookAt() * scene.GetActiveCamera().GetC_inv() * glm::inverse(scene.GetActiveCamera().GetC_inv());
 	glm::vec3 c;
 	for (int i = 0; i < viewport_width_; i++)
@@ -606,18 +601,18 @@ void Renderer::FogExists(Scene& scene)
 				float vertexViewDistance = z;
 				float fogFactor;
 				if (scene.GetIsLinearFog())
-				    {
-						if (!scene.GetActiveCamera().GetIsOrthographic())
-							int x = 3;
-						fogFactor =(scene.GetFogEnd() - vertexViewDistance) / (scene.GetFogEnd() - scene.GetFogStart());
-					}
+				{
+					if (!scene.GetActiveCamera().GetIsOrthographic())
+						int x = 3;
+					fogFactor = (scene.GetFogEnd() - vertexViewDistance) / (scene.GetFogEnd() - scene.GetFogStart());
+				}
 				else
-					{
-						fogFactor = std::exp(-(vertexViewDistance*vertexViewDistance*scene.GetFogDensity() * scene.GetFogDensity()));
-						if (fogFactor < 0 || fogFactor > 1)
-							fogFactor = 1;
-					}
-				c = ((1 - fogFactor) * glm::vec3(0.3, 0.3, 0.3) + fogFactor * c);
+				{
+					fogFactor = std::exp(-(vertexViewDistance * vertexViewDistance * scene.GetFogDensity() * scene.GetFogDensity()));
+					if (fogFactor < 0 || fogFactor > 1)
+						fogFactor = 1;
+				}
+				c = ((1 - fogFactor) * glm::vec3(0.4, 0.4, 0.4) + fogFactor * c);
 				color_buffer_[INDEX(viewport_width_, i, j, 0)] = c.x;
 				color_buffer_[INDEX(viewport_width_, i, j, 1)] = c.y;
 				color_buffer_[INDEX(viewport_width_, i, j, 2)] = c.z;
@@ -630,7 +625,7 @@ float Renderer::CalcArea(const glm::vec3& v1, const glm::vec3& v2, const glm::ve
 	return abs(((v2.x - v1.x) * (v3.y - v1.y) - (v3.x - v1.x) * (v2.y - v1.y)) / 2.0f);
 }
 
-glm::vec3 Renderer::CalcZ(glm::vec3& P, const glm::vec3& v1, const glm::vec3& v2,const glm::vec3& v3, const glm::vec3& value1, const glm::vec3& value2, const glm::vec3& value3)
+glm::vec3 Renderer::CalcZ(glm::vec3& P, const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, const glm::vec3& value1, const glm::vec3& value2, const glm::vec3& value3)
 {
 	float A;
 	float A1 = CalcArea(P, v1, v2);
@@ -648,7 +643,7 @@ float Renderer::sign(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& 
 bool Renderer::ptInTriangle(const glm::vec3& pt, const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3) {
 	float d1, d2, d3;
 	bool has_neg, has_pos;
-	
+
 	d1 = sign(pt, v1, v2);
 	d2 = sign(pt, v2, v3);
 	d3 = sign(pt, v3, v1);
@@ -661,7 +656,7 @@ float Renderer::GetZ(int i, int j) const
 {
 	if (i < 0) return FLT_MAX; if (i >= viewport_width_) return FLT_MAX;
 	if (j < 0) return FLT_MAX; if (j >= viewport_height_) return FLT_MAX;
-	return Z_Buffer[Z_INDEX(viewport_width_,i,j)];
+	return Z_Buffer[Z_INDEX(viewport_width_, i, j)];
 }
 
 void Renderer::PutZ(int i, int j, float z)
@@ -696,22 +691,24 @@ void Renderer::ScanConvert_Flat(const glm::vec3& v1, const glm::vec3& v2, const 
 					{
 						if (x < 0) continue; if (x >= viewport_width_) continue;
 						if (y < 0) continue; if (y >= viewport_height_) continue;
-						color_buffer_[INDEX(viewport_width_, x, y, 0)] = +color.x;
-						color_buffer_[INDEX(viewport_width_, x, y, 1)] = +color.y;
-						color_buffer_[INDEX(viewport_width_, x, y, 2)] = +color.z;
+						color_buffer_[INDEX(viewport_width_, x, y, 0)] += color.x;
+						color_buffer_[INDEX(viewport_width_, x, y, 1)] += color.y;
+						color_buffer_[INDEX(viewport_width_, x, y, 2)] += color.z;
+						color_buffer_[INDEX(viewport_width_, x, y, 0)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 0)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 0)] : MaxC = MaxC;
+						color_buffer_[INDEX(viewport_width_, x, y, 1)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 1)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 1)] : MaxC = MaxC;
+						color_buffer_[INDEX(viewport_width_, x, y, 2)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 2)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 2)] : MaxC = MaxC;
 					}
 				}
 			}
 		}
 }
 
-void Renderer::FillZ_Buffer(const glm::vec3& v1,const glm::vec3& v2,const glm::vec3& v3,Scene& scene)
+void Renderer::FillZ_Buffer(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, Scene& scene)
 {
 	float minY = std::min(std::min(v1.y, v2.y), v3.y);
 	float maxY = std::max(std::max(v1.y, v2.y), v3.y);
 	float minX = std::min(std::min(v1.x, v2.x), v3.x);
 	float maxX = std::max(std::max(v1.x, v2.x), v3.x);
-	glm::vec3 RandomColor = RandColor();
 	for (int y = minY; y < maxY; y++)
 		for (int x = minX; x < maxX; x++)
 		{
@@ -724,6 +721,9 @@ void Renderer::FillZ_Buffer(const glm::vec3& v1,const glm::vec3& v2,const glm::v
 					MaxZ = std::max(MaxZ, P.z);
 					MinZ = std::min(MinZ, P.z);
 					PutZ(x, y, P.z);
+					color_buffer_[INDEX(viewport_width_, x, y, 0)] = 0.f;
+					color_buffer_[INDEX(viewport_width_, x, y, 1)] = 0.f;
+					color_buffer_[INDEX(viewport_width_, x, y, 2)] = 0.f;
 				}
 			}
 		}
@@ -752,58 +752,72 @@ void Renderer::ScanConvert_ZBuffer(const glm::vec3& v1, const glm::vec3& v2, con
 			}
 }
 
-void Renderer::DrawLight(Light& light, Scene& scene)
+void Renderer::DrawLights(Scene& scene)
 {
 	int half_width = viewport_width_ / 2;
 	int half_height = viewport_height_ / 2;
-	glm::mat4x4 transformation = light.GetWorldTransformation() * light.GetLocalTransformation();
-	glm::vec4 position = light.GetLightPosition();
 	glm::vec3 color = glm::vec3(1, 1, 1);
 	glm::mat4x4 Lookat = scene.GetActiveCamera().GetLookAt();
 	glm::mat4x4 projectionTransformation = scene.GetActiveCamera().GetProjectionTransformation();
 	glm::mat4x4 ViewPortTransformation = Transformations::ScalingTransformation(half_width, half_height, 1) * Transformations::TranslationTransformation(1, 1, 1);
 	glm::mat4x4 C_inv = scene.GetActiveCamera().GetC_inv();
-	position = projectionTransformation * Lookat * C_inv * transformation * position;
-	if (!scene.GetActiveCamera().GetIsOrthographic())
+	for (int i = 0; i < scene.GetLightCount(); i++)
 	{
-		position /= position.w;
-	}
-	position = ViewPortTransformation * position;
-	if (light.GetLightType() == LightType::POINT)
-	{
-		glm::vec3 v1(position.x, position.y +20, -position.z);
-		glm::vec3 v2(position.x - 20, position.y - 10, -position.z);
-		glm::vec3 v3(position.x + 20, position.y - 10, -position.z);
-		float minY = std::min(std::min(v1.y, v2.y), v3.y);
-		float maxY = std::max(std::max(v1.y, v2.y), v3.y);
-		float minX = std::min(std::min(v1.x, v2.x), v3.x);
-		float maxX = std::max(std::max(v1.x, v2.x), v3.x);
-		for (int y = minY; y < maxY; y++)
-			for (int x = minX; x < maxX; x++)
-				if (ptInTriangle(glm::vec3(x, y, 0), v1, v2, v3))
-				{
-					glm::vec3 P(x, y, 1);
-					P = CalcZ(P, v1, v2, v3, v1, v2, v3);
-					if (P.z < GetZ(x, y))
+		auto& light = scene.GetLight(i);
+		glm::mat4x4 transformation = light.GetWorldTransformation() * light.GetLocalTransformation();
+		if (light.GetLightType() == LightType::POINT)
+		{
+			glm::vec4 position = light.GetLightPosition();
+			position = projectionTransformation * Lookat * C_inv * transformation * position;
+			if (!scene.GetActiveCamera().GetIsOrthographic())
+			{
+				position /= position.w;
+			}
+			position = ViewPortTransformation * position;
+			glm::vec3 v1(position.x, position.y + 20, -position.z);
+			glm::vec3 v2(position.x - 20, position.y - 10, -position.z);
+			glm::vec3 v3(position.x + 20, position.y - 10, -position.z);
+			float minY = v2.y;
+			float maxY = v1.y;
+			float minX = v2.x;
+			float maxX = v3.x;
+			for (int y = minY; y < maxY; y++)
+				for (int x = minX; x < maxX; x++)
+					if (ptInTriangle(glm::vec3(x, y, 0), v1, v2, v3))
 					{
-						PutPixel(x, y, color);
-						PutZ(x, y, P.z);
+						glm::vec3 P(x, y, 1);
+						P = CalcZ(P, v1, v2, v3, v1, v2, v3);
+						if (P.z < GetZ(x, y))
+						{
+							PutPixel(x, y, color);
+							PutZ(x, y, P.z);
+						}
 					}
-				}
+		}
+		else
+		{
+			glm::vec4 direction = glm::vec4(normalize(light.GetLightDirection()), 1);
+			direction = transformation * direction;
+			direction = Transformations::ScalingTransformation(50, 50, 50) * direction + parallelLights;
+			DrawLine(glm::vec3(parallelLights.x, parallelLights.y, parallelLights.z), glm::vec3(direction.x, direction.y, direction.z), color);
+			DrawLine(glm::vec3(parallelLights.x + 10, parallelLights.y, parallelLights.z), glm::vec3(direction.x + 10, direction.y, direction.z), color);
+			DrawLine(glm::vec3(parallelLights.x + 20, parallelLights.y, parallelLights.z), glm::vec3(direction.x + 20, direction.y, direction.z), color);
+			DrawLine(glm::vec3(parallelLights.x + 30, parallelLights.y, parallelLights.z), glm::vec3(direction.x + 30, direction.y, direction.z), color);
+		}
 	}
 }
 
-glm::vec3 Renderer::GetAmbientColor(const glm::vec3& Acolor,const glm::vec3& LightAcolor)
+glm::vec3 Renderer::GetAmbientColor(const glm::vec3& Acolor, const glm::vec3& LightAcolor)
 {
 	glm::vec3 I_a(Acolor.x * LightAcolor.x, Acolor.y * LightAcolor.y, Acolor.z * LightAcolor.z);
 	return I_a;
 }
 
-glm::vec3 Renderer::GetSpecularColor(glm::vec3& I, glm::vec3 n,const glm::vec3& eye,Light& light,const glm::vec3& Scolor)
+glm::vec3 Renderer::GetSpecularColor(glm::vec3& I, glm::vec3 n, const glm::vec3& eye, Light& light, const glm::vec3& Scolor)
 {
 	int alpha = light.GetAlpha();
 	glm::vec3 temp = glm::vec3(Scolor.x * light.GetSpecularLightColor().x, Scolor.y * light.GetSpecularLightColor().y, Scolor.z * light.GetSpecularLightColor().z);
-	glm::vec3 r =( 2.f * glm::dot(-n,I) * n - I);
+	glm::vec3 r = (2.f * glm::dot(-n, I) * n - I);
 	float Power = (std::pow(std::max(0.0f, glm::dot((r), (eye))), alpha));
 	glm::vec3 I_s(temp * Power);
 	return I_s;
@@ -817,7 +831,7 @@ glm::vec3 Renderer::GetDiffuseColor(glm::vec3 normal, glm::vec3 I, Scene& scene)
 	return temp * IdotN;
 }
 
-void Renderer::ScanConvert_Phong(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, const glm::vec3& vn1, const glm::vec3& vn2, const glm::vec3& vn3, Scene& scene,glm::vec3 color,glm::vec3 LightPosition,Light& light)
+void Renderer::ScanConvert_Phong(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, const glm::vec3& vn1, const glm::vec3& vn2, const glm::vec3& vn3, Scene& scene, glm::vec3 color, glm::vec3 LightPosition, Light& light)
 {
 	float minY = std::min(std::min(v1.y, v2.y), v3.y);
 	float maxY = std::max(std::max(v1.y, v2.y), v3.y);
@@ -845,6 +859,9 @@ void Renderer::ScanConvert_Phong(const glm::vec3& v1, const glm::vec3& v2, const
 					color_buffer_[INDEX(viewport_width_, x, y, 0)] += color.x;
 					color_buffer_[INDEX(viewport_width_, x, y, 1)] += color.y;
 					color_buffer_[INDEX(viewport_width_, x, y, 2)] += color.z;
+					color_buffer_[INDEX(viewport_width_, x, y, 0)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 0)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 0)] : MaxC = MaxC;
+					color_buffer_[INDEX(viewport_width_, x, y, 1)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 1)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 1)] : MaxC = MaxC;
+					color_buffer_[INDEX(viewport_width_, x, y, 2)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 2)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 2)] : MaxC = MaxC;
 				}
 			}
 		}
@@ -872,9 +889,9 @@ void Renderer::ScanConvert_Gouraud(const glm::vec3& v1, const glm::vec3& v2, con
 					color_buffer_[INDEX(viewport_width_, x, y, 0)] += color.x;
 					color_buffer_[INDEX(viewport_width_, x, y, 1)] += color.y;
 					color_buffer_[INDEX(viewport_width_, x, y, 2)] += color.z;
-					//colors[INDEX(viewport_width_, x, y, 0)] > MaxC && colors[INDEX(viewport_width_, x, y, 0)] > 1.f ? MaxC = colors[INDEX(viewport_width_, x, y, 0)] : MaxC = MaxC;
-					//colors[INDEX(viewport_width_, x, y, 1)] > MaxC && colors[INDEX(viewport_width_, x, y, 1)] > 1.f ? MaxC = colors[INDEX(viewport_width_, x, y, 1)] : MaxC = MaxC;
-					//colors[INDEX(viewport_width_, x, y, 2)] > MaxC && colors[INDEX(viewport_width_, x, y, 2)] > 1.f ? MaxC = colors[INDEX(viewport_width_, x, y, 2)] : MaxC = MaxC;
+					color_buffer_[INDEX(viewport_width_, x, y, 0)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 0)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 0)] : MaxC = MaxC;
+					color_buffer_[INDEX(viewport_width_, x, y, 1)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 1)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 1)] : MaxC = MaxC;
+					color_buffer_[INDEX(viewport_width_, x, y, 2)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 2)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 2)] : MaxC = MaxC;
 				}
 			}
 		}

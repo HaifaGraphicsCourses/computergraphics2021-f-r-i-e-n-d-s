@@ -388,22 +388,11 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 					scene.SetIsLinearFog(false);
 				}
 
-				if (fogType == 0)
-				{
-					if (ImGui::SliderFloat("Fog Start", &fogStart, -1, 1))
-					{
-						scene.SetFogStart(fogStart);
-					}
-					if (ImGui::SliderFloat("Fog End", &fogEnd, -1, 1))
-					{
-						scene.SetFogEnd(fogEnd);
-					}
-				}
-				else
+				if (fogType == 1)
 				{
 					static float fogDensity;
 					fogDensity = scene.GetFogDensity();
-					if (ImGui::SliderFloat("Fog Density", &fogDensity, -20, 10))// 0.001, 0.2))
+					if (ImGui::SliderFloat("Fog Density", &fogDensity, scene.GetActiveModel().minDensity, scene.GetActiveModel().maxDensity))
 					{
 						scene.SetFogDensity(fogDensity);
 					}
@@ -764,7 +753,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 							ImGui::RadioButton("Rotate", &TransformationType_, 1);
 							if (IsWorld_)
 							{
-								if (!TransformationType_)
+								if (!TransformationType_ && light.GetLightType()!=LightType::PARALLEL)
 								{
 									ImGui::SliderFloat("Translate in X", &WTranslateX_, -115, 115);
 									ImGui::SliderFloat("Translate in y", &WTranslateY_, -85, 85);
@@ -795,7 +784,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 									scene.GetActiveLight().SetRotationMatrix((AngleZ_), false, 3);
 								}
 								else
-									if (!TransformationType_)
+									if (!TransformationType_ && light.GetLightType() != LightType::PARALLEL)
 									{
 										ImGui::SliderFloat("Translate in X", &TranslateX_, -115, 115);
 										ImGui::SliderFloat("Translate in y", &TranslateY_, -85, 85);
