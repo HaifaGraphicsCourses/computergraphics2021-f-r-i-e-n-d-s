@@ -14,4 +14,8 @@ Without the Z_buufer       |  With the Z_buffer
 ## It's obvious that two of the cow's legs are dark colored because they are the "far" legs
 ![GIF1](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/GrayScale_Cow.JPG)
 # applying camera rotations transformation
+<<<<<<< HEAD
 ![GIF1](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/GrayScale_CowTransformed.JPG)
+=======
+![GIF1](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/GrayScale_CowTransformed.JPG)
+>>>>>>> e13457ce83e06ad33af933b3404c7a27ab90fd42
