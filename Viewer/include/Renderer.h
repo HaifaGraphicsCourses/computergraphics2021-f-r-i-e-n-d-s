@@ -36,6 +36,7 @@ public:
 	void ScanConvert_Grayscale();
 	float GetMinz();
 	float GetMaxz();
+	void ScanConvert_ZBuffer(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, Scene& scene);
 
 private:
 	void PutPixel(const int i, const int j, const glm::vec3& color);

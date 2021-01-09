@@ -322,9 +322,9 @@ void Renderer::ClearZ_Buffer()
 			if (i < 0) return; if (i >= viewport_width_) return;
 			if (j < 0) return; if (j >= viewport_height_) return;
 			Z_Buffer[Z_INDEX(viewport_width_, i, j)] = FLT_MAX;
-			color_buffer_[INDEX(viewport_width_, i, j, 0)] = 0.f;
-			color_buffer_[INDEX(viewport_width_, i, j, 1)] = 0.f;
-			color_buffer_[INDEX(viewport_width_, i, j, 2)] = 0.f;
+			//color_buffer_[INDEX(viewport_width_, i, j, 0)] = 0.f;
+			//color_buffer_[INDEX(viewport_width_, i, j, 1)] = 0.f;
+			//color_buffer_[INDEX(viewport_width_, i, j, 2)] = 0.f;
 		}
 	}
 }
@@ -370,6 +370,7 @@ void Renderer::Render(Scene& scene)
 		glm::mat4x4 projectionTransformation = (scene.GetActiveCamera().GetProjectionTransformation());
 		glm::mat4x4 ViewPortTransformation = Transformations::ScalingTransformation(half_width, half_height, 1) * Transformations::TranslationTransformation(1, 1, 1);
 		glm::mat4x4 C_inv = scene.GetActiveCamera().GetC_inv();
+		if(scene.GetActiveModel().GetColorMethod()!=RANDOM_COLORED)
 		for (int i = 0; i < scene.GetModelCount(); i++)
 		{
 			auto model = scene.GetModel(i);
@@ -437,7 +438,8 @@ void Renderer::Render(Scene& scene)
 				c1 = glm::vec3(0.f, 0.f, 0.f);
 				c2 = glm::vec3(0.f, 0.f, 0.f);
 				c3 = glm::vec3(0.f, 0.f, 0.f);
-				FillZ_Buffer(v1, v2, v3, scene);
+				if (scene.GetActiveModel().GetColorMethod() == RANDOM_COLORED)
+					ScanConvert_ZBuffer(v1, v2, v3, scene);
 				for (int i = 0; i < scene.GetLightCount(); i++)
 				{
 					Light& light = scene.GetLight(i);
@@ -485,7 +487,7 @@ void Renderer::Render(Scene& scene)
 						ScanConvert_Phong(v1, v2, v3, (vn1), (vn2), (vn3), scene, GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), light.GetAmbientLightColor()), LightPosition, light);
 					}
 				}
-				if (scene.GetShadingtype() == ShadingType::FLAT || scene.GetActiveModel().GetColorMethod() == GRAYSCALE)
+				if ((scene.GetShadingtype() == ShadingType::FLAT || scene.GetActiveModel().GetColorMethod() == GRAYSCALE)&&scene.GetActiveModel().GetColorMethod()!=RANDOM_COLORED)
 					ScanConvert_Flat(v1, v2, v3, scene.GetActiveModel().GetColorMethod(), color, scene, Lighting);
 
 				//Draw X and Y Axes
@@ -509,7 +511,6 @@ void Renderer::Render(Scene& scene)
 				if (model.GetFacesNormalsFlag())
 					DrawLine(glm::vec3(FaceCenter.x, FaceCenter.y, FaceCenter.z), glm::vec3(FaceNormal.x, FaceNormal.y, FaceNormal.z), model.GetFN());
 			}
-			//DrawTriangles(scene);
 		//Draw the bounding box
 			if (model.GetBoundingBoxFlag())
 			{
@@ -691,8 +692,6 @@ void Renderer::ScanConvert_Flat(const glm::vec3& v1, const glm::vec3& v2, const 
 					MaxZ = std::max(MaxZ, P.z);
 					MinZ = std::min(MinZ, P.z);
 					PutZ(x, y, P.z);
-					if (colorMeth == RANDOM_COLORED)
-						PutPixel(x, y, RandomColor);
 					if (!lighting)
 					{
 						if (x < 0) continue; if (x >= viewport_width_) continue;
@@ -728,6 +727,29 @@ void Renderer::FillZ_Buffer(const glm::vec3& v1,const glm::vec3& v2,const glm::v
 				}
 			}
 		}
+}
+
+void Renderer::ScanConvert_ZBuffer(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, Scene& scene)
+{
+	float minY = std::min(std::min(v1.y, v2.y), v3.y);
+	float maxY = std::max(std::max(v1.y, v2.y), v3.y);
+	float minX = std::min(std::min(v1.x, v2.x), v3.x);
+	float maxX = std::max(std::max(v1.x, v2.x), v3.x);
+	glm::vec3 RandomColor = RandColor();
+	for (int y = minY; y < maxY; y++)
+		for (int x = minX; x < maxX; x++)
+			if (ptInTriangle(glm::vec3(x, y, 0), v1, v2, v3))
+			{
+				glm::vec3 P(x, y, 1);
+				P = CalcZ(P, v1, v2, v3, v1, v2, v3);
+				if (P.z <= GetZ(x, y))
+				{
+					MaxZ = std::max(MaxZ, P.z);
+					MinZ = std::min(MinZ, P.z);
+					PutZ(x, y, P.z);
+					PutPixel(x, y, RandomColor);
+				}
+			}
 }
 
 void Renderer::DrawLight(Light& light, Scene& scene)
@@ -820,15 +842,9 @@ void Renderer::ScanConvert_Phong(const glm::vec3& v1, const glm::vec3& v2, const
 					color = GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), light.GetAmbientLightColor());
 					color += GetDiffuseColor(normal, I, scene);
 					color += GetSpecularColor(I, normal, eye, light, Scolor);
-					//color.x > MaxC&& color.x > 1.f ? MaxC = color.x : MaxC = MaxC;
-					//color.y > MaxC&& color.y > 1.f ? MaxC = color.y : MaxC = MaxC;
-					//color.z > MaxC&& color.z > 1.f ? MaxC = color.z : MaxC = MaxC;
 					color_buffer_[INDEX(viewport_width_, x, y, 0)] += color.x;
 					color_buffer_[INDEX(viewport_width_, x, y, 1)] += color.y;
 					color_buffer_[INDEX(viewport_width_, x, y, 2)] += color.z;
-					//colors[INDEX(viewport_width_, x, y, 0)]> MaxC&& colors[INDEX(viewport_width_, x, y, 0)] > 1.f ? MaxC = colors[INDEX(viewport_width_, x, y, 0)] : MaxC = MaxC;
-					//colors[INDEX(viewport_width_, x, y, 1)] > MaxC&& colors[INDEX(viewport_width_, x, y, 1)] > 1.f ? MaxC = colors[INDEX(viewport_width_, x, y, 1)] : MaxC = MaxC;
-					//colors[INDEX(viewport_width_, x, y, 2)] > MaxC&& colors[INDEX(viewport_width_, x, y, 2)] > 1.f ? MaxC = colors[INDEX(viewport_width_, x, y, 2)] : MaxC = MaxC;
 				}
 			}
 		}

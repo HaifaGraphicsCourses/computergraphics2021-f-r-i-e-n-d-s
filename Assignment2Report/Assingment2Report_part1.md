@@ -8,6 +8,12 @@
 Without the Z_buufer       |  With the Z_buffer
 :-------------------------:|:-------------------------:
 ![](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/ColorBuffer_Banana.JPG)|  ![](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/ZBuffer_Banana.JPG)
+## The following pictures are for the bunny comparision between implementing the zbuffer and without it.
+## we can see the difference in the tail of the bunny which can clearly be seen when using the zbuffer and without it it looks like its behind the rabbit
+Without the Z_buufer       |  With the Z_buffer
+:-------------------------:|:-------------------------:
+![](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/Bunny_ColorBuffer.JPG)|  ![](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/Bunny_Zbuffer.JPG)
+
 # Now this picture after transforming the model with the same transformations as before but with the zbuffer no triangles overlap.
 ![GIF1](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/ZBuffer_BananaTransformed.JPG)
 # Now we will show the Cow model being colored in grayscale
