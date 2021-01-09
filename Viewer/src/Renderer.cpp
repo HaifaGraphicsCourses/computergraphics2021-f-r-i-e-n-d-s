@@ -570,7 +570,7 @@ int Renderer::GetViewportHeight() const
 {
 	return viewport_height_;
 }
-
+ 
 void Renderer::SetViewportWidth(int w)
 {
 	viewport_width_ = w;
