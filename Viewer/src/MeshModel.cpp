@@ -23,6 +23,21 @@ MeshModel::MeshModel(ModelParameters& model) :
 {
     std::string name = GetModelName();
 
+	if (!name.compare("Sphere.obj"))
+	{
+		TranslateFactor = 1000;
+		Preffered_eye = glm::vec3(0, 0, 0.4);
+		minOrtho = 0.355;
+		maxOrtho = 1.145;
+		minDensity = 300;
+		maxDensity = 1000;
+		//TranslateFactor = 55;
+		//Preffered_eye = glm::vec3(0, 0, 4);
+		//minOrtho = 3;
+		//maxOrtho = 27;
+		//minDensity = 50;
+		//maxDensity = 200;
+	}
 	if (!name.compare("banana.obj"))
 	{
 		TranslateFactor = 1000;

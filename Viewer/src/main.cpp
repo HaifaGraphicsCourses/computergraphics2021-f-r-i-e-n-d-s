@@ -329,8 +329,6 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 	
 	//***************************************************** Control Window*****************************************************
 	static int fogType;
-	static float fogStart = renderer.GetMinz();
-	static float fogEnd = renderer.GetMaxz();
 	if (ColorsWindow) {
 		ImGui::Begin("Controls Menu");
 		// Controls
@@ -692,31 +690,31 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 						scene.SetActiveLightIndex(item_current);
 						TranslateX_ = scene.GetActiveLight().GetLTranslateX() * scene.GetActiveModel().GetTranslateFactor();
 						TranslateY_ = scene.GetActiveLight().GetLTranslateY() * scene.GetActiveModel().GetTranslateFactor();
-						TranslateZ_ = scene.GetActiveLight().GetLTranslateZ() * scene.GetActiveModel().GetTranslateFactor();
+						TranslateZ_ = scene.GetActiveLight().GetLTranslateZ() / 1000;
 						WTranslateX_ = scene.GetActiveLight().GetWTranslateX() * scene.GetActiveModel().GetTranslateFactor();
 						WTranslateY_ = scene.GetActiveLight().GetWTranslateY() * scene.GetActiveModel().GetTranslateFactor();
-						WTranslateZ_ = scene.GetActiveLight().GetWTranslateZ() * scene.GetActiveModel().GetTranslateFactor();
+						WTranslateZ_ = scene.GetActiveLight().GetWTranslateZ();
 						AngleX_ = scene.GetActiveLight().GetLRotationX();
 						AngleY_ = scene.GetActiveLight().GetLRotationY();
 						AngleZ_ = scene.GetActiveLight().GetLRotationZ();
 						WAngleX_ = scene.GetActiveLight().GetWRotationX();
 						WAngleY_ = scene.GetActiveLight().GetWRotationY();
 						WAngleZ_ = scene.GetActiveLight().GetWRotationZ();
+						DLL[0] = scene.GetActiveLight().GetDiffuseLightColor().x;
+						DLL[1] = scene.GetActiveLight().GetDiffuseLightColor().y;
+						DLL[2] = scene.GetActiveLight().GetDiffuseLightColor().z;
+
+						ALL[0] = scene.GetActiveLight().GetAmbientLightColor().x;
+						ALL[1] = scene.GetActiveLight().GetAmbientLightColor().y;
+						ALL[2] = scene.GetActiveLight().GetAmbientLightColor().z;
+						SLL[0] = scene.GetActiveLight().GetSpecularLightColor().x;
+						SLL[1] = scene.GetActiveLight().GetSpecularLightColor().y;
+						SLL[2] = scene.GetActiveLight().GetSpecularLightColor().z;
+						xDirection = scene.GetActiveLight().GetLightDirection().x;
+						yDirection = scene.GetActiveLight().GetLightDirection().y;
+						zDirection = scene.GetActiveLight().GetLightDirection().z;
 					}
 					auto& light = scene.GetActiveLight();
-					DLL[0] = scene.GetActiveLight().GetDiffuseLightColor().x;
-					DLL[1] = scene.GetActiveLight().GetDiffuseLightColor().y;
-					DLL[2] = scene.GetActiveLight().GetDiffuseLightColor().z;
-
-					ALL[0] = scene.GetActiveLight().GetAmbientLightColor().x;
-					ALL[1] = scene.GetActiveLight().GetAmbientLightColor().y;
-					ALL[2] = scene.GetActiveLight().GetAmbientLightColor().z;
-					SLL[0] = scene.GetActiveLight().GetSpecularLightColor().x;
-					SLL[1] = scene.GetActiveLight().GetSpecularLightColor().y;
-					SLL[2] = scene.GetActiveLight().GetSpecularLightColor().z;
-					xDirection = light.GetLightDirection().x;
-					yDirection = light.GetLightDirection().y;
-					zDirection = light.GetLightDirection().z;
 					if (ImGui::TreeNode("Control Active Light")) 
 					{
 						ImGui::ColorEdit3("Active Light Diffuse Color", DLL);
@@ -743,6 +741,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 								light.SetLightDirection(glm::vec3(xDirection, yDirection, zDirection));
 							}
 						}
+						else
 						if (ImGui::TreeNode("Light Transformations"))
 						{
 							ImGui::RadioButton("Local", &IsWorld_, 0);

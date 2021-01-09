@@ -343,6 +343,7 @@ void Renderer::ClearColorBuffer(const glm::vec3& color)
 
 void Renderer::Render(Scene& scene)
 {
+	ClearZ_Buffer();
 	MaxC = FLT_MIN;
 	int half_width = viewport_width_ / 2;
 	int half_height = viewport_height_ / 2;
@@ -449,7 +450,7 @@ void Renderer::Render(Scene& scene)
 							LightDirection = glm::normalize(glm::vec3(FaceCenter) - glm::vec3(LightPosition));
 						else
 							LightDirection = normalize(light.GetLightDirection());
-						color += GetDiffuseColor(FaceNormal, LightDirection, scene);
+						color += GetDiffuseColor(FaceNormal, LightDirection, scene, light);
 						color += GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), light.GetAmbientLightColor());
 						color += GetSpecularColor(LightDirection, FaceNormal, scene.GetActiveCamera().GetEye(), light, scene.GetActiveModel().GetSpecularColor());
 					}
@@ -465,13 +466,13 @@ void Renderer::Render(Scene& scene)
 						}
 						else
 							LightDirection1 = LightDirection2 = LightDirection3 = normalize(light.GetLightDirection());
-						c1 = GetDiffuseColor((vn1), LightDirection1, scene);
+						c1 = GetDiffuseColor((vn1), LightDirection1, scene, light);
 						c1 += GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), light.GetAmbientLightColor());
 						c1 += GetSpecularColor(LightDirection1, vn1, scene.GetActiveCamera().GetEye(), light, scene.GetActiveModel().GetSpecularColor());
-						c2 = GetDiffuseColor(vn2, LightDirection2, scene);
+						c2 = GetDiffuseColor(vn2, LightDirection2, scene, light);
 						c2 += GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), light.GetAmbientLightColor());
 						c2 += GetSpecularColor(LightDirection2, vn2, scene.GetActiveCamera().GetEye(), light, scene.GetActiveModel().GetSpecularColor());
-						c3 = GetDiffuseColor(vn3, LightDirection3, scene);
+						c3 = GetDiffuseColor(vn3, LightDirection3, scene, light);
 						c3 += GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), light.GetAmbientLightColor());
 						c3 += GetSpecularColor(LightDirection3, vn3, scene.GetActiveCamera().GetEye(), light, scene.GetActiveModel().GetSpecularColor());
 						ScanConvert_Gouraud(v1, v2, v3, c1, c2, c3);
@@ -550,6 +551,8 @@ void Renderer::Render(Scene& scene)
 				DrawLine(glm::vec3(rightBottomFar.x, rightBottomFar.y, rightBottomFar.z), glm::vec3(rightBottomNear.x, rightBottomNear.y, rightBottomNear.z), model.GetBB());
 			}
 		}
+		FixColors(scene.GetColoring());
+		
 		if (scene.GetActiveModel().GetColorMethod() == GRAYSCALE)
 			ScanConvert_Grayscale();
 		if (scene.GetFog())
@@ -588,8 +591,6 @@ void Renderer::FogExists(Scene& scene)
 	scene.SetFogEnd(MaxZ);
 	int half_width = viewport_width_ / 2;
 	int half_height = viewport_height_ / 2;
-	glm::mat4x4 viewportmat = Transformations::ScalingTransformation(half_width, half_height, 1) * Transformations::TranslationTransformation(1, 1, 1);
-	glm::mat4x4 graphicpipline = scene.GetActiveCamera().GetProjectionTransformation() * scene.GetActiveCamera().GetLookAt() * scene.GetActiveCamera().GetC_inv() * glm::inverse(scene.GetActiveCamera().GetC_inv());
 	glm::vec3 c;
 	for (int i = 0; i < viewport_width_; i++)
 		for (int j = 0; j < viewport_height_; j++)
@@ -674,7 +675,6 @@ void Renderer::ScanConvert_Flat(const glm::vec3& v1, const glm::vec3& v2, const 
 	float maxY = std::max(std::max(v1.y, v2.y), v3.y);
 	float minX = std::min(std::min(v1.x, v2.x), v3.x);
 	float maxX = std::max(std::max(v1.x, v2.x), v3.x);
-	glm::vec3 RandomColor = RandColor();
 	for (int y = minY; y < maxY; y++)
 		for (int x = minX; x < maxX; x++)
 		{
@@ -694,9 +694,9 @@ void Renderer::ScanConvert_Flat(const glm::vec3& v1, const glm::vec3& v2, const 
 						color_buffer_[INDEX(viewport_width_, x, y, 0)] += color.x;
 						color_buffer_[INDEX(viewport_width_, x, y, 1)] += color.y;
 						color_buffer_[INDEX(viewport_width_, x, y, 2)] += color.z;
-						color_buffer_[INDEX(viewport_width_, x, y, 0)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 0)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 0)] : MaxC = MaxC;
-						color_buffer_[INDEX(viewport_width_, x, y, 1)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 1)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 1)] : MaxC = MaxC;
-						color_buffer_[INDEX(viewport_width_, x, y, 2)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 2)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 2)] : MaxC = MaxC;
+						//color_buffer_[INDEX(viewport_width_, x, y, 0)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 0)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 0)] : MaxC = MaxC;
+						//color_buffer_[INDEX(viewport_width_, x, y, 1)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 1)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 1)] : MaxC = MaxC;
+						//color_buffer_[INDEX(viewport_width_, x, y, 2)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 2)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 2)] : MaxC = MaxC;
 					}
 				}
 			}
@@ -718,6 +718,8 @@ void Renderer::FillZ_Buffer(const glm::vec3& v1, const glm::vec3& v2, const glm:
 				P = CalcZ(P, v1, v2, v3, v1, v2, v3);
 				if (P.z <= GetZ(x, y))
 				{
+					if (x < 0) return; if (x >= viewport_width_) return;
+					if (y < 0) return; if (y >= viewport_height_) return;
 					MaxZ = std::max(MaxZ, P.z);
 					MinZ = std::min(MinZ, P.z);
 					PutZ(x, y, P.z);
@@ -823,10 +825,10 @@ glm::vec3 Renderer::GetSpecularColor(glm::vec3& I, glm::vec3 n, const glm::vec3&
 	return I_s;
 }
 
-glm::vec3 Renderer::GetDiffuseColor(glm::vec3 normal, glm::vec3 I, Scene& scene)
+glm::vec3 Renderer::GetDiffuseColor(glm::vec3 normal, glm::vec3 I, Scene& scene,Light& light)
 {
 	glm::vec3 Dcolor = scene.GetActiveModel().GetDiffuseColor();
-	glm::vec3 temp(Dcolor.x * scene.GetActiveLight().GetDiffuseLightColor().x, Dcolor.y * scene.GetActiveLight().GetDiffuseLightColor().y, Dcolor.z * scene.GetActiveLight().GetDiffuseLightColor().z);
+	glm::vec3 temp(Dcolor.x * light.GetDiffuseLightColor().x, Dcolor.y * light.GetDiffuseLightColor().y, Dcolor.z * light.GetDiffuseLightColor().z);
 	float IdotN = glm::dot(-(normal), I);
 	return temp * IdotN;
 }
@@ -854,14 +856,14 @@ void Renderer::ScanConvert_Phong(const glm::vec3& v1, const glm::vec3& v2, const
 					glm::vec3 normal;
 					normal = CalcZ(P, v1, v2, v3, vn1, vn2, vn3);
 					color = GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), light.GetAmbientLightColor());
-					color += GetDiffuseColor(normal, I, scene);
+					color += GetDiffuseColor(normal, I, scene,light);
 					color += GetSpecularColor(I, normal, eye, light, Scolor);
 					color_buffer_[INDEX(viewport_width_, x, y, 0)] += color.x;
 					color_buffer_[INDEX(viewport_width_, x, y, 1)] += color.y;
 					color_buffer_[INDEX(viewport_width_, x, y, 2)] += color.z;
-					color_buffer_[INDEX(viewport_width_, x, y, 0)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 0)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 0)] : MaxC = MaxC;
-					color_buffer_[INDEX(viewport_width_, x, y, 1)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 1)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 1)] : MaxC = MaxC;
-					color_buffer_[INDEX(viewport_width_, x, y, 2)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 2)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 2)] : MaxC = MaxC;
+					//color_buffer_[INDEX(viewport_width_, x, y, 0)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 0)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 0)] : MaxC = MaxC;
+					//color_buffer_[INDEX(viewport_width_, x, y, 1)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 1)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 1)] : MaxC = MaxC;
+					//color_buffer_[INDEX(viewport_width_, x, y, 2)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 2)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 2)] : MaxC = MaxC;
 				}
 			}
 		}
@@ -889,9 +891,9 @@ void Renderer::ScanConvert_Gouraud(const glm::vec3& v1, const glm::vec3& v2, con
 					color_buffer_[INDEX(viewport_width_, x, y, 0)] += color.x;
 					color_buffer_[INDEX(viewport_width_, x, y, 1)] += color.y;
 					color_buffer_[INDEX(viewport_width_, x, y, 2)] += color.z;
-					color_buffer_[INDEX(viewport_width_, x, y, 0)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 0)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 0)] : MaxC = MaxC;
-					color_buffer_[INDEX(viewport_width_, x, y, 1)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 1)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 1)] : MaxC = MaxC;
-					color_buffer_[INDEX(viewport_width_, x, y, 2)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 2)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 2)] : MaxC = MaxC;
+					//color_buffer_[INDEX(viewport_width_, x, y, 0)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 0)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 0)] : MaxC = MaxC;
+					//color_buffer_[INDEX(viewport_width_, x, y, 1)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 1)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 1)] : MaxC = MaxC;
+					//color_buffer_[INDEX(viewport_width_, x, y, 2)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 2)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 2)] : MaxC = MaxC;
 				}
 			}
 		}
@@ -915,12 +917,26 @@ void Renderer::ScanConvert_Grayscale()
 		}
 }
 
-float Renderer::GetMinz()
+void Renderer::FixColors(int coloring)
 {
-	return MinZ;
-}
-
-float Renderer::GetMaxz()
-{
-	return MaxZ;
+	for (int i = 0; i < viewport_width_; i++)
+		for (int j = 0; j < viewport_height_; j++)
+		{
+			float z = Z_Buffer[Z_INDEX(viewport_width_, i, j)];
+			if (z != FLT_MAX)
+			{
+				if (coloring)
+				{
+					if (color_buffer_[INDEX(viewport_width_, i, j, 0)] > 1.f) color_buffer_[INDEX(viewport_width_, i, j, 0)] = 1.f;
+					if (color_buffer_[INDEX(viewport_width_, i, j, 1)] > 1.f) color_buffer_[INDEX(viewport_width_, i, j, 1)] = 1.f;
+					if (color_buffer_[INDEX(viewport_width_, i, j, 2)] > 1.f) color_buffer_[INDEX(viewport_width_, i, j, 2)] = 1.f;
+				}
+				else
+				{
+					color_buffer_[INDEX(viewport_width_, i, j, 0)] /= 5;
+					color_buffer_[INDEX(viewport_width_, i, j, 1)] /= 5;
+					color_buffer_[INDEX(viewport_width_, i, j, 2)] /= 5;
+				}
+			}
+		}
 }
