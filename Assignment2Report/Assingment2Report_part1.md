@@ -7,7 +7,7 @@
 ## We can see more "strictness" on the edges of each triangle which is not found in the first picture 
 Without the Z_buufer       |  With the Z_buffer
 :-------------------------:|:-------------------------:
-![]https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/ColorBuffer_Banana.JPG|  ![]https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/ZBuffer_Banana.JPG
+![](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/ColorBuffer_Banana.JPG)|  ![](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/ZBuffer_Banana.JPG)
 # Now this picture after transforming the model with the same transformations as before but with the zbuffer no triangles overlap.
 ![GIF1](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/ZBuffer_BananaTransformed.JPG)
 # Now we will show the Cow model being colored in grayscale
