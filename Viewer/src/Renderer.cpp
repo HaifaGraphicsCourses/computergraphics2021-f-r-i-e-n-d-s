@@ -723,9 +723,10 @@ void Renderer::FillZ_Buffer(const glm::vec3& v1, const glm::vec3& v2, const glm:
 					MaxZ = std::max(MaxZ, P.z);
 					MinZ = std::min(MinZ, P.z);
 					PutZ(x, y, P.z);
-					color_buffer_[INDEX(viewport_width_, x, y, 0)] = 0.f;
-					color_buffer_[INDEX(viewport_width_, x, y, 1)] = 0.f;
-					color_buffer_[INDEX(viewport_width_, x, y, 2)] = 0.f;
+					PutPixel(x, y, glm::vec3(0.f, 0.f, 0.f));
+					//color_buffer_[INDEX(viewport_width_, x, y, 0)] = 0.f;
+					//color_buffer_[INDEX(viewport_width_, x, y, 1)] = 0.f;
+					//color_buffer_[INDEX(viewport_width_, x, y, 2)] = 0.f;
 				}
 			}
 		}
