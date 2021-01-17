@@ -23,3 +23,6 @@ Without Fog    |  With Fog
 Without Fog    |  With Fog
 :-------------------------:|:-------------------------:
 ![](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/Assignment2Part2_10.JPG)|  ![](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/Assignment2Part2_11.JPG)
+## two more pictures for the fog showing the dolphin model and banana model
+![](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/DolphinFog.JPG)
+![](https://github.com/HaifaGraphicsCourses/computergraphics2021-f-r-i-e-n-d-s/blob/master/Images/BananaFog.JPG)

@@ -452,7 +452,7 @@ void Renderer::Render(Scene& scene)
 							LightDirection = normalize(light.GetLightDirection());
 						color += GetDiffuseColor(FaceNormal, LightDirection, scene, light);
 						color += GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), light.GetAmbientLightColor());
-						color += GetSpecularColor(LightDirection, FaceNormal, scene.GetActiveCamera().GetEye(), light, scene.GetActiveModel().GetSpecularColor());
+						color += GetSpecularColor(LightDirection, FaceNormal,scene.GetActiveCamera().GetEye(), light, scene.GetActiveModel().GetSpecularColor());
 					}
 					else if (scene.GetShadingtype() == ShadingType::GORAUD)
 					{
@@ -818,10 +818,11 @@ glm::vec3 Renderer::GetAmbientColor(const glm::vec3& Acolor, const glm::vec3& Li
 
 glm::vec3 Renderer::GetSpecularColor(glm::vec3& I, glm::vec3 n, const glm::vec3& eye, Light& light, const glm::vec3& Scolor)
 {
+	glm::vec3 temp_eye = normalize(eye);
 	int alpha = light.GetAlpha();
 	glm::vec3 temp = glm::vec3(Scolor.x * light.GetSpecularLightColor().x, Scolor.y * light.GetSpecularLightColor().y, Scolor.z * light.GetSpecularLightColor().z);
 	glm::vec3 r = (2.f * glm::dot(-n, I) * n - I);
-	float Power = (std::pow(std::max(0.0f, glm::dot((r), (eye))), alpha));
+	float Power = (std::pow(std::max(0.0f, glm::dot((r), (temp_eye))), alpha));
 	glm::vec3 I_s(temp * Power);
 	return I_s;
 }
@@ -853,7 +854,11 @@ void Renderer::ScanConvert_Phong(const glm::vec3& v1, const glm::vec3& v2, const
 				P = CalcZ(P, v1, v2, v3, v1, v2, v3);
 				if (P.z <= GetZ(x, y))
 				{
-					glm::vec3 I = normalize(P - LightPosition);
+					glm::vec3 I;
+					if (light.GetLightType() == LightType::POINT)
+						I = normalize(P - LightPosition);
+					else
+						I = normalize(light.GetLightDirection());
 					glm::vec3 normal;
 					normal = CalcZ(P, v1, v2, v3, vn1, vn2, vn3);
 					color = GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), light.GetAmbientLightColor());
