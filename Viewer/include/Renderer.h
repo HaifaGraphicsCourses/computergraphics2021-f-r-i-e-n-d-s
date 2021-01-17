@@ -45,9 +45,9 @@ private:
 	void InitOpenGLRendering();
 	float* color_buffer_;
 	float* Z_Buffer;
-	float MinZ=FLT_MAX;
-	float MaxZ=FLT_MIN;
-	float MaxC=FLT_MIN;
+	float MinZ = FLT_MAX;
+	float MaxZ = FLT_MIN;
+	float MaxC = FLT_MIN;
 	int viewport_width_;
 	int viewport_height_;
 	GLuint gl_screen_tex_;
