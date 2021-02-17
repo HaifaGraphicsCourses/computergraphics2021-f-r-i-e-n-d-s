@@ -69,6 +69,7 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 		}
 		else if (lineType == "vt")
 		{
+			model.textureCoords.push_back(Utils::Vec2fFromStream(issLine));
 			// TODO: Handle texture coordinates
 		}
 		else if (lineType == "f")
@@ -95,13 +96,6 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 	model.rightBottomFar = glm::vec4(Max_X, Min_Y, Min_Z, 1);
 	model.modelName = GetFileName(filePath);
 	model.modelCenter=glm::vec3((Max_X + Min_X) / 2, (Max_Y + Min_Y) / 2, (Min_Z + Max_Z) / 2);
-	MaxIndex = Max_X > Max_Y ? Max_X : Max_Y;
-	MaxIndex = MaxIndex > Max_Z ? MaxIndex : Max_Z;
-	float ScalingParameter = 330 / MaxIndex;
-	glm::mat4x4 scaling = Transformations::ScalingTransformation(ScalingParameter, ScalingParameter, ScalingParameter);
-	glm::mat4x4 translateObjectToCenter = Transformations::TranslationTransformation(-Min_X, -Min_Y, -Min_Z);
-	Transformation = scaling * translateObjectToCenter;
-	model.preTransformation = Transformation;
 	return std::make_shared<MeshModel>(model);
 }
 

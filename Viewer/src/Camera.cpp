@@ -7,13 +7,13 @@ Camera::Camera(glm::vec3 Preffered_Eye)
 {
 	this->width = 1920;
 	this->height = 1080;
-	this->eye = glm::vec3(Preffered_Eye[0], Preffered_Eye[1], Preffered_Eye[2]);
+	this->eye = glm::vec3(0,0,1);
 	this->at = glm::vec3(0, 0, 0);
 	this->up = glm::vec3(0, 1, 0);
 	WorldTransformation = Transformations::Identity4X4Matrix();
 	SetCameraLookAt();
+	SetOrthographicWidth(this->width);
 	view_transformation_ = Transformations::Identity4X4Matrix();
-	projection_transformation_ = Transformations::Identity4X4Matrix();
 }
 
 Camera::~Camera()
@@ -33,15 +33,7 @@ const glm::mat4x4& Camera::GetViewTransformation() const
 
 void Camera::SetCameraLookAt()
 {
-	glm::vec3 ztemp = normalize(eye - at);
-	glm::vec3 xtemp = normalize(glm::cross(up,ztemp));
-	glm::vec3 ytemp = normalize(glm::cross(ztemp, xtemp));
-	glm::vec4 z(ztemp, 0);
-	glm::vec4 x(xtemp, 0);
-	glm::vec4 y(ytemp, 0);
-	glm::vec4 t(0, 0, 0, 1);
-	glm::mat4 c(x,y,z,t);
-	LookAt = c * Transformations::TranslationTransformation(-eye[0], -eye[1], -eye[2]);
+	LookAt = glm::lookAt(eye, at, up);
 }
 
 glm::mat4x4 Camera::GetLookAt()
@@ -69,11 +61,12 @@ void Camera::SetFovy(float fovy) {
 
 void Camera::UpdateOrthographicMat()
 {
-	glm::vec4 c1(2 / (right - left), 0, 0, 0);
-	glm::vec4 c2(0, 2 / (top - bottom), 0, 0);
-	glm::vec4 c3(0, 0, -2 / (Far - Near), 0);
-	glm::vec4 c4(-((right + left) / (right - left)), -((top + bottom) / (top - bottom)), -((Far + Near) / (Far - Near)), 1);
-	projection_transformation_ = glm::mat4(c1, c2, c3, c4);
+	//glm::vec4 c1(2 / (right - left), 0, 0, 0);
+	//glm::vec4 c2(0, 2 / (top - bottom), 0, 0);
+	//glm::vec4 c3(0, 0, -2 / (Far - Near), 0);
+	//glm::vec4 c4(-((right + left) / (right - left)), -((top + bottom) / (top - bottom)), -((Far + Near) / (Far - Near)), 1);
+	//projection_transformation_ = glm::mat4(c1, c2, c3, c4);
+	projection_transformation_ = glm::ortho(left, right, bottom, top,Near,Far);
 }
 
 void Camera::UpdatePerspectiveMat() 

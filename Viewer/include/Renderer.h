@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+#include <ShaderProgram.h>
 
 class Renderer
 {
@@ -35,9 +36,12 @@ public:
 	void ScanConvert_Flat(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, const int& colorMeth, glm::vec3 color, Scene& scene, bool lighting);
 	void ScanConvert_Grayscale();
 	void FixColors(int coloring);
+	void LoadShaders();
 	void ScanConvert_ZBuffer(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, Scene& scene);
 
 private:
+	ShaderProgram lightShader;
+	ShaderProgram colorShader;
 	void PutPixel(const int i, const int j, const glm::vec3& color);
 	void DrawLine(const glm::vec3& p1, const glm::vec3& p2,glm::vec3& color);
 	void CreateBuffers(int w, int h);

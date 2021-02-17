@@ -48,7 +48,7 @@ static void RGBtoHSV(float fR, float fG, float fB, float& fH, float& fS, float& 
 		fH = 0;
 		return ;
 	}
-	if (fR >= max)                           // > is bogus, just keeps compilor happy
+	if (fR >= max)                           // > is bogus, just keeps compiler happy
 		fH = (fG - fB) / delta;        // between yellow & magenta
 	else
 		if (fG >= max)
@@ -71,9 +71,6 @@ static float DModelColor[3]= {0.2f, 0.75f, 0.8f};
 static float AModelColor[3]= {0.2f, 0.75f, 0.8f};
 static float SModelColor[3]= {0.2f, 0.75f, 0.8f};
 
-/**
- * Function declarations
- */
 static void GlfwErrorCallback(int error, const char* description);
 GLFWwindow* SetupGlfwWindow(int w, int h, const char* window_name);
 ImGuiIO& SetupDearImgui(GLFWwindow* window);
@@ -98,9 +95,11 @@ int main(int argc, char **argv)
 	glfwMakeContextCurrent(window);
 	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
 	Renderer renderer = Renderer(frameBufferWidth, frameBufferHeight);
+	renderer.LoadShaders();
 	Scene scene = Scene();
 	ImGuiIO& io = SetupDearImgui(window);
 	glfwSetScrollCallback(window, ScrollCallback);
+	
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
@@ -168,14 +167,6 @@ void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& 
 	if (frameBufferWidth != renderer.GetViewportWidth() || frameBufferHeight != renderer.GetViewportHeight())
 	{
 		glfwSetWindowAspectRatio(window, renderer.GetViewportWidth(), renderer.GetViewportHeight());
-		//renderer.SetViewportHeight(frameBufferHeight);
-		//renderer.SetViewportWidth(frameBufferWidth);
-		//if (scene.GetCameraCount()) {
-		//	scene.GetActiveCamera().SetWidth(frameBufferWidth);
-		//	scene.GetActiveCamera().SetHeight(frameBufferHeight);
-		//	scene.GetActiveCamera().SetAspectRatio(frameBufferWidth, frameBufferHeight);
-		//}
-		// TODO: Set new aspect ratio
 	}
 
 	if (!io.WantCaptureKeyboard)
@@ -196,8 +187,8 @@ void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& 
 			// Left mouse button is down
 		}
 	}
-	renderer.ClearColorBuffer(clear_color);
-	renderer.ClearZ_Buffer();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	renderer.Render(scene);
 	renderer.SwapBuffers();
 
@@ -219,9 +210,9 @@ void Cleanup(GLFWwindow* window)
 void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 {
 	static bool CameraWindow = true;
-	static bool ModelWindow = false;
+	static bool ModelWindow = true;
 	static bool LightWindow = false;
-	static bool ColorsWindow = false;
+	static bool ColorsWindow = true;
 	static bool Fog = false;
 
 	static float OrthoWidth;
@@ -232,6 +223,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 	{
 		if (ImGui::BeginMenu("Choose Model"))
 		{
+			scene.AddCamera(std::make_shared<Camera>(glm::vec3(0,0,1)));
+			scene.SetActiveCameraIndex(0);
 			if (ImGui::MenuItem("Banana")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\banana.obj"));
 				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
@@ -290,6 +283,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 				nfdresult_t result = NFD_OpenDialog("obj;", NULL, &outPath);
 				if (result == NFD_OKAY)
 				{
+					scene.AddCamera(std::make_shared<Camera>(glm::vec3(0, 0, 1)));
 					scene.AddModel(Utils::LoadMeshModel(outPath));
 					OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
 					free(outPath);
@@ -308,7 +302,6 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		{
 			scene.GetActiveCamera().ResetTransformations();
 			scene.GetActiveModel().ResetModel();
-			renderer.ClearZ_Buffer();
 			scene.ClearActiveModel();
 		}
 
@@ -332,7 +325,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 	if (ColorsWindow) {
 		ImGui::Begin("Controls Menu");
 		// Controls
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::ColorEdit3("Background Color", (float*)&clear_color);
+		glClearColor(clear_color.x, clear_color.y, clear_color.z, 1.f);
 		ImGui::ColorEdit3("Bounding Box Color", BoundingBoxColor);
 		ImGui::ColorEdit3("Vertices Normals Color", NormalsColor);
 		ImGui::ColorEdit3("Faces Normals Color", FacesNormalsColor);
@@ -363,7 +358,6 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 					scene.SetShadingtype(ShadingType::PHONG);
 				}
 		}
-		// TODO: Add more controls as needed
 		ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.f, 0.f, 0.f));
 		if (ImGui::Button("Close Me"))
 			ColorsWindow = false;
@@ -400,51 +394,10 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		}
 		ImGui::End();
 	}
-	/**
-	 * Imgui demo - you can remove it once you are familiar with imgui
-	 */
-	
-	// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-	//if (show_demo_window)
-	//	ImGui::ShowDemoWindow(&show_demo_window);
-
-	//{
-	//	static float f = 0.0f;
-	//	static int counter = 0;
-	//
-	//	ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-	//
-	//	ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-	//	ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-	//	ImGui::Checkbox("Another Window", &show_another_window);
-	//
-	//	ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-	//	ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-	//
-	//	if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-	//		counter++;
-	//	ImGui::SameLine();
-	//	ImGui::Text("counter = %d", counter);
-	//
-	//	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-	//	ImGui::End();
-	//}
-
-	// 3. Show another simple window.
-	//if (show_another_window)
-	//{
-	//	ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-	//	ImGui::Text("Hello from another window!");
-	//	if (ImGui::Button("Close Me"))
-	//		show_another_window = false;
-	//	ImGui::End();
-	//}
-	//std::string name;
 
 	//*******************************************************************************MODEL WINDOW***********************************************************************
 	if(scene.GetModelCount()>0)
 	{
-		scene.AddCamera(std::make_shared<Camera>(scene.GetActiveModel().GetPreffered_Eye()));
 		auto model = scene.GetActiveModel();
 		static float DModelColor[3] = { 0.5,0.285,0.285 };
 		static float AModelColor[3] = {0.0625 ,0.3,0.57 };

@@ -1,15 +1,13 @@
 #include "MeshModel.h"
 #include <iostream>
 #include "Renderer.h"
-
-MeshModel::MeshModel()
-{
-}
+#include <random>
 
 MeshModel::MeshModel(ModelParameters& model) :
 	faces_(model.faces),
 	vertices_(model.vertices),
 	normals_(model.normals),
+	textureCoords(model.textureCoords),
 	leftTopNear_(model.leftTopNear),
 	rightTopNear_(model.rightTopNear),
 	leftTopFar_(model.leftTopFar),
@@ -22,7 +20,6 @@ MeshModel::MeshModel(ModelParameters& model) :
 	ModelCenter(model.modelCenter)
 {
     std::string name = GetModelName();
-
 	if (!name.compare("Sphere.obj"))
 	{
 		TranslateFactor = 1000;
@@ -31,12 +28,6 @@ MeshModel::MeshModel(ModelParameters& model) :
 		maxOrtho = 1.145;
 		minDensity = 300;
 		maxDensity = 1000;
-		//TranslateFactor = 55;
-		//Preffered_eye = glm::vec3(0, 0, 4);
-		//minOrtho = 3;
-		//maxOrtho = 27;
-		//minDensity = 50;
-		//maxDensity = 200;
 	}
 	if (!name.compare("banana.obj"))
 	{
@@ -107,7 +98,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 	if (!name.compare("demo.obj"))
 	{
 		TranslateFactor = 33;
-		Preffered_eye = glm::vec3(0, 0,15);
+		Preffered_eye = glm::vec3(0, 0, 15);
 		minOrtho = 10;
 		maxOrtho = 50;
 	}
@@ -139,10 +130,53 @@ MeshModel::MeshModel(ModelParameters& model) :
 		minOrtho = 0;
 		maxOrtho = 30;
 	}
+	modelVertices.reserve(3 * model.faces.size());
+	for (int i = 0; i < faces_.size(); i++)
+	{
+		Face currentFace = faces_.at(i);
+		for (int j = 0; j < 3; j++)
+		{
+			int vertexIndex = currentFace.GetVertexIndex(j) - 1;
+
+			Vertex vertex;
+			vertex.position = vertices_[vertexIndex];
+			vertex.normal = model.normals[vertexIndex];
+
+			if (textureCoords.size() > 0)
+			{
+				int textureCoordsIndex = currentFace.GetTextureIndex(j) - 1;
+				vertex.textureCoords = model.textureCoords[textureCoordsIndex];
+			}
+			modelVertices.push_back(vertex);
+		}
+	}
+	glGenVertexArrays(1, &vao);
+	glGenBuffers(1, &vbo);
+
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, modelVertices.size() * sizeof(Vertex), &modelVertices[0], GL_STATIC_DRAW);
+
+	// Vertex Positions
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+
+	// Normals attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+
+	// Vertex Texture Coords
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(6 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(2);
+
+	// unbind to make sure other code does not change it somewhere else
+	glBindVertexArray(0);
 }
 
 MeshModel::~MeshModel()
 {
+	glDeleteVertexArrays(1, &vao);
+	glDeleteBuffers(1, &vbo);
 }
 
 const Face& MeshModel::GetFace(int index) const
@@ -160,28 +194,8 @@ const std::string& MeshModel::GetModelName() const
 	return model_name_;
 }
 
-void MeshModel::PrintModel() const
-{
-	std::cout << "Model Name is: " << model_name_<<"\n";
-	std::cout << "Printing Faces of the Model:\n------------------------------------------------------\n";
-	for (int i = 0; i < this->GetFacesCount(); i++) {
-		std::cout << "Face" << i + 1 << ": ";
-		this->GetFace(i).PrintFace();
-		std::cout << "\n";
-	}
-	std::cout << "\n------------------------------------------------------\n";
-	std::cout << "Printing Vertices of the Model:\n------------------------------------------------------\n";
-	for (std::vector<int>::size_type i = 0; i != vertices_.size(); i++) {
-		std::cout << vertices_[i].x << " " << vertices_[i].y << " " << vertices_[i].z << "\n";
-	}
-	std::cout << "Printing Normals of the Model:\n------------------------------------------------------\n";
-	for (std::vector<int>::size_type i = 0; i != normals_.size(); i++) {
-		std::cout << normals_[i].x << " " << normals_[i].y << " " << normals_[i].z << "\n";
-	}
-}
-
 const glm::vec3 MeshModel::GetVertex(int index)const {
-	return vertices_[index-1];
+	return vertices_[index];
 }
 
 const glm::mat4x4& MeshModel::GetPreTransformation() {
@@ -450,3 +464,12 @@ void MeshModel::SetDiffuseColor(glm::vec3& color) { DModelColor = color; }
 void MeshModel::SetAmbientColor(glm::vec3& color) { AModelColor = color; }
 void MeshModel::SetSpecularColor(glm::vec3& color) { SModelColor = color; }
 glm::vec4 MeshModel::GetModelCenter() { return glm::vec4(ModelCenter, 1); }
+
+GLuint MeshModel::GetVAO() const
+{
+	return vao;
+}
+const std::vector<Vertex>& MeshModel::GetModelVertices()
+{
+	return modelVertices;
+}

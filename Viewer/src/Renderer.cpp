@@ -13,7 +13,7 @@ Renderer::Renderer(int viewport_width, int viewport_height) :
 	viewport_width_(viewport_width),
 	viewport_height_(viewport_height)
 {
-	InitOpenGLRendering();
+	//InitOpenGLRendering();
 	CreateBuffers(viewport_width, viewport_height);
 }
 
@@ -224,7 +224,7 @@ void Renderer::InitOpenGLRendering()
 
 	// (-1, 1)____(1, 1)
 	//	     |\  |
-	//	     | \ | <--- The exture is drawn over two triangles that stretch over the screen.
+	//	     | \ | <--- The texture is drawn over two triangles that stretch over the screen.
 	//	     |__\|
 	// (-1,-1)    (1,-1)
 	const GLfloat vtc[] = {
@@ -256,7 +256,7 @@ void Renderer::InitOpenGLRendering()
 	// memcopy tex to buffer[sizeof(vtc),sizeof(vtc)+sizeof(tex)]
 	glBufferSubData(GL_ARRAY_BUFFER, sizeof(vtc), sizeof(tex), tex);
 
-	// Loads and compiles a sheder.
+	// Loads and compiles a shader.
 	GLuint program = InitShader("vshader.glsl", "fshader.glsl");
 
 	// Make this program the current one.
@@ -343,13 +343,11 @@ void Renderer::ClearColorBuffer(const glm::vec3& color)
 
 void Renderer::Render(Scene& scene)
 {
-	ClearZ_Buffer();
+	//ClearZ_Buffer();
 	MaxC = FLT_MIN;
 	int half_width = viewport_width_ / 2;
 	int half_height = viewport_height_ / 2;
 	bool Lighting = false;
-	std::vector<int> VerticesIndices;
-	std::vector<glm::ivec2> VerticesCont;
 	glm::vec3 color(0.f, 0.f, 0.f);
 	glm::vec3 c1;
 	glm::vec3 c2;
@@ -358,46 +356,49 @@ void Renderer::Render(Scene& scene)
 	glm::vec4 FaceNormal;
 	glm::vec4 LightPosition;
 	glm::vec3 LightDirection;
-	if (scene.GetLightCount())
-		DrawLights(scene);
-	if (scene.GetModelCount() > 0)
+	//if (scene.GetLightCount())
+	//	DrawLights(scene);
+	if (scene.GetCameraCount() > 0)
 	{
 		glm::mat4x4 Lookat = scene.GetActiveCamera().GetLookAt();
 		glm::mat4x4 projectionTransformation = (scene.GetActiveCamera().GetProjectionTransformation());
-		glm::mat4x4 ViewPortTransformation = Transformations::ScalingTransformation(half_width, half_height, 1) * Transformations::TranslationTransformation(1, 1, 1);
+		//glm::mat4x4 ViewPortTransformation = Transformations::ScalingTransformation(half_width, half_height, 1) * Transformations::TranslationTransformation(1, 1, 1);
 		glm::mat4x4 C_inv = scene.GetActiveCamera().GetC_inv();
-		if (scene.GetActiveModel().GetColorMethod() != RANDOM_COLORED)
-			for (int i = 0; i < scene.GetModelCount(); i++)
-			{
-				auto model = scene.GetModel(i);
-				glm::mat4x4 Transformation = model.GetTransformation();
-				for (int i = 0; i < model.GetFacesCount(); i++)
-				{
-					Face face = model.GetFace(i);
-					int VertexIndex1 = face.GetVertexIndex(0), VertexIndex2 = face.GetVertexIndex(1), VertexIndex3 = face.GetVertexIndex(2);
-					glm::vec3 v1Temp = model.GetVertex(VertexIndex1);
-					glm::vec3 v2Temp = model.GetVertex(VertexIndex2);
-					glm::vec3 v3Temp = model.GetVertex(VertexIndex3);
-					glm::vec4 v1 = projectionTransformation * Lookat * C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex1), 1);
-					glm::vec4 v2 = projectionTransformation * Lookat * C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex2), 1);
-					glm::vec4 v3 = projectionTransformation * Lookat * C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex3), 1);
-					if (!scene.GetActiveCamera().GetIsOrthographic())
-					{
-						v1 /= v1.w;
-						v2 /= v2.w;
-						v3 /= v3.w;
-					}
-					v1 = ViewPortTransformation * v1;
-					v2 = ViewPortTransformation * v2;
-					v3 = ViewPortTransformation * v3;
-					FillZ_Buffer(v1, v2, v3, scene);
-				}
-			}
 		for (int i = 0; i < scene.GetModelCount(); i++)
 		{
-			auto model = scene.GetModel(i);
-			glm::mat4x4 Transformation = model.GetTransformation();
-			for (int i = 0; i < model.GetFacesCount(); i++)
+			scene.SetActiveModelIndex(i);
+			glm::mat4x4 Transformation = scene.GetActiveModel().GetTransformation();
+			// Activate the 'colorShader' program (vertex and fragment shaders)
+			colorShader.use();
+
+			// Set the uniform variables
+			colorShader.setUniform("model", scene.GetActiveModel().GetTransformation());
+			colorShader.setUniform("view", scene.GetActiveCamera().GetLookAt() * scene.GetActiveCamera().GetC_inv());
+			colorShader.setUniform("projection", scene.GetActiveCamera().GetProjectionTransformation());
+			colorShader.setUniform("material.textureMap", 0);
+
+			// Set 'texture1' as the active texture at slot #0
+			//texture1.bind(0);
+
+			// Drag our model's faces (triangles) in fill mode
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			glBindVertexArray(scene.GetActiveModel().GetVAO());
+			glDrawArrays(GL_TRIANGLES, 0, scene.GetActiveModel().GetModelVertices().size());
+			glBindVertexArray(0);
+
+			// Unset 'texture1' as the active texture at slot #0
+			//texture1.unbind(0);
+
+			//colorShader.setUniform("color", glm::vec3(0, 0, 0));
+
+			// Drag our model's faces (triangles) in line mode (wireframe)
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			glBindVertexArray(scene.GetActiveModel().GetVAO());
+			glDrawArrays(GL_TRIANGLES, 0, scene.GetActiveModel().GetModelVertices().size());
+			glBindVertexArray(0);
+		}
+	}
+			/*for (int i = 0; i < model.GetFacesCount(); i++)
 			{
 				Face face = model.GetFace(i);
 				int VertexIndex1 = face.GetVertexIndex(0), VertexIndex2 = face.GetVertexIndex(1), VertexIndex3 = face.GetVertexIndex(2);
@@ -557,7 +558,7 @@ void Renderer::Render(Scene& scene)
 			ScanConvert_Grayscale();
 		if (scene.GetFog())
 			FogExists(scene);
-	}
+	}*/
 }
 
 int Renderer::GetViewportWidth() const
@@ -945,4 +946,9 @@ void Renderer::FixColors(int coloring)
 				}
 			}
 		}
+}
+
+void Renderer::LoadShaders()
+{
+	colorShader.loadShaders("vshader_color.glsl", "fshader_color.glsl");
 }

@@ -45,8 +45,8 @@ private:
 	float right = width / 2;
 	float bottom = -height / 2;
 	float top = height / 2;
-	float Near = -0.1;
-	float Far = 1000;
+	float Near = 0.1;
+	float Far = 200;
 	float Fovy = glm::radians(45.f);
 	glm::vec3 eye;
 	glm::vec3 at;

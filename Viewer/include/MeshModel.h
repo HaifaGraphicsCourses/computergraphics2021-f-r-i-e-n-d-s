@@ -5,21 +5,27 @@
 #include "Face.h"
 #include "ModelParameters.h"
 #include "Enums.h"
+#include <glad/glad.h>
 
 #define GRAYSCALE 999
 #define RANDOM_COLORED 990
 #define MODEL_COLOR 900
 
+struct Vertex
+{
+	glm::vec3 position;
+	glm::vec3 normal;
+	glm::vec2 textureCoords;
+};
+
 class MeshModel
 {
 public:
-	MeshModel();
 	MeshModel(ModelParameters& model);
 	virtual ~MeshModel();
 	const Face& GetFace(int index) const;
 	int GetFacesCount() const;
 	const std::string& GetModelName() const;
-	void PrintModel()const;
 	const glm::mat4x4& GetPreTransformation();
 	const glm::vec3 MeshModel::GetVertex(int index)const;
 	void Set_S_w(glm::mat4x4& Transformation);
@@ -76,12 +82,21 @@ public:
 	void SetSpecularColor(glm::vec3& collor);
 	glm::vec4 GetModelCenter();
 	float minDensity, maxDensity;
-
-private:
-	std::vector<bool> VerticesCheck;
+	GLuint GetVAO() const;
+	const std::vector<Vertex>& GetModelVertices();
 	std::vector<Face> faces_;
 	std::vector<glm::vec3> vertices_;
 	std::vector<glm::vec3> normals_;
+	std::vector<glm::vec2> textureCoords;
+
+protected:
+	std::vector<Vertex> modelVertices;
+	GLuint vbo;
+	GLuint vao; 
+
+
+private:
+	
 	glm::mat4x4 PreTransformation;
 	std::vector<glm::vec3> boundingBoxVertices;
 	glm::mat4x4 S_w= Transformations::Identity4X4Matrix();
@@ -120,9 +135,6 @@ private:
 	glm::vec3 Preffered_eye;
 	float TranslateFactor;
 	float minOrtho, maxOrtho;
-	int colorMethod=GRAYSCALE;
+	int colorMethod;
 	glm::vec3 ModelCenter;
-
-	
-
 };
