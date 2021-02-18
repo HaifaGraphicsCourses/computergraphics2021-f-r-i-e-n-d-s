@@ -351,19 +351,20 @@ void Renderer::Render(Scene& scene)
 	if (cameraCount > 0)
 	{
 		int modelCount = scene.GetModelCount();
-		Camera& camera = scene.GetActiveCamera();
+		std::shared_ptr<Camera> camera = scene.GetActiveCamera();
 
 		for (int currentModelIndex = 0; currentModelIndex < modelCount; currentModelIndex++)
 		{
-			MeshModel& currentModel = scene.GetModel(currentModelIndex);
+			std::shared_ptr<MeshModel> currentModel = scene.GetModel(currentModelIndex);
 
 			// Activate the 'colorShader' program (vertex and fragment shaders)
 			colorShader.use();
 
 			// Set the uniform variables
-			colorShader.setUniform("model", currentModel.GetTransformation());
-			colorShader.setUniform("view", camera.GetLookAt() * camera.GetC_inv());
-			colorShader.setUniform("projection", camera.GetProjectionTransformation());
+			colorShader.setUniform("model", currentModel->GetTransformation());
+			colorShader.setUniform("DrawLight", false);
+			colorShader.setUniform("view", camera->GetLookAt() * camera->GetC_inv());
+			colorShader.setUniform("projection", camera->GetProjectionTransformation());
 			//colorShader.setUniform("material.textureMap", 0);
 
 			// Set 'texture1' as the active texture at slot #0
@@ -371,8 +372,8 @@ void Renderer::Render(Scene& scene)
 
 			// Drag our model's faces (triangles) in fill mode
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-			glBindVertexArray(currentModel.GetVAO()- 1);
-			glDrawArrays(GL_TRIANGLES, 0, currentModel.GetModelVertices().size());
+			glBindVertexArray(currentModel->GetVAO());
+			glDrawArrays(GL_TRIANGLES, 0, currentModel->GetModelVertices().size());
 			glBindVertexArray(0);
 
 			// Unset 'texture1' as the active texture at slot #0
@@ -382,10 +383,12 @@ void Renderer::Render(Scene& scene)
 
 			// Drag our model's faces (triangles) in line mode (wireframe)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			glBindVertexArray(currentModel.GetVAO()+1);
-			glDrawArrays(GL_TRIANGLES, 0, currentModel.GetModelVertices().size());
+			glBindVertexArray(currentModel->GetVAO());
+			glDrawArrays(GL_TRIANGLES, 0, currentModel->GetModelVertices().size());
 			glBindVertexArray(0);
 		}
+		if (scene.GetLightCount())
+			DrawLights(scene);
 	}
 			/*for (int i = 0; i < model.GetFacesCount(); i++)
 			{
@@ -593,7 +596,7 @@ void Renderer::FogExists(Scene& scene)
 				float fogFactor;
 				if (scene.GetIsLinearFog())
 				{
-					if (!scene.GetActiveCamera().GetIsOrthographic())
+					if (!scene.GetActiveCamera()->GetIsOrthographic())
 						int x = 3;
 					fogFactor = (scene.GetFogEnd() - vertexViewDistance) / (scene.GetFogEnd() - scene.GetFogStart());
 				}
@@ -750,52 +753,70 @@ void Renderer::DrawLights(Scene& scene)
 	int half_width = viewport_width_ / 2;
 	int half_height = viewport_height_ / 2;
 	glm::vec3 color = glm::vec3(1, 1, 1);
-	glm::mat4x4 Lookat = scene.GetActiveCamera().GetLookAt();
-	glm::mat4x4 projectionTransformation = scene.GetActiveCamera().GetProjectionTransformation();
+	glm::mat4x4 Lookat = scene.GetActiveCamera()->GetLookAt();
+	glm::mat4x4 projectionTransformation = scene.GetActiveCamera()->GetProjectionTransformation();
 	glm::mat4x4 ViewPortTransformation = Transformations::ScalingTransformation(half_width, half_height, 1) * Transformations::TranslationTransformation(1, 1, 1);
-	glm::mat4x4 C_inv = scene.GetActiveCamera().GetC_inv();
+	glm::mat4x4 C_inv = scene.GetActiveCamera()->GetC_inv();
 	for (int i = 0; i < scene.GetLightCount(); i++)
 	{
-		auto& light = scene.GetLight(i);
-		glm::mat4x4 transformation = light.GetWorldTransformation() * light.GetLocalTransformation();
-		if (light.GetLightType() == LightType::POINT)
+		std::shared_ptr<Light> light = scene.GetLight(i);
+		glm::mat4x4 transformation = light->GetWorldTransformation() * light->GetLocalTransformation();
+		if (light->GetLightType() == LightType::POINT)
 		{
-			glm::vec4 position = light.GetLightPosition();
-			position = projectionTransformation * Lookat * C_inv * transformation * position;
-			if (!scene.GetActiveCamera().GetIsOrthographic())
-			{
-				position /= position.w;
-			}
-			position = ViewPortTransformation * position;
-			glm::vec3 v1(position.x, position.y + 20, -position.z);
-			glm::vec3 v2(position.x - 20, position.y - 10, -position.z);
-			glm::vec3 v3(position.x + 20, position.y - 10, -position.z);
-			float minY = v2.y;
-			float maxY = v1.y;
-			float minX = v2.x;
-			float maxX = v3.x;
-			for (int y = minY; y < maxY; y++)
-				for (int x = minX; x < maxX; x++)
-					if (ptInTriangle(glm::vec3(x, y, 0), v1, v2, v3))
-					{
-						glm::vec3 P(x, y, 1);
-						P = CalcZ(P, v1, v2, v3, v1, v2, v3);
-						if (P.z < GetZ(x, y))
-						{
-							PutPixel(x, y, color);
-							PutZ(x, y, P.z);
-						}
-					}
+			glm::vec3 position = light->GetLightPosition();
+			colorShader.use();
+
+			// Set the uniform variables
+			colorShader.setUniform("LightTransformation", transformation);
+			colorShader.setUniform("DrawLight", true);
+			colorShader.setUniform("view", Lookat*C_inv);
+			colorShader.setUniform("projection", projectionTransformation);
+			//colorShader.setUniform("material.textureMap", 0);
+
+			// Set 'texture1' as the active texture at slot #0
+			//texture1.bind(0);
+
+			// Drag our model's faces (triangles) in fill mode
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			glBindVertexArray(light->GetVao());
+			glDrawArrays(GL_POINTS, 0,1);
+			glEnable(GL_PROGRAM_POINT_SIZE);
+			glBindVertexArray(0);
+			//position = projectionTransformation * Lookat * C_inv * transformation * position;
+			//if (!scene.GetActiveCamera()->GetIsOrthographic())
+			//{
+			//	position /= position.w;
+			//}
+			//position = ViewPortTransformation * position;
+			//glm::vec3 v1(position.x, position.y + 20, -position.z);
+			//glm::vec3 v2(position.x - 20, position.y - 10, -position.z);
+			//glm::vec3 v3(position.x + 20, position.y - 10, -position.z);
+			//float minY = v2.y;
+			//float maxY = v1.y;
+			//float minX = v2.x;
+			//float maxX = v3.x;
+			//for (int y = minY; y < maxY; y++)
+			//	for (int x = minX; x < maxX; x++)
+			//		if (ptInTriangle(glm::vec3(x, y, 0), v1, v2, v3))
+			//		{
+			//			glm::vec3 P(x, y, 1);
+			//			P = CalcZ(P, v1, v2, v3, v1, v2, v3);
+			//			if (P.z < GetZ(x, y))
+			//			{
+			//				PutPixel(x, y, color);
+			//				PutZ(x, y, P.z);
+			//			}
+			//		}
 		}
 		else
 		{
-			glm::vec4 direction = glm::vec4(normalize(light.GetLightDirection()), 1);
-			direction = transformation * direction;
-			direction = Transformations::ScalingTransformation(50, 50, 50) * direction + parallelLights;
-			DrawLine(glm::vec3(parallelLights.x, parallelLights.y, parallelLights.z), glm::vec3(direction.x, direction.y, direction.z), color);
-			DrawLine(glm::vec3(parallelLights.x + 10, parallelLights.y, parallelLights.z), glm::vec3(direction.x + 10, direction.y, direction.z), color);
-			DrawLine(glm::vec3(parallelLights.x + 20, parallelLights.y, parallelLights.z), glm::vec3(direction.x + 20, direction.y, direction.z), color);
-			DrawLine(glm::vec3(parallelLights.x + 30, parallelLights.y, parallelLights.z), glm::vec3(direction.x + 30, direction.y, direction.z), color);
+			//glm::vec4 direction = glm::vec4(normalize(light->GetLightDirection()), 1);
+			//direction = transformation * direction;
+			//direction = Transformations::ScalingTransformation(50, 50, 50) * direction + parallelLights;
+			//DrawLine(glm::vec3(parallelLights.x, parallelLights.y, parallelLights.z), glm::vec3(direction.x, direction.y, direction.z), color);
+			//DrawLine(glm::vec3(parallelLights.x + 10, parallelLights.y, parallelLights.z), glm::vec3(direction.x + 10, direction.y, direction.z), color);
+			//DrawLine(glm::vec3(parallelLights.x + 20, parallelLights.y, parallelLights.z), glm::vec3(direction.x + 20, direction.y, direction.z), color);
+			//DrawLine(glm::vec3(parallelLights.x + 30, parallelLights.y, parallelLights.z), glm::vec3(direction.x + 30, direction.y, direction.z), color);
 		}
 	}
 }
@@ -819,7 +840,7 @@ glm::vec3 Renderer::GetSpecularColor(glm::vec3& I, glm::vec3 n, const glm::vec3&
 
 glm::vec3 Renderer::GetDiffuseColor(glm::vec3 normal, glm::vec3 I, Scene& scene,Light& light)
 {
-	glm::vec3 Dcolor = scene.GetActiveModel().GetDiffuseColor();
+	glm::vec3 Dcolor = scene.GetActiveModel()->GetDiffuseColor();
 	glm::vec3 temp(Dcolor.x * light.GetDiffuseLightColor().x, Dcolor.y * light.GetDiffuseLightColor().y, Dcolor.z * light.GetDiffuseLightColor().z);
 	float IdotN = glm::dot(-(normal), I);
 	return temp * IdotN;
@@ -831,8 +852,8 @@ void Renderer::ScanConvert_Phong(const glm::vec3& v1, const glm::vec3& v2, const
 	float maxY = std::max(std::max(v1.y, v2.y), v3.y);
 	float minX = std::min(std::min(v1.x, v2.x), v3.x);
 	float maxX = std::max(std::max(v1.x, v2.x), v3.x);
-	glm::vec3 eye = scene.GetActiveCamera().GetEye();
-	glm::vec3 Scolor = scene.GetActiveModel().GetSpecularColor();
+	glm::vec3 eye = scene.GetActiveCamera()->GetEye();
+	glm::vec3 Scolor = scene.GetActiveModel()->GetSpecularColor();
 	for (int y = minY; y < maxY; y++)
 		for (int x = minX; x < maxX; x++)
 		{
@@ -851,7 +872,7 @@ void Renderer::ScanConvert_Phong(const glm::vec3& v1, const glm::vec3& v2, const
 						I = normalize(light.GetLightDirection());
 					glm::vec3 normal;
 					normal = CalcZ(P, v1, v2, v3, vn1, vn2, vn3);
-					color = GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), light.GetAmbientLightColor());
+					color = GetAmbientColor(scene.GetActiveModel()->GetAmbientColor(), light.GetAmbientLightColor());
 					color += GetDiffuseColor(normal, I, scene,light);
 					color += GetSpecularColor(I, normal, eye, light, Scolor);
 					color_buffer_[INDEX(viewport_width_, x, y, 0)] += color.x;

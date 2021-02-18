@@ -100,7 +100,8 @@ int main(int argc, char** argv)
 	renderer.LoadShaders();
 	//renderer.LoadTextures();
 	Scene scene = Scene();
-
+	scene.AddCamera(std::make_shared<Camera>(glm::vec3(0, 0, 1)));
+	scene.SetActiveCameraIndex(0);
 	ImGuiIO& io = SetupDearImgui(window);
 	glfwSetScrollCallback(window, ScrollCallback);
 	while (!glfwWindowShouldClose(window))
@@ -235,59 +236,57 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	{
 		if (ImGui::BeginMenu("Choose Model"))
 		{
-			scene.AddCamera(std::make_shared<Camera>(glm::vec3(0,0,1)));
-			scene.SetActiveCameraIndex(0);
 			if (ImGui::MenuItem("Banana")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\banana.obj"));
-				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+				OrthoWidth = (scene.GetActiveModel()->GetMinOrtho() + scene.GetActiveModel()->GetMaxOrtho()) / 3;
 			}
 			if (ImGui::MenuItem("Beethoven")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\beethoven.obj"));
-				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 2;
+				OrthoWidth = (scene.GetActiveModel()->GetMinOrtho() + scene.GetActiveModel()->GetMaxOrtho()) / 2;
 			}
 			if (ImGui::MenuItem("Bishop")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\bishop.obj"));
-				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+				OrthoWidth = (scene.GetActiveModel()->GetMinOrtho() + scene.GetActiveModel()->GetMaxOrtho()) / 3;
 			}
 			if (ImGui::MenuItem("Blob")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\blob.obj"));
-				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+				OrthoWidth = (scene.GetActiveModel()->GetMinOrtho() + scene.GetActiveModel()->GetMaxOrtho()) / 3;
 			}
 			if (ImGui::MenuItem("Bunny")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\bunny.obj"));
-				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+				OrthoWidth = (scene.GetActiveModel()->GetMinOrtho() + scene.GetActiveModel()->GetMaxOrtho()) / 3;
 			}
 			if (ImGui::MenuItem("Camera")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\camera.obj"));
-				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+				OrthoWidth = (scene.GetActiveModel()->GetMinOrtho() + scene.GetActiveModel()->GetMaxOrtho()) / 3;
 			}
 			if (ImGui::MenuItem("Chain")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\chain.obj"));
-				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+				OrthoWidth = (scene.GetActiveModel()->GetMinOrtho() + scene.GetActiveModel()->GetMaxOrtho()) / 3;
 			}
 			if (ImGui::MenuItem("Cow")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\cow.obj"));
-				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+				OrthoWidth = (scene.GetActiveModel()->GetMinOrtho() + scene.GetActiveModel()->GetMaxOrtho()) / 3;
 			}
 			if (ImGui::MenuItem("Demo")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\demo.obj"));
-				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+				OrthoWidth = (scene.GetActiveModel()->GetMinOrtho() + scene.GetActiveModel()->GetMaxOrtho()) / 3;
 			}
 			if (ImGui::MenuItem("Dolphin")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\dolphin.obj"));
-				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+				OrthoWidth = (scene.GetActiveModel()->GetMinOrtho() + scene.GetActiveModel()->GetMaxOrtho()) / 3;
 			}
 			if (ImGui::MenuItem("Feline")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\feline.obj"));
-				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+				OrthoWidth = (scene.GetActiveModel()->GetMinOrtho() + scene.GetActiveModel()->GetMaxOrtho()) / 3;
 			}
 			if (ImGui::MenuItem("Pawn")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\pawn.obj"));
-				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+				OrthoWidth = (scene.GetActiveModel()->GetMinOrtho() + scene.GetActiveModel()->GetMaxOrtho()) / 3;
 			}
 			if (ImGui::MenuItem("Teapot")) {
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\teapot.obj"));
-				OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+				OrthoWidth = (scene.GetActiveModel()->GetMinOrtho() + scene.GetActiveModel()->GetMaxOrtho()) / 3;
 			}
 				if (ImGui::MenuItem("Other", "CTRL+O"))
 			{
@@ -297,7 +296,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				{
 					scene.AddCamera(std::make_shared<Camera>(glm::vec3(0, 0, 1)));
 					scene.AddModel(Utils::LoadMeshModel(outPath));
-					OrthoWidth = (scene.GetActiveModel().GetMinOrtho() + scene.GetActiveModel().GetMaxOrtho()) / 3;
+					OrthoWidth = (scene.GetActiveModel()->GetMinOrtho() + scene.GetActiveModel()->GetMaxOrtho()) / 3;
 					free(outPath);
 				}
 				else if (result == NFD_CANCEL)
@@ -312,8 +311,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		
 		if (ImGui::Button("Clear Model"))
 		{
-			scene.GetActiveCamera().ResetTransformations();
-			scene.GetActiveModel().ResetModel();
+			scene.GetActiveCamera()->ResetTransformations();
+			scene.GetActiveModel()->ResetModel();
 			scene.ClearActiveModel();
 		}
 
@@ -345,15 +344,15 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		ImGui::ColorEdit3("Faces Normals Color", FacesNormalsColor);
 		if (scene.GetModelCount())
 		{
-			scene.GetActiveModel().SetColors(BoundingBoxColor, FacesNormalsColor, NormalsColor);
+			scene.GetActiveModel()->SetColors(BoundingBoxColor, FacesNormalsColor, NormalsColor);
 			if (ImGui::Button("Grayscale Model"))
-				scene.GetActiveModel().SetColorMethod(GRAYSCALE);
+				scene.GetActiveModel()->SetColorMethod(GRAYSCALE);
 			ImGui::SameLine();
 			if (ImGui::Button("Random Colored Model"))
-				scene.GetActiveModel().SetColorMethod(RANDOM_COLORED);
+				scene.GetActiveModel()->SetColorMethod(RANDOM_COLORED);
 			ImGui::SameLine();
 			if (ImGui::Button("Chosen Color Model"))
-				scene.GetActiveModel().SetColorMethod(MODEL_COLOR);
+				scene.GetActiveModel()->SetColorMethod(MODEL_COLOR);
 			ImGui::RadioButton("Flat Shading", &Shadingtype, 0);
 			ImGui::SameLine(); ImGui::RadioButton("Gouraud Shading", &Shadingtype, 1);
 			ImGui::SameLine(); ImGui::RadioButton("Phong Shading", &Shadingtype, 2);
@@ -396,7 +395,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				{
 					static float fogDensity;
 					fogDensity = scene.GetFogDensity();
-					if (ImGui::SliderFloat("Fog Density", &fogDensity, scene.GetActiveModel().minDensity, scene.GetActiveModel().maxDensity))
+					if (ImGui::SliderFloat("Fog Density", &fogDensity, scene.GetActiveModel()->minDensity, scene.GetActiveModel()->maxDensity))
 					{
 						scene.SetFogDensity(fogDensity);
 					}
@@ -443,12 +442,12 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		{
 			ImGui::Begin("Transformations Window");
 			ImGui::ColorEdit3("Diffuse Model Color", DModelColor);
-			scene.GetActiveModel().SetDiffuseColor(glm::vec3(DModelColor[0], DModelColor[1], DModelColor[2]));
+			scene.GetActiveModel()->SetDiffuseColor(glm::vec3(DModelColor[0], DModelColor[1], DModelColor[2]));
 			ImGui::ColorEdit3("Ambient Model Color", AModelColor);
-			scene.GetActiveModel().SetAmbientColor(glm::vec3(AModelColor[0], AModelColor[1], AModelColor[2]));
+			scene.GetActiveModel()->SetAmbientColor(glm::vec3(AModelColor[0], AModelColor[1], AModelColor[2]));
 			ImGui::ColorEdit3("Specular Model Color", SModelColor);
-			scene.GetActiveModel().SetSpecularColor(glm::vec3(SModelColor[0], SModelColor[1], SModelColor[2]));
-			scene.GetActiveModel().SetColors(BoundingBoxColor, FacesNormalsColor, NormalsColor);
+			scene.GetActiveModel()->SetSpecularColor(glm::vec3(SModelColor[0], SModelColor[1], SModelColor[2]));
+			scene.GetActiveModel()->SetColors(BoundingBoxColor, FacesNormalsColor, NormalsColor);
 			ImGui::ListBox("World Or Local", &SelectedTransform, TransformItems, IM_ARRAYSIZE(TransformItems), 2);
 			ImGui::ListBox("Choose Transformation", &SelectedItem, items, IM_ARRAYSIZE(items), 3);
 			if (SelectedTransform) {
@@ -459,7 +458,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 					ImGui::SliderFloat("Scale Factor Y", &ScaleY, 0.f, 3.f);
 					ImGui::SliderFloat("Scale Factor Z", &ScaleZ, 0.f, 3.f);
 					Transformation = Transformations::ScalingTransformation(ScaleX, ScaleY, ScaleZ);
-					scene.GetActiveModel().Set_S_m(Transformation);
+					scene.GetActiveModel()->Set_S_m(Transformation);
 					break;
 				case 1:
 					ImGui::ListBox("Choose Axis to rotate around", &SelectedAxis, Axis, IM_ARRAYSIZE(Axis), 3);
@@ -477,20 +476,20 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 						ImGui::SliderFloat("Rotation Angle", &AngleZ, 0, 360);
 						Transformation = Transformations::ZRotationTransformation(AngleZ);
 					}
-					scene.GetActiveModel().SetRotationMatrix(Transformation, false, SelectedAxis + 1);
-					scene.GetActiveModel().Set_R_m();
+					scene.GetActiveModel()->SetRotationMatrix(Transformation, false, SelectedAxis + 1);
+					scene.GetActiveModel()->Set_R_m();
 					break;
 				case 2:
 					ImGui::SliderFloat("Translate Factor X", &TranslateX, -220, 220);
 					ImGui::SliderFloat("Translate Factor Y", &TranslateY, -220, 220);
 					ImGui::SliderFloat("Translate Factor Z", &TranslateZ, -220, 220);
-					Transformation = Transformations::TranslationTransformation(TranslateX / scene.GetActiveModel().GetTranslateFactor(), TranslateY / scene.GetActiveModel().GetTranslateFactor(), TranslateZ / scene.GetActiveModel().GetTranslateFactor());
-					scene.GetActiveModel().Set_T_m(Transformation);
+					Transformation = Transformations::TranslationTransformation(TranslateX / scene.GetActiveModel()->GetTranslateFactor(), TranslateY / scene.GetActiveModel()->GetTranslateFactor(), TranslateZ / scene.GetActiveModel()->GetTranslateFactor());
+					scene.GetActiveModel()->Set_T_m(Transformation);
 					break;
 				default:
 					break;
 				}
-				scene.GetActiveModel().SetModelTransformation(scene.GetActiveModel().Get_S_m() * scene.GetActiveModel().Get_R_m() * scene.GetActiveModel().Get_T_m());
+				scene.GetActiveModel()->SetModelTransformation(scene.GetActiveModel()->Get_S_m() * scene.GetActiveModel()->Get_R_m() * scene.GetActiveModel()->Get_T_m());
 			}
 			else
 			{
@@ -501,7 +500,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 					ImGui::SliderFloat("World Scale Factor Y", &WScaleY, 0.f, 3.f);
 					ImGui::SliderFloat("World Scale Factor Z", &WScaleZ, 0.f, 3.f);
 					Transformation = Transformations::ScalingTransformation(WScaleX, WScaleY, WScaleZ);
-					scene.GetActiveModel().Set_S_w(Transformation);
+					scene.GetActiveModel()->Set_S_w(Transformation);
 					break;
 				case 1:
 					ImGui::ListBox("Choose World Axis to rotate around", &SelectedAxis, Axis, IM_ARRAYSIZE(Axis), 3);
@@ -519,22 +518,22 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 						ImGui::SliderFloat("Rotation Angle", &WAngleZ, 0, 360);
 						Transformation = Transformations::ZRotationTransformation(WAngleZ);
 					}
-					scene.GetActiveModel().SetRotationMatrix(Transformation, true, SelectedAxis + 1);
-					scene.GetActiveModel().Set_R_w();
+					scene.GetActiveModel()->SetRotationMatrix(Transformation, true, SelectedAxis + 1);
+					scene.GetActiveModel()->Set_R_w();
 					break;
 				case 2:
 					ImGui::SliderFloat("World Translate Factor X", &WTranslateX, -220, 220);
 					ImGui::SliderFloat("World Translate Factor Y", &WTranslateY, -220, 220);
 					ImGui::SliderFloat("World Translate Factor Z", &WTranslateZ, -220, 220);
-					Transformation = Transformations::TranslationTransformation(WTranslateX / scene.GetActiveModel().GetTranslateFactor(), WTranslateY / scene.GetActiveModel().GetTranslateFactor(), WTranslateZ / scene.GetActiveModel().GetTranslateFactor());
-					scene.GetActiveModel().Set_T_w(Transformation);
+					Transformation = Transformations::TranslationTransformation(WTranslateX / scene.GetActiveModel()->GetTranslateFactor(), WTranslateY / scene.GetActiveModel()->GetTranslateFactor(), WTranslateZ / scene.GetActiveModel()->GetTranslateFactor());
+					scene.GetActiveModel()->Set_T_w(Transformation);
 					break;
 				default:
 					break;
 				}
-				scene.GetActiveModel().SetWorldTransformation(scene.GetActiveModel().Get_S_w() * scene.GetActiveModel().Get_R_w() * scene.GetActiveModel().Get_T_w());
+				scene.GetActiveModel()->SetWorldTransformation(scene.GetActiveModel()->Get_S_w() * scene.GetActiveModel()->Get_R_w() * scene.GetActiveModel()->Get_T_w());
 			}
-			scene.GetActiveModel().SetTransformation();
+			scene.GetActiveModel()->SetTransformation();
 
 			if (ImGui::Button("Reset"))
 			{
@@ -556,27 +555,27 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				WAngleX = 0;
 				WAngleY = 0;
 				WAngleZ = 0;
-				scene.GetActiveModel().ResetModel();
+				scene.GetActiveModel()->ResetModel();
 			}
 			float color[3];
 			RGBtoHSV(BoundingBoxColor[0] * 255, BoundingBoxColor[1] * 255, BoundingBoxColor[2] * 255, color[0], color[1], color[2]);
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(color[0] / 360, color[1], color[2] / 255));
 			if (ImGui::Button("Show/Hide Bounding Box"))
-				scene.GetActiveModel().SetBoundingBoxFlag();
+				scene.GetActiveModel()->SetBoundingBoxFlag();
 			ImGui::PopStyleColor();
 
 			ImGui::SameLine();
 			RGBtoHSV(FacesNormalsColor[0] * 255, FacesNormalsColor[1] * 255, FacesNormalsColor[2] * 255, color[0], color[1], color[2]);
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(color[0] / 360, color[1], color[2] / 255));
 			if (ImGui::Button("Show/Hide Faces Normals"))
-				scene.GetActiveModel().SetFacesNormalsFlag();
+				scene.GetActiveModel()->SetFacesNormalsFlag();
 			ImGui::PopStyleColor();
 
 			ImGui::SameLine();
 			RGBtoHSV(NormalsColor[0] * 255, NormalsColor[1] * 255, NormalsColor[2] * 255, color[0], color[1], color[2]);
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(color[0] / 360, color[1], color[2] / 255));
 			if (ImGui::Button("Show/Hide Normals"))
-				scene.GetActiveModel().SetNormalsFlag();
+				scene.GetActiveModel()->SetNormalsFlag();
 			ImGui::PopStyleColor();
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.f, 0.f, 0.f));
 			if (ImGui::Button("Close Me"))
@@ -634,7 +633,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 					ALightC = glm::vec3(AlightColor[0], AlightColor[1], AlightColor[2]);
 					if (ImGui::Button("Add Light"))
 					{
-						std::shared_ptr <Light> new_light = std::make_shared<Light>();
+						std::shared_ptr <Light> new_light = std::make_shared<Light>(model->GetModelCenter());
 						(*new_light).SetDiffuseLightColor(DLightC);
 						(*new_light).SetAmbientLightColor(ALightC);
 						(*new_light).SetSpecularLightColor(SLightC);
@@ -642,7 +641,6 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 							(*new_light).SetLightType(LightType::POINT);
 						else
 							(*new_light).SetLightType(LightType::PARALLEL);
-						(*new_light).SetLightPosition(model.GetModelCenter());
 						scene.AddLight(new_light);
 					}
 					ImGui::TreePop();
@@ -653,57 +651,57 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 					if (ImGui::SliderInt("Active Light Index", &item_current, 0, scene.GetLightCount() - 1))
 					{
 						scene.SetActiveLightIndex(item_current);
-						TranslateX_ = scene.GetActiveLight().GetLTranslateX() * scene.GetActiveModel().GetTranslateFactor();
-						TranslateY_ = scene.GetActiveLight().GetLTranslateY() * scene.GetActiveModel().GetTranslateFactor();
-						TranslateZ_ = scene.GetActiveLight().GetLTranslateZ() / 1000;
-						WTranslateX_ = scene.GetActiveLight().GetWTranslateX() * scene.GetActiveModel().GetTranslateFactor();
-						WTranslateY_ = scene.GetActiveLight().GetWTranslateY() * scene.GetActiveModel().GetTranslateFactor();
-						WTranslateZ_ = scene.GetActiveLight().GetWTranslateZ();
-						AngleX_ = scene.GetActiveLight().GetLRotationX();
-						AngleY_ = scene.GetActiveLight().GetLRotationY();
-						AngleZ_ = scene.GetActiveLight().GetLRotationZ();
-						WAngleX_ = scene.GetActiveLight().GetWRotationX();
-						WAngleY_ = scene.GetActiveLight().GetWRotationY();
-						WAngleZ_ = scene.GetActiveLight().GetWRotationZ();
-						DLL[0] = scene.GetActiveLight().GetDiffuseLightColor().x;
-						DLL[1] = scene.GetActiveLight().GetDiffuseLightColor().y;
-						DLL[2] = scene.GetActiveLight().GetDiffuseLightColor().z;
+						TranslateX_ = scene.GetActiveLight()->GetLTranslateX() * scene.GetActiveModel()->GetTranslateFactor();
+						TranslateY_ = scene.GetActiveLight()->GetLTranslateY() * scene.GetActiveModel()->GetTranslateFactor();
+						TranslateZ_ = scene.GetActiveLight()->GetLTranslateZ();
+						WTranslateX_ = scene.GetActiveLight()->GetWTranslateX() * scene.GetActiveModel()->GetTranslateFactor();
+						WTranslateY_ = scene.GetActiveLight()->GetWTranslateY() * scene.GetActiveModel()->GetTranslateFactor();
+						WTranslateZ_ = scene.GetActiveLight()->GetWTranslateZ();
+						AngleX_ = scene.GetActiveLight()->GetLRotationX();
+						AngleY_ = scene.GetActiveLight()->GetLRotationY();
+						AngleZ_ = scene.GetActiveLight()->GetLRotationZ();
+						WAngleX_ = scene.GetActiveLight()->GetWRotationX();
+						WAngleY_ = scene.GetActiveLight()->GetWRotationY();
+						WAngleZ_ = scene.GetActiveLight()->GetWRotationZ();
+						DLL[0] = scene.GetActiveLight()->GetDiffuseLightColor().x;
+						DLL[1] = scene.GetActiveLight()->GetDiffuseLightColor().y;
+						DLL[2] = scene.GetActiveLight()->GetDiffuseLightColor().z;
 
-						ALL[0] = scene.GetActiveLight().GetAmbientLightColor().x;
-						ALL[1] = scene.GetActiveLight().GetAmbientLightColor().y;
-						ALL[2] = scene.GetActiveLight().GetAmbientLightColor().z;
-						SLL[0] = scene.GetActiveLight().GetSpecularLightColor().x;
-						SLL[1] = scene.GetActiveLight().GetSpecularLightColor().y;
-						SLL[2] = scene.GetActiveLight().GetSpecularLightColor().z;
-						xDirection = scene.GetActiveLight().GetLightDirection().x;
-						yDirection = scene.GetActiveLight().GetLightDirection().y;
-						zDirection = scene.GetActiveLight().GetLightDirection().z;
+						ALL[0] = scene.GetActiveLight()->GetAmbientLightColor().x;
+						ALL[1] = scene.GetActiveLight()->GetAmbientLightColor().y;
+						ALL[2] = scene.GetActiveLight()->GetAmbientLightColor().z;
+						SLL[0] = scene.GetActiveLight()->GetSpecularLightColor().x;
+						SLL[1] = scene.GetActiveLight()->GetSpecularLightColor().y;
+						SLL[2] = scene.GetActiveLight()->GetSpecularLightColor().z;
+						xDirection = scene.GetActiveLight()->GetLightDirection().x;
+						yDirection = scene.GetActiveLight()->GetLightDirection().y;
+						zDirection = scene.GetActiveLight()->GetLightDirection().z;
 					}
 					auto& light = scene.GetActiveLight();
 					if (ImGui::TreeNode("Control Active Light")) 
 					{
 						ImGui::ColorEdit3("Active Light Diffuse Color", DLL);
-						light.SetDiffuseLightColor(glm::vec3(DLL[0], DLL[1], DLL[2]));
+						light->SetDiffuseLightColor(glm::vec3(DLL[0], DLL[1], DLL[2]));
 						ImGui::ColorEdit3("Active Light Ambient Color", ALL);
-						light.SetAmbientLightColor(glm::vec3(ALL[0], ALL[1], ALL[2]));
+						light->SetAmbientLightColor(glm::vec3(ALL[0], ALL[1], ALL[2]));
 						ImGui::ColorEdit3("Active Light Specular Color", SLL);
-						light.SetSpecularLightColor(glm::vec3(SLL[0], SLL[1], SLL[2]));
+						light->SetSpecularLightColor(glm::vec3(SLL[0], SLL[1], SLL[2]));
 						ImGui::SliderInt("alpha coefficent", &alpha, 1, 10);
-						light.SetAlpha(alpha);
-						if (light.GetLightType() == LightType::PARALLEL)
+						light->SetAlpha(alpha);
+						if (light->GetLightType() == LightType::PARALLEL)
 						{
 							ImGui::Text("Light Direction");
 							if (ImGui::SliderFloat("X Coordinate", &xDirection, -10, 10))
 							{
-								light.SetLightDirection(glm::vec3(xDirection, yDirection, zDirection));
+								light->SetLightDirection(glm::vec3(xDirection, yDirection, zDirection));
 							}
 							if (ImGui::SliderFloat("Y Coordinate", &yDirection, -10, 10))
 							{
-								light.SetLightDirection(glm::vec3(xDirection, yDirection, zDirection));
+								light->SetLightDirection(glm::vec3(xDirection, yDirection, zDirection));
 							}
 							if (ImGui::SliderFloat("Z Coordinate", &zDirection, -10, 10))
 							{
-								light.SetLightDirection(glm::vec3(xDirection, yDirection, zDirection));
+								light->SetLightDirection(glm::vec3(xDirection, yDirection, zDirection));
 							}
 						}
 						else
@@ -717,12 +715,12 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 							ImGui::RadioButton("Rotate", &TransformationType_, 1);
 							if (IsWorld_)
 							{
-								if (!TransformationType_ && light.GetLightType()!=LightType::PARALLEL)
+								if (!TransformationType_ && light->GetLightType()!=LightType::PARALLEL)
 								{
 									ImGui::SliderFloat("Translate in X", &WTranslateX_, -115, 115);
 									ImGui::SliderFloat("Translate in y", &WTranslateY_, -85, 85);
 									ImGui::SliderFloat("Translate in Z", &WTranslateZ_, -1, 1);
-									scene.GetActiveLight().SetTranslationMatrix(WTranslateX_ / scene.GetActiveModel().GetTranslateFactor(), WTranslateY_ / scene.GetActiveModel().GetTranslateFactor(), WTranslateZ_, true);
+									scene.GetActiveLight()->SetTranslationMatrix(WTranslateX_ / scene.GetActiveModel()->GetTranslateFactor(), WTranslateY_ / scene.GetActiveModel()->GetTranslateFactor(), WTranslateZ_, true);
 								}
 								else
 									if (TransformationType_)
@@ -730,11 +728,11 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 										ImGui::SliderFloat("Rotate in X", &WAngleX_, 0, 360);
 										ImGui::SliderFloat("Rotate in y", &WAngleY_, 0, 360);
 										ImGui::SliderFloat("Rotate in Z", &WAngleZ_, 0, 360);
-										scene.GetActiveLight().SetRotationMatrix((WAngleX_), true, 1);
-										scene.GetActiveLight().SetRotationMatrix((WAngleY_), true, 2);
-										scene.GetActiveLight().SetRotationMatrix((WAngleZ_), true, 3);
+										scene.GetActiveLight()->SetRotationMatrix((WAngleX_), true, 1);
+										scene.GetActiveLight()->SetRotationMatrix((WAngleY_), true, 2);
+										scene.GetActiveLight()->SetRotationMatrix((WAngleZ_), true, 3);
 									}
-								scene.GetActiveLight().SetWorldTransformation();
+								scene.GetActiveLight()->SetWorldTransformation();
 							}
 							else
 							{
@@ -743,23 +741,23 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 									ImGui::SliderFloat("Rotate in X", &AngleX_, 0, 360);
 									ImGui::SliderFloat("Rotate in y", &AngleY_, 0, 360);
 									ImGui::SliderFloat("Rotate in Z", &AngleZ_, 0, 360);
-									scene.GetActiveLight().SetRotationMatrix((AngleX_), false, 1);
-									scene.GetActiveLight().SetRotationMatrix((AngleY_), false, 2);
-									scene.GetActiveLight().SetRotationMatrix((AngleZ_), false, 3);
+									scene.GetActiveLight()->SetRotationMatrix((AngleX_), false, 1);
+									scene.GetActiveLight()->SetRotationMatrix((AngleY_), false, 2);
+									scene.GetActiveLight()->SetRotationMatrix((AngleZ_), false, 3);
 								}
 								else
-									if (!TransformationType_ && light.GetLightType() != LightType::PARALLEL)
+									if (!TransformationType_ && light->GetLightType() != LightType::PARALLEL)
 									{
 										ImGui::SliderFloat("Translate in X", &TranslateX_, -115, 115);
 										ImGui::SliderFloat("Translate in y", &TranslateY_, -85, 85);
 										ImGui::SliderFloat("Translate in Z", &TranslateZ_, -200, 200);
-										scene.GetActiveLight().SetTranslationMatrix(TranslateX_ / scene.GetActiveModel().GetTranslateFactor(), TranslateY_ / scene.GetActiveModel().GetTranslateFactor(), 1000 * TranslateZ_, false);
+										scene.GetActiveLight()->SetTranslationMatrix(TranslateX_ / scene.GetActiveModel()->GetTranslateFactor(), TranslateY_ / scene.GetActiveModel()->GetTranslateFactor(),TranslateZ_, false);
 									}
-								scene.GetActiveLight().SetLocalTransformation();
+								scene.GetActiveLight()->SetLocalTransformation();
 							}
 							if (ImGui::Button("Reset Light Transformations"))
 							{
-								scene.GetActiveLight().ResetTransformations();
+								scene.GetActiveLight()->ResetTransformations();
 								TranslateX_ = 0;
 								TranslateY_ = 0;
 								TranslateZ_ = 0;
@@ -787,7 +785,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		}
 		//*******************************************************************************CAMERA WINDOW***********************************************************************
 		static int Projection = 1;
-		static float eye[3] = { scene.GetActiveModel().GetPreffered_Eye()[0],scene.GetActiveModel().GetPreffered_Eye()[1],scene.GetActiveModel().GetPreffered_Eye()[2] };
+		static float eye[3] = { scene.GetActiveModel()->GetPreffered_Eye()[0],scene.GetActiveModel()->GetPreffered_Eye()[1],scene.GetActiveModel()->GetPreffered_Eye()[2] };
 		static float at[3] = { 0,0,0 };
 		static float up[3] = { 0,1,0 };
 		static float cameraTranslationX, cameraTranslationY, cameraTranslationZ;
@@ -806,15 +804,15 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			ImGui::RadioButton("Orthographic", &Projection, 1);
 			if (Projection)
 			{
-				scene.GetActiveCamera().SetIsOrthographic(true);
-				ImGui::SliderFloat("Orho Width", &OrthoWidth, scene.GetActiveModel().GetMinOrtho(), scene.GetActiveModel().GetMaxOrtho());
-				scene.GetActiveCamera().SetOrthographicWidth(OrthoWidth);
+				scene.GetActiveCamera()->SetIsOrthographic(true);
+				ImGui::SliderFloat("Orho Width", &OrthoWidth, scene.GetActiveModel()->GetMinOrtho(), scene.GetActiveModel()->GetMaxOrtho());
+				scene.GetActiveCamera()->SetOrthographicWidth(OrthoWidth);
 			}
 			else
 			{
-				scene.GetActiveCamera().SetIsOrthographic(false);
+				scene.GetActiveCamera()->SetIsOrthographic(false);
 				ImGui::SliderFloat("Fov", &fovy, 20, 120);
-				scene.GetActiveCamera().SetFovy(fovy);
+				scene.GetActiveCamera()->SetFovy(fovy);
 				//perspective
 			}
 
@@ -822,12 +820,12 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				ImGui::InputFloat3("Eye", eye, 3);
 				ImGui::InputFloat3("At", at, 3);
 				ImGui::InputFloat3("Up", up, 3);
-				scene.GetActiveCamera().SetAt(glm::vec3(at[0], at[1], at[2]));
-				scene.GetActiveCamera().SetEye(glm::vec3(eye[0], eye[1], eye[2]));
-				scene.GetActiveCamera().SetUp(glm::vec3(up[0], up[1], up[2]));
+				scene.GetActiveCamera()->SetAt(glm::vec3(at[0], at[1], at[2]));
+				scene.GetActiveCamera()->SetEye(glm::vec3(eye[0], eye[1], eye[2]));
+				scene.GetActiveCamera()->SetUp(glm::vec3(up[0], up[1], up[2]));
 				if (ImGui::Button("Look At"))
 				{
-					scene.GetActiveCamera().SetCameraLookAt();
+					scene.GetActiveCamera()->SetCameraLookAt();
 				}
 				ImGui::TreePop();
 			}
@@ -846,18 +844,18 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 						ImGui::SliderFloat("Rotate in X", &worldRotationX, 0, 360);
 						ImGui::SliderFloat("Rotate in y", &worldRotationY, 0, 360);
 						ImGui::SliderFloat("Rotate in Z", &worldRotationZ, 0, 360);
-						scene.GetActiveCamera().SetRotationMatrix(Transformations::XRotationTransformation(worldRotationX), true, 1);
-						scene.GetActiveCamera().SetRotationMatrix(Transformations::YRotationTransformation(worldRotationY), true, 2);
-						scene.GetActiveCamera().SetRotationMatrix(Transformations::ZRotationTransformation(worldRotationZ), true, 3);
+						scene.GetActiveCamera()->SetRotationMatrix(Transformations::XRotationTransformation(worldRotationX), true, 1);
+						scene.GetActiveCamera()->SetRotationMatrix(Transformations::YRotationTransformation(worldRotationY), true, 2);
+						scene.GetActiveCamera()->SetRotationMatrix(Transformations::ZRotationTransformation(worldRotationZ), true, 3);
 					}
 					else
 					{
 						ImGui::SliderFloat("Translate in X", &worldTranslationX, -200, 200);
 						ImGui::SliderFloat("Translate in y", &worldTranslationY, -200, 200);
 						ImGui::SliderFloat("Translate in Z", &worldTranslationZ, -200, 200);
-						scene.GetActiveCamera().SetWTranslate(Transformations::TranslationTransformation(worldTranslationX / 1000, worldTranslationY / 1000, worldTranslationZ / 1000));
+						scene.GetActiveCamera()->SetWTranslate(Transformations::TranslationTransformation(worldTranslationX / 1000, worldTranslationY / 1000, worldTranslationZ / 1000));
 					}
-					scene.GetActiveCamera().SetWTransformation();
+					scene.GetActiveCamera()->SetWTransformation();
 				}
 				else
 				{
@@ -866,23 +864,23 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 						ImGui::SliderFloat("Rotate in X", &cameraRotationX, 0, 360);
 						ImGui::SliderFloat("Rotate in y", &cameraRotationY, 0, 360);
 						ImGui::SliderFloat("Rotate in Z", &cameraRotationZ, 0, 360);
-						scene.GetActiveCamera().SetRotationMatrix(Transformations::XRotationTransformation(cameraRotationX), false, 1);
-						scene.GetActiveCamera().SetRotationMatrix(Transformations::YRotationTransformation(cameraRotationY), false, 2);
-						scene.GetActiveCamera().SetRotationMatrix(Transformations::ZRotationTransformation(cameraRotationZ), false, 3);
+						scene.GetActiveCamera()->SetRotationMatrix(Transformations::XRotationTransformation(cameraRotationX), false, 1);
+						scene.GetActiveCamera()->SetRotationMatrix(Transformations::YRotationTransformation(cameraRotationY), false, 2);
+						scene.GetActiveCamera()->SetRotationMatrix(Transformations::ZRotationTransformation(cameraRotationZ), false, 3);
 					}
 					else
 					{
 						ImGui::SliderFloat("Translate in x", &cameraTranslationX, -200, 200);
 						ImGui::SliderFloat("Translate in y", &cameraTranslationY, -200, 200);
 						ImGui::SliderFloat("Translate in z", &cameraTranslationZ, -200, 200);
-						scene.GetActiveCamera().SetCTranslate(Transformations::TranslationTransformation(cameraTranslationX / 1000, cameraTranslationY / 1000, cameraTranslationZ / 1000));
+						scene.GetActiveCamera()->SetCTranslate(Transformations::TranslationTransformation(cameraTranslationX / 1000, cameraTranslationY / 1000, cameraTranslationZ / 1000));
 					}
-					scene.GetActiveCamera().SetCTransformation();
+					scene.GetActiveCamera()->SetCTransformation();
 				}
-				scene.GetActiveCamera().SetTransformations();
+				scene.GetActiveCamera()->SetTransformations();
 				if (ImGui::Button("Reset Transformations"))
 				{
-					scene.GetActiveCamera().ResetTransformations();
+					scene.GetActiveCamera()->ResetTransformations();
 					cameraTranslationX = 0;
 					cameraTranslationY = 0;
 					cameraTranslationZ = 0;

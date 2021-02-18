@@ -13,21 +13,21 @@ public:
 
 	void AddLight(const std::shared_ptr<Light>& light);
 	int GetLightCount() const;
-	Light& GetLight(int index) const;
-	Light& GetActiveLight();
+	std::shared_ptr<Light> GetLight(int index) const;
+	std::shared_ptr<Light> GetActiveLight();
 	int GetActiveLightIndex();
 	void SetActiveLightIndex(int index);
 
 	void AddModel(const std::shared_ptr<MeshModel>& mesh_model);
 	int GetModelCount() const;
-	MeshModel& GetModel(int index) const;
-	MeshModel& GetActiveModel() const;
+	std::shared_ptr<MeshModel> GetModel(int index) const;
+	std::shared_ptr<MeshModel> GetActiveModel() const;
 	
 	void AddCamera(const std::shared_ptr<Camera>& camera);
 
 	int GetCameraCount() const;
-	Camera& GetCamera(int index);
-	Camera& GetActiveCamera();
+	std::shared_ptr<Camera> GetCamera(int index);
+	std::shared_ptr<Camera> GetActiveCamera();
 
 	void SetActiveCameraIndex(int index);
 	int GetActiveCameraIndex() const;

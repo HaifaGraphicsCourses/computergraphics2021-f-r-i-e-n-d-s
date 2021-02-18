@@ -8,6 +8,8 @@ layout(location = 2) in vec2 texCoords;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+uniform bool DrawLight;
+uniform mat4 LightTransformation;
 
 // These outputs will be available in the fragment shader as inputs
 out vec3 orig_fragPos;
@@ -26,7 +28,9 @@ void main()
 	// Pass the vertex texture coordinates property as it is. Its interpolated value
 	// will be avilable for us in the fragment shader
 	fragTexCoords = texCoords;
-
+	gl_PointSize=10.0f;
 	// This is an internal OpenGL variable, we must set a value to this variable
 	gl_Position = projection * view *  model * vec4(pos, 1.0f);
+	if(DrawLight==true)
+		gl_Position= projection * view *  LightTransformation * vec4(pos, 1.0f);
 }

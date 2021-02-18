@@ -8,13 +8,13 @@
 class Light 
 {
 public:
-	Light();
+	Light(glm::vec3 pos);
 
 	const glm::vec3& GetDiffuseLightColor() const;
 	const glm::vec3& GetAmbientLightColor() const;
 	const glm::vec3& GetSpecularLightColor() const;
 	const glm::vec3& GetLightDirection() const;
-	const glm::vec4& GetLightPosition() const;
+	const glm::vec3& GetLightPosition() const;
 	const LightType& GetLightType() const;
 	glm::mat4x4 GetWorldTransformation() const;
 	glm::mat4x4 GetLocalTransformation() const;
@@ -43,6 +43,8 @@ public:
 	float GetLTranslateX();
 	float GetLTranslateY();
 	float GetLTranslateZ();
+	GLuint GetVao();
+	GLuint GetVbo();
 
 
 private:
@@ -50,7 +52,7 @@ private:
 	glm::vec3 AlightColor;
 	glm::vec3 SlightColor;
 	glm::vec3 lightDirection;
-	glm::vec4 lightPosition;
+	glm::vec3 lightPosition;
 	LightType lightType;
 	ShadingType shadingType;
 	int alpha;
@@ -68,4 +70,6 @@ private:
 	float LTranslateX = 0.f;
 	float LTranslateY = 0.f;
 	float LTranslateZ = 0.f;
+	GLuint LightVao;
+	GLuint LightVbo;
 };

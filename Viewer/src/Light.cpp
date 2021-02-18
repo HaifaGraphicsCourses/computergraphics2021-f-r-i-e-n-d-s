@@ -1,13 +1,37 @@
 #include "Light.h"
 
 
-Light::Light()
+Light::Light(glm::vec3 pos)
 {
 	DlightColor = glm::vec3(0.37, 0.37, 0.37);
 	AlightColor = glm::vec3(0.37, 0.37, 0.37);
 	SlightColor = glm::vec3(0.37, 0.37, 0.37);
 	lightDirection = glm::vec3(0, 0, -1);
-	lightPosition = glm::vec4();
+	lightPosition = pos;
+	float point[3] = { pos.x,pos.y,pos.z };
+	glGenVertexArrays(1, &LightVao);
+	glGenBuffers(1, &LightVbo);
+
+	glBindVertexArray(LightVao);
+	glBindBuffer(GL_ARRAY_BUFFER, LightVbo);
+	glBufferData(GL_ARRAY_BUFFER, 3 * sizeof(Vertex), point, GL_STATIC_DRAW);
+
+	// Vertex Positions
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+
+	// Normals attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
+
+	// Vertex Texture Coords
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(6 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(2);
+
+	// unbind to make sure other code does not change it somewhere else
+	glBindVertexArray(0);
+
+
 }
 
 const glm::vec3& Light::GetDiffuseLightColor() const
@@ -30,7 +54,7 @@ const glm::vec3& Light::GetLightDirection() const
 	return lightDirection;
 }
 
-const glm::vec4& Light::GetLightPosition() const
+const glm::vec3& Light::GetLightPosition() const
 {
 	return lightPosition;
 }
@@ -185,9 +209,18 @@ float Light::GetLRotationY() {
 float Light::GetLRotationZ() {
 	return LRotationZ;
 }
-float Light::GetWTranslateX() { return WTranslateX; }
+float Light::GetWTranslateX() 
+{ return WTranslateX; }
 float Light::GetWTranslateY() { return WTranslateY; }
 float Light::GetWTranslateZ() { return WTranslateZ; }
 float Light::GetLTranslateX() { return LTranslateX; }
 float Light::GetLTranslateY() { return LTranslateY; }
 float Light::GetLTranslateZ() { return LTranslateZ; }
+GLuint Light::GetVao()
+{
+	return LightVao;
+}
+GLuint Light::GetVbo()
+{
+	return LightVbo;
+}
