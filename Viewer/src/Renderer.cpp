@@ -224,7 +224,7 @@ void Renderer::InitOpenGLRendering()
 
 	// (-1, 1)____(1, 1)
 	//	     |\  |
-	//	     | \ | <--- The texture is drawn over two triangles that stretch over the screen.
+	//	     | \ | <--- The exture is drawn over two triangles that stretch over the screen.
 	//	     |__\|
 	// (-1,-1)    (1,-1)
 	const GLfloat vtc[] = {
@@ -256,8 +256,8 @@ void Renderer::InitOpenGLRendering()
 	// memcopy tex to buffer[sizeof(vtc),sizeof(vtc)+sizeof(tex)]
 	glBufferSubData(GL_ARRAY_BUFFER, sizeof(vtc), sizeof(tex), tex);
 
-	// Loads and compiles a shader.
-	GLuint program = InitShader("vshader.glsl", "fshader.glsl");
+	// Loads and compiles a sheder.
+	GLuint program = InitShader("vshader_color.glsl", "fshader_color.glsl");
 
 	// Make this program the current one.
 	glUseProgram(program);
@@ -343,47 +343,36 @@ void Renderer::ClearColorBuffer(const glm::vec3& color)
 
 void Renderer::Render(Scene& scene)
 {
-	//ClearZ_Buffer();
-	MaxC = FLT_MIN;
 	int half_width = viewport_width_ / 2;
 	int half_height = viewport_height_ / 2;
-	bool Lighting = false;
-	glm::vec3 color(0.f, 0.f, 0.f);
-	glm::vec3 c1;
-	glm::vec3 c2;
-	glm::vec3 c3;
-	glm::vec3 FaceCenter;
-	glm::vec4 FaceNormal;
-	glm::vec4 LightPosition;
-	glm::vec3 LightDirection;
-	//if (scene.GetLightCount())
-	//	DrawLights(scene);
-	if (scene.GetCameraCount() > 0)
+
+	int cameraCount = scene.GetCameraCount();
+
+	if (cameraCount > 0)
 	{
-		glm::mat4x4 Lookat = scene.GetActiveCamera().GetLookAt();
-		glm::mat4x4 projectionTransformation = (scene.GetActiveCamera().GetProjectionTransformation());
-		//glm::mat4x4 ViewPortTransformation = Transformations::ScalingTransformation(half_width, half_height, 1) * Transformations::TranslationTransformation(1, 1, 1);
-		glm::mat4x4 C_inv = scene.GetActiveCamera().GetC_inv();
-		for (int i = 0; i < scene.GetModelCount(); i++)
+		int modelCount = scene.GetModelCount();
+		Camera& camera = scene.GetActiveCamera();
+
+		for (int currentModelIndex = 0; currentModelIndex < modelCount; currentModelIndex++)
 		{
-			scene.SetActiveModelIndex(i);
-			glm::mat4x4 Transformation = scene.GetActiveModel().GetTransformation();
+			MeshModel& currentModel = scene.GetModel(currentModelIndex);
+
 			// Activate the 'colorShader' program (vertex and fragment shaders)
 			colorShader.use();
 
 			// Set the uniform variables
-			colorShader.setUniform("model", scene.GetActiveModel().GetTransformation());
-			colorShader.setUniform("view", scene.GetActiveCamera().GetLookAt() * scene.GetActiveCamera().GetC_inv());
-			colorShader.setUniform("projection", scene.GetActiveCamera().GetProjectionTransformation());
-			colorShader.setUniform("material.textureMap", 0);
+			colorShader.setUniform("model", currentModel.GetTransformation());
+			colorShader.setUniform("view", camera.GetLookAt() * camera.GetC_inv());
+			colorShader.setUniform("projection", camera.GetProjectionTransformation());
+			//colorShader.setUniform("material.textureMap", 0);
 
 			// Set 'texture1' as the active texture at slot #0
 			//texture1.bind(0);
 
 			// Drag our model's faces (triangles) in fill mode
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-			glBindVertexArray(scene.GetActiveModel().GetVAO());
-			glDrawArrays(GL_TRIANGLES, 0, scene.GetActiveModel().GetModelVertices().size());
+			glBindVertexArray(currentModel.GetVAO()- 1);
+			glDrawArrays(GL_TRIANGLES, 0, currentModel.GetModelVertices().size());
 			glBindVertexArray(0);
 
 			// Unset 'texture1' as the active texture at slot #0
@@ -393,8 +382,8 @@ void Renderer::Render(Scene& scene)
 
 			// Drag our model's faces (triangles) in line mode (wireframe)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			glBindVertexArray(scene.GetActiveModel().GetVAO());
-			glDrawArrays(GL_TRIANGLES, 0, scene.GetActiveModel().GetModelVertices().size());
+			glBindVertexArray(currentModel.GetVAO()+1);
+			glDrawArrays(GL_TRIANGLES, 0, currentModel.GetModelVertices().size());
 			glBindVertexArray(0);
 		}
 	}

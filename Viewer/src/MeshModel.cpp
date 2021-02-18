@@ -19,7 +19,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 	model_name_(model.modelName),
 	ModelCenter(model.modelCenter)
 {
-    std::string name = GetModelName();
+   /* std::string name = GetModelName();
 	if (!name.compare("Sphere.obj"))
 	{
 		TranslateFactor = 1000;
@@ -129,7 +129,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 		Preffered_eye = glm::vec3(0, 0, 10);
 		minOrtho = 0;
 		maxOrtho = 30;
-	}
+	}*/
 	modelVertices.reserve(3 * model.faces.size());
 	for (int i = 0; i < faces_.size(); i++)
 	{
@@ -140,7 +140,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 
 			Vertex vertex;
 			vertex.position = vertices_[vertexIndex];
-			vertex.normal = model.normals[vertexIndex];
+			//vertex.normal = model.normals[vertexIndex];
 
 			if (textureCoords.size() > 0)
 			{
