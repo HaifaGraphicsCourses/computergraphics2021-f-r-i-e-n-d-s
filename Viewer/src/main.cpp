@@ -35,16 +35,16 @@ static void RGBtoHSV(float fR, float fG, float fB, float& fH, float& fS, float& 
 
 	fV = max;
 	delta = max - min;
-	if (delta < 0.00001)
+	if (delta < 0.00001f)
 	{
-		fS = 0;
-		fH = 0;
+		fS = 0.f;
+		fH = 0.f;
 	}
-	if (max > 0.0) {
+	if (max > 0.0f) {
 		fS = (delta / max);
 	}
 	else {
-		fS = 0.0;
+		fS = 0.0f;
 		fH = 0;
 		return ;
 	}
@@ -52,9 +52,9 @@ static void RGBtoHSV(float fR, float fG, float fB, float& fH, float& fS, float& 
 		fH = (fG - fB) / delta;        // between yellow & magenta
 	else
 		if (fG >= max)
-			fH = 2.0 + (fB - fR) / delta;  // between cyan & yellow
+			fH = 2.0f + (fB - fR) / delta;  // between cyan & yellow
 		else
-			fH = 4.0 + (fR - fG) / delta;  // between magenta & cyan
+			fH = 4.0f + (fR - fG) / delta;  // between magenta & cyan
 
 	fH *= 60.0;                              // degrees
 
@@ -98,7 +98,7 @@ int main(int argc, char** argv)
 
 	Renderer renderer = Renderer(frameBufferWidth, frameBufferHeight);
 	renderer.LoadShaders();
-	//renderer.LoadTextures();
+	renderer.LoadTextures();
 	Scene scene = Scene();
 	scene.AddCamera(std::make_shared<Camera>(glm::vec3(0, 0, 1)));
 	scene.SetActiveCameraIndex(0);
@@ -393,8 +393,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	if(scene.GetModelCount()>0)
 	{
 		auto model = scene.GetActiveModel();
-		static float DModelColor[3] = { 0.5,0.285,0.285 };
-		static float AModelColor[3] = {0.0625 ,0.3,0.57 };
+		static float DModelColor[3] = { 0.5f,0.285f,0.285f };
+		static float AModelColor[3] = {0.0625f ,0.3f,0.57f };
 		static float SModelColor[3]={};
 		const static char* items[] = { "Scale","Rotate","Translate"};
 		const static char* TransformItems[] = {"World Transformation","Local Transformation"};
@@ -677,15 +677,15 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 						if (light->GetLightType() == LightType::PARALLEL)
 						{
 							ImGui::Text("Light Direction");
-							if (ImGui::SliderFloat("X Coordinate", &xDirection, -1, 1))
+							if (ImGui::SliderFloat("X Coordinate", &xDirection, -1.f, 1.f))
 							{
 								light->SetLightDirection(glm::vec3(xDirection, yDirection, zDirection));
 							}
-							if (ImGui::SliderFloat("Y Coordinate", &yDirection, -1, 1))
+							if (ImGui::SliderFloat("Y Coordinate", &yDirection, -1.f, 1.f))
 							{
 								light->SetLightDirection(glm::vec3(xDirection, yDirection, zDirection));
 							}
-							if (ImGui::SliderFloat("Z Coordinate", &zDirection, -1, 1))
+							if (ImGui::SliderFloat("Z Coordinate", &zDirection, -1.f, 1.f))
 							{
 								light->SetLightDirection(glm::vec3(xDirection, yDirection, zDirection));
 							}
@@ -703,17 +703,17 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 							{
 								if (!TransformationType_ && light->GetLightType()!=LightType::PARALLEL)
 								{
-									ImGui::SliderFloat("Translate in X", &WTranslateX_, -0.1, 0.1);
-									ImGui::SliderFloat("Translate in y", &WTranslateY_, -0.1, 0.1);
-									ImGui::SliderFloat("Translate in Z", &WTranslateZ_, -0.1, 0.1);
+									ImGui::SliderFloat("Translate in X", &WTranslateX_, -0.1f, 0.1f);
+									ImGui::SliderFloat("Translate in y", &WTranslateY_, -0.1f, 0.1f);
+									ImGui::SliderFloat("Translate in Z", &WTranslateZ_, -0.1f, 0.1f);
 									scene.GetActiveLight()->SetTranslationMatrix(WTranslateX_, WTranslateY_ , WTranslateZ_, true);
 								}
 								else
 									if (TransformationType_)
 									{
-										ImGui::SliderFloat("Rotate in X", &WAngleX_, 0, 360);
-										ImGui::SliderFloat("Rotate in y", &WAngleY_, 0, 360);
-										ImGui::SliderFloat("Rotate in Z", &WAngleZ_, 0, 360);
+										ImGui::SliderFloat("Rotate in X", &WAngleX_, 0.f, 360.f);
+										ImGui::SliderFloat("Rotate in y", &WAngleY_, 0.f, 360.f);
+										ImGui::SliderFloat("Rotate in Z", &WAngleZ_, 0.f, 360.f);
 										scene.GetActiveLight()->SetRotationMatrix((WAngleX_), true, 1);
 										scene.GetActiveLight()->SetRotationMatrix((WAngleY_), true, 2);
 										scene.GetActiveLight()->SetRotationMatrix((WAngleZ_), true, 3);
@@ -724,9 +724,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 							{
 								if (TransformationType_)
 								{
-									ImGui::SliderFloat("Rotate in X", &AngleX_, 0, 360);
-									ImGui::SliderFloat("Rotate in y", &AngleY_, 0, 360);
-									ImGui::SliderFloat("Rotate in Z", &AngleZ_, 0, 360);
+									ImGui::SliderFloat("Rotate in X", &AngleX_, 0.f, 360.f);
+									ImGui::SliderFloat("Rotate in y", &AngleY_, 0.f, 360.f);
+									ImGui::SliderFloat("Rotate in Z", &AngleZ_, 0.f, 360.f);
 									scene.GetActiveLight()->SetRotationMatrix((AngleX_), false, 1);
 									scene.GetActiveLight()->SetRotationMatrix((AngleY_), false, 2);
 									scene.GetActiveLight()->SetRotationMatrix((AngleZ_), false, 3);
@@ -734,9 +734,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 								else
 									if (!TransformationType_ && light->GetLightType() != LightType::PARALLEL)
 									{
-										ImGui::SliderFloat("Translate in X", &TranslateX_, -0.1, 0.1);
-										ImGui::SliderFloat("Translate in y", &TranslateY_, -0.1, 0.1);
-										ImGui::SliderFloat("Translate in Z", &TranslateZ_, -0.1, 0.1);
+										ImGui::SliderFloat("Translate in X", &TranslateX_, -0.1f, 0.1f);
+										ImGui::SliderFloat("Translate in y", &TranslateY_, -0.1f, 0.1f);
+										ImGui::SliderFloat("Translate in Z", &TranslateZ_, -0.1f, 0.1f);
 										scene.GetActiveLight()->SetTranslationMatrix(TranslateX_ , TranslateY_ ,TranslateZ_, false);
 									}
 								scene.GetActiveLight()->SetLocalTransformation();
@@ -772,16 +772,16 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		//*******************************************************************************CAMERA WINDOW***********************************************************************
 		static int Projection = 1;
 		static float eye[3] = { scene.GetActiveModel()->GetPreffered_Eye()[0],scene.GetActiveModel()->GetPreffered_Eye()[1],scene.GetActiveModel()->GetPreffered_Eye()[2] };
-		static float at[3] = { 0,0,0 };
-		static float up[3] = { 0,1,0 };
+		static float at[3] = { 0.f,0.f,0.f };
+		static float up[3] = { 0.f,1.f,0.f };
 		static float cameraTranslationX, cameraTranslationY, cameraTranslationZ;
 		static float cameraRotationX, cameraRotationY, cameraRotationZ;
 		static float worldTranslationX, worldTranslationY, worldTranslationZ;
 		static float worldRotationX, worldRotationY, worldRotationZ;
 		static int IsWorld, TransformationType;
 		static float fovy = (90.f);
-		static float Near = -0.1;
-		static float Far = 1000;
+		static float Near = -0.1f;
+		static float Far = 1000.f;
 		if (CameraWindow)
 		{
 			ImGui::Begin("Camera Window");

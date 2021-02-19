@@ -25,10 +25,10 @@ void main()
 	orig_fragPos = vec3(vec4(pos, 1.0f));
 	fragPos = vec3(model * vec4(pos, 1.0f));
 	fragNormal = mat3(model) * normal;
-
+		
+	fragTexCoords = texCoords;
 	// Pass the vertex texture coordinates property as it is. Its interpolated value
 	// will be avilable for us in the fragment shader
-	fragTexCoords = texCoords;
 	gl_PointSize=10.0f;
 	// This is an internal OpenGL variable, we must set a value to this variable
 	gl_Position = projection * view *  model * vec4(pos, 1.0f);

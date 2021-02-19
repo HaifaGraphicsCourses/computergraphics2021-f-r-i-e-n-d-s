@@ -407,7 +407,7 @@ void Renderer::Render(Scene& scene)
 			colorShader.setUniform("material.alpha", scene.GetActiveModel()->GetAlpha());
 
 			// Set 'texture1' as the active texture at slot #0
-			//texture1.bind(0);
+			texture1.bind(0);
 
 			
 			if (scene.GetActiveModel()->GetColorMethod() == PHONGSHADING)
@@ -420,7 +420,7 @@ void Renderer::Render(Scene& scene)
 			}
 
 			// Unset 'texture1' as the active texture at slot #0
-			//texture1.unbind(0);
+			texture1.unbind(0);
 
 			if (scene.GetActiveModel()->GetColorMethod() == WIREFRAME)
 			{
@@ -704,98 +704,10 @@ void Renderer::PutZ(int i, int j, float z)
 	this->Z_Buffer[Z_INDEX(viewport_width_, i, j)] = z;
 }
 
-void Renderer::ScanConvert_Flat(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, const int& colorMeth, glm::vec3 color, Scene& scene, bool lighting)
-{
-	if (lighting)
-		return;
-	float minY = std::min(std::min(v1.y, v2.y), v3.y);
-	float maxY = std::max(std::max(v1.y, v2.y), v3.y);
-	float minX = std::min(std::min(v1.x, v2.x), v3.x);
-	float maxX = std::max(std::max(v1.x, v2.x), v3.x);
-	for (int y = minY; y < maxY; y++)
-		for (int x = minX; x < maxX; x++)
-		{
-			if (ptInTriangle(glm::vec3(x, y, 0), v1, v2, v3))
-			{
-				glm::vec3 P(x, y, 1);
-				P = CalcZ(P, v1, v2, v3, v1, v2, v3);
-				if (P.z <= GetZ(x, y))
-				{
-					MaxZ = std::max(MaxZ, P.z);
-					MinZ = std::min(MinZ, P.z);
-					PutZ(x, y, P.z);
-					if (!lighting)
-					{
-						if (x < 0) continue; if (x >= viewport_width_) continue;
-						if (y < 0) continue; if (y >= viewport_height_) continue;
-						color_buffer_[INDEX(viewport_width_, x, y, 0)] += color.x;
-						color_buffer_[INDEX(viewport_width_, x, y, 1)] += color.y;
-						color_buffer_[INDEX(viewport_width_, x, y, 2)] += color.z;
-						//color_buffer_[INDEX(viewport_width_, x, y, 0)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 0)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 0)] : MaxC = MaxC;
-						//color_buffer_[INDEX(viewport_width_, x, y, 1)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 1)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 1)] : MaxC = MaxC;
-						//color_buffer_[INDEX(viewport_width_, x, y, 2)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 2)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 2)] : MaxC = MaxC;
-					}
-				}
-			}
-		}
-}
-
-void Renderer::FillZ_Buffer(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, Scene& scene)
-{
-	float minY = std::min(std::min(v1.y, v2.y), v3.y);
-	float maxY = std::max(std::max(v1.y, v2.y), v3.y);
-	float minX = std::min(std::min(v1.x, v2.x), v3.x);
-	float maxX = std::max(std::max(v1.x, v2.x), v3.x);
-	for (int y = minY; y < maxY; y++)
-		for (int x = minX; x < maxX; x++)
-		{
-			if (ptInTriangle(glm::vec3(x, y, 0), v1, v2, v3))
-			{
-				glm::vec3 P(x, y, 1);
-				P = CalcZ(P, v1, v2, v3, v1, v2, v3);
-				if (P.z <= GetZ(x, y))
-				{
-					if (x < 0) return; if (x >= viewport_width_) return;
-					if (y < 0) return; if (y >= viewport_height_) return;
-					MaxZ = std::max(MaxZ, P.z);
-					MinZ = std::min(MinZ, P.z);
-					PutZ(x, y, P.z);
-					PutPixel(x, y, glm::vec3(0.f, 0.f, 0.f));
-					//color_buffer_[INDEX(viewport_width_, x, y, 0)] = 0.f;
-					//color_buffer_[INDEX(viewport_width_, x, y, 1)] = 0.f;
-					//color_buffer_[INDEX(viewport_width_, x, y, 2)] = 0.f;
-				}
-			}
-		}
-}
-
-void Renderer::ScanConvert_ZBuffer(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, Scene& scene)
-{
-	float minY = std::min(std::min(v1.y, v2.y), v3.y);
-	float maxY = std::max(std::max(v1.y, v2.y), v3.y);
-	float minX = std::min(std::min(v1.x, v2.x), v3.x);
-	float maxX = std::max(std::max(v1.x, v2.x), v3.x);
-	glm::vec3 RandomColor = RandColor();
-	for (int y = minY; y < maxY; y++)
-		for (int x = minX; x < maxX; x++)
-			if (ptInTriangle(glm::vec3(x, y, 0), v1, v2, v3))
-			{
-				glm::vec3 P(x, y, 1);
-				P = CalcZ(P, v1, v2, v3, v1, v2, v3);
-				if (P.z <= GetZ(x, y))
-				{
-					MaxZ = std::max(MaxZ, P.z);
-					MinZ = std::min(MinZ, P.z);
-					PutZ(x, y, P.z);
-					PutPixel(x, y, RandomColor);
-				}
-			}
-}
-
 void Renderer::DrawLights(Scene& scene)
 {
-	int half_width = viewport_width_ / 2;
-	int half_height = viewport_height_ / 2;
+	float half_width = viewport_width_ / 2;
+	float half_height = viewport_height_ / 2;
 	glm::vec3 color = glm::vec3(1, 1, 1);
 	glm::mat4x4 Lookat = scene.GetActiveCamera()->GetLookAt();
 	glm::mat4x4 projectionTransformation = scene.GetActiveCamera()->GetProjectionTransformation();
@@ -851,7 +763,7 @@ glm::vec3 Renderer::GetSpecularColor(glm::vec3& I, glm::vec3 n, const glm::vec3&
 	int alpha = 2;
 	glm::vec3 temp = glm::vec3(Scolor.x * light.GetSpecularLightColor().x, Scolor.y * light.GetSpecularLightColor().y, Scolor.z * light.GetSpecularLightColor().z);
 	glm::vec3 r = (2.f * glm::dot(-n, I) * n - I);
-	float Power = (std::pow(std::max(0.0f, glm::dot((r), (temp_eye))), alpha));
+	float Power = (float)(std::pow(std::max(0.0f, glm::dot((r), (temp_eye))), alpha));
 	glm::vec3 I_s(temp * Power);
 	return I_s;
 }
@@ -864,75 +776,6 @@ glm::vec3 Renderer::GetDiffuseColor(glm::vec3 normal, glm::vec3 I, Scene& scene,
 	return temp * IdotN;
 }
 
-void Renderer::ScanConvert_Phong(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, const glm::vec3& vn1, const glm::vec3& vn2, const glm::vec3& vn3, Scene& scene, glm::vec3 color, glm::vec3 LightPosition, Light& light)
-{
-	float minY = std::min(std::min(v1.y, v2.y), v3.y);
-	float maxY = std::max(std::max(v1.y, v2.y), v3.y);
-	float minX = std::min(std::min(v1.x, v2.x), v3.x);
-	float maxX = std::max(std::max(v1.x, v2.x), v3.x);
-	glm::vec3 eye = scene.GetActiveCamera()->GetEye();
-	glm::vec3 Scolor = scene.GetActiveModel()->GetSpecularColor();
-	for (int y = minY; y < maxY; y++)
-		for (int x = minX; x < maxX; x++)
-		{
-			if (x < 0) continue; if (x >= viewport_width_) continue;
-			if (y < 0) continue; if (y >= viewport_height_) continue;
-			if (ptInTriangle(glm::vec3(x, y, 0), v1, v2, v3))
-			{
-				glm::vec3 P(x, y, 1);
-				P = CalcZ(P, v1, v2, v3, v1, v2, v3);
-				if (P.z <= GetZ(x, y))
-				{
-					glm::vec3 I;
-					if (light.GetLightType() == LightType::POINT)
-						I = normalize(P - LightPosition);
-					else
-						I = normalize(light.GetLightDirection());
-					glm::vec3 normal;
-					normal = CalcZ(P, v1, v2, v3, vn1, vn2, vn3);
-					color = GetAmbientColor(scene.GetActiveModel()->GetAmbientColor(), light.GetAmbientLightColor());
-					color += GetDiffuseColor(normal, I, scene,light);
-					color += GetSpecularColor(I, normal, eye, light, Scolor);
-					color_buffer_[INDEX(viewport_width_, x, y, 0)] += color.x;
-					color_buffer_[INDEX(viewport_width_, x, y, 1)] += color.y;
-					color_buffer_[INDEX(viewport_width_, x, y, 2)] += color.z;
-					//color_buffer_[INDEX(viewport_width_, x, y, 0)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 0)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 0)] : MaxC = MaxC;
-					//color_buffer_[INDEX(viewport_width_, x, y, 1)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 1)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 1)] : MaxC = MaxC;
-					//color_buffer_[INDEX(viewport_width_, x, y, 2)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 2)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 2)] : MaxC = MaxC;
-				}
-			}
-		}
-
-}
-
-void Renderer::ScanConvert_Gouraud(const glm::vec3& v1, const glm::vec3& v2, const glm::vec3& v3, const glm::vec3& c1, const glm::vec3& c2, const glm::vec3& c3)
-{
-	float minY = std::min(std::min(v1.y, v2.y), v3.y);
-	float maxY = std::max(std::max(v1.y, v2.y), v3.y);
-	float minX = std::min(std::min(v1.x, v2.x), v3.x);
-	float maxX = std::max(std::max(v1.x, v2.x), v3.x);
-	for (int y = minY; y < maxY; y++)
-		for (int x = minX; x < maxX; x++)
-		{
-			if (x < 0) continue; if (x >= viewport_width_) continue;
-			if (y < 0) continue; if (y >= viewport_height_) continue;
-			if (ptInTriangle(glm::vec3(x, y, 0), v1, v2, v3))
-			{
-				glm::vec3 P(x, y, 1);
-				P = CalcZ(P, v1, v2, v3, v1, v2, v3);
-				if (P.z <= GetZ(x, y))
-				{
-					glm::vec3 color = CalcZ(P, v1, v2, v3, c1, c2, c3);
-					color_buffer_[INDEX(viewport_width_, x, y, 0)] += color.x;
-					color_buffer_[INDEX(viewport_width_, x, y, 1)] += color.y;
-					color_buffer_[INDEX(viewport_width_, x, y, 2)] += color.z;
-					//color_buffer_[INDEX(viewport_width_, x, y, 0)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 0)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 0)] : MaxC = MaxC;
-					//color_buffer_[INDEX(viewport_width_, x, y, 1)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 1)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 1)] : MaxC = MaxC;
-					//color_buffer_[INDEX(viewport_width_, x, y, 2)] > MaxC&& color_buffer_[INDEX(viewport_width_, x, y, 2)] > 1.f ? MaxC = color_buffer_[INDEX(viewport_width_, x, y, 2)] : MaxC = MaxC;
-				}
-			}
-		}
-}
 
 void Renderer::ScanConvert_Grayscale()
 {
@@ -979,4 +822,12 @@ void Renderer::FixColors(int coloring)
 void Renderer::LoadShaders()
 {
 	colorShader.loadShaders("vshader_color.glsl", "fshader_color.glsl");
+}
+
+void Renderer::LoadTextures()
+{
+	if (!texture1.loadTexture("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\armadillo.jpg", true))
+	{
+		texture1.loadTexture("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\armadillo.jpg", true);
+	}
 }

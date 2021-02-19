@@ -26,126 +26,126 @@ MeshModel::MeshModel(ModelParameters& model) :
 	colorMethod = WIREFRAME;
 	if (!name.compare("Sphere.obj"))
 	{
-		TranslateFactor = 1000;
+		TranslateFactor = 1000.f;
 		Preffered_eye = glm::vec3(0, 0, 0.4);
-		minOrtho = 0.355;
-		maxOrtho = 1.145;
-		minDensity = 300;
-		maxDensity = 1000;
+		minOrtho = 0.355f;
+		maxOrtho = 1.145f;
+		minDensity = 300.f;
+		maxDensity = 1000.f;
 	}
 	else
 	if (!name.compare("banana.obj"))
 	{
-		TranslateFactor = 1000;
+		TranslateFactor = 1000.f;
 		Preffered_eye = glm::vec3(0, 0, 0.4);
-		minOrtho = 0.355;
-		maxOrtho = 1.145;
-		minDensity = 300;
-		maxDensity = 1000;
+		minOrtho = 0.355f;
+		maxOrtho = 1.145f;
+		minDensity = 300.f;
+		maxDensity = 1000.f;
 	}
 	else
 	if (!name.compare("beethoven.obj"))
 	{
 		TranslateFactor = 2;
 		Preffered_eye = glm::vec3(0, 0, 40);
-		minOrtho = 10;
-		maxOrtho = 80;
+		minOrtho = 10.f;
+		maxOrtho = 80.f;
 	}
 	else
 	if (!name.compare("bishop.obj"))
 	{
-		TranslateFactor = 1000;
+		TranslateFactor = 1000.f;
 		Preffered_eye = glm::vec3(0, 0, 0.5);
-		minOrtho = 0.355;
-		maxOrtho = 1.145;
-		minDensity = 400;
-		maxDensity = 1000;
+		minOrtho = 0.355f;
+		maxOrtho = 1.145f;
+		minDensity = 400.f;
+		maxDensity = 1000.f;
 	}
 	else
 	if (!name.compare("blob.obj"))
 	{
 		TranslateFactor = 2;
 		Preffered_eye = glm::vec3(0, 0, 1000);
-		minOrtho = 150;
-		maxOrtho = 450;
-		minDensity = 1;
-		maxDensity = 10;
+		minOrtho = 150.f;
+		maxOrtho = 450.f;
+		minDensity = 1.f;
+		maxDensity = 10.f;
 	}
 	else
 	if (!name.compare("bunny.obj"))
 	{
-		TranslateFactor = 55;
+		TranslateFactor = 55.f;
 		Preffered_eye = glm::vec3(0, 0, 4);
-		minOrtho = 3;
-		maxOrtho = 27;
-		minDensity = 50;
-		maxDensity = 200;
+		minOrtho = 3.f;
+		maxOrtho = 27.f;
+		minDensity = 50.f;
+		maxDensity = 200.f;
 	}
 	else
 	if (!name.compare("camera.obj"))
 	{
-		TranslateFactor = 35;
+		TranslateFactor = 35.f;
 		Preffered_eye = glm::vec3(0, 0, 10);
-		minOrtho = 5;
-		maxOrtho = 40;
-		minDensity = 20;
-		maxDensity = 100;
+		minOrtho = 5.f;
+		maxOrtho = 40.f;
+		minDensity = 20.f;
+		maxDensity = 100.f;
 	}
 	else
 	if (!name.compare("chain.obj"))
 	{
-		TranslateFactor = 35;
+		TranslateFactor = 35.f;
 		Preffered_eye = glm::vec3(0, 0, 8);
-		minOrtho = 10;
-		maxOrtho = 35;
+		minOrtho = 10.f;
+		maxOrtho = 35.f;
 	}
 	else
 	if (!name.compare("cow.obj"))
 	{
-		TranslateFactor = 30;
+		TranslateFactor = 30.f;
 		Preffered_eye = glm::vec3(0, 0, 11);
-		minOrtho = 1;
-		maxOrtho = 50;
+		minOrtho = 1.f;
+		maxOrtho = 50.f;
 	}
 	else
 	if (!name.compare("demo.obj"))
 	{
-		TranslateFactor = 33;
+		TranslateFactor = 33.f;
 		Preffered_eye = glm::vec3(0, 0, 15);
-		minOrtho = 10;
-		maxOrtho = 50;
+		minOrtho = 10.f;
+		maxOrtho = 50.f;
 	}
 	else
 	if (!name.compare("dolphin.obj"))
 	{
-		TranslateFactor = 1;
+		TranslateFactor = 1.f;
 		Preffered_eye = glm::vec3(0, 0, 1000);
-		minOrtho = 500;
-		maxOrtho = 2500;
+		minOrtho = 500.f;
+		maxOrtho = 2500.f;
 	}
 	else
 	if (!name.compare("feline.obj"))
 	{
-		TranslateFactor = 20;
+		TranslateFactor = 20.f;
 		Preffered_eye = glm::vec3(0, 0, 10);
-		minOrtho = 1;
-		maxOrtho = 29;
+		minOrtho = 1.f;
+		maxOrtho = 29.f;
 	}
 	else
 	if (!name.compare("pawn.obj"))
 	{
-		TranslateFactor = 1000;
+		TranslateFactor = 1000.f;
 		Preffered_eye = glm::vec3(0, 0, 0.5);
-		minOrtho = 0.355;
-		maxOrtho = 1.145;
+		minOrtho = 0.355f;
+		maxOrtho = 1.145f;
 	}
 	else
 	if (!name.compare("teapot.obj"))
 	{
-		TranslateFactor = 50;
+		TranslateFactor = 50.f;
 		Preffered_eye = glm::vec3(0, 0, 10);
-		minOrtho = 0;
-		maxOrtho = 30;
+		minOrtho = 0.f;
+		maxOrtho = 30.f;
 	}
 	else
 	{

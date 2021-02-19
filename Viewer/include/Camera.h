@@ -38,15 +38,15 @@ public:
 	
 
 private:
-	float width=1920;
-	float height=1080;
+	float width=1920.f;
+	float height=1080.f;
 	float aspectratio = width/height;   
 	float left = -width / 2;
 	float right = width / 2;
 	float bottom = -height / 2;
 	float top = height / 2;
-	float Near = 0.1;
-	float Far = 200;
+	float Near = 0.1f;
+	float Far = 200.f;
 	float Fovy = glm::radians(45.f);
 	glm::vec3 eye;
 	glm::vec3 at;

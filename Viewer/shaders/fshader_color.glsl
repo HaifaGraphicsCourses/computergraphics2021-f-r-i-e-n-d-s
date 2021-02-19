@@ -68,6 +68,7 @@ void main()
 			Is+=(temp * Power);
 		}
 		frag_color = vec4((Is+Id+Ia),1.f);
+		frag_color=vec4(textureColor,1.f);
 		
 	}
 		
