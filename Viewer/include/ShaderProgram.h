@@ -33,6 +33,9 @@ public:
 	void setUniform(const GLchar* name, const GLfloat f);
 	void setUniform(const GLchar* name, const GLint v);
 	void setUniformSampler(const GLchar* name, const GLint& slot);
+	void setUniform(const GLchar* name, const glm::vec3 v[], int size);
+	void setUniform(const GLchar* name, const glm::mat4x4 m[], int size);
+	void setUniform(const GLchar* name, const GLfloat* v, int size);
 
 	// We are going to speed up looking for uniforms by keeping their locations in a map
 	GLint getUniformLocation(const GLchar * name);

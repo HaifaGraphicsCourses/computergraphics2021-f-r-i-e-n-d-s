@@ -1,37 +1,68 @@
 #include "Light.h"
 
 
-Light::Light(glm::vec3 pos)
+Light::Light(glm::vec3 pos, LightType type)
 {
 	DlightColor = glm::vec3(0.37, 0.37, 0.37);
 	AlightColor = glm::vec3(0.37, 0.37, 0.37);
 	SlightColor = glm::vec3(0.37, 0.37, 0.37);
 	lightDirection = glm::vec3(0, 0, -1);
 	lightPosition = pos;
-	float point[3] = { pos.x,pos.y,pos.z };
-	glGenVertexArrays(1, &LightVao);
-	glGenBuffers(1, &LightVbo);
-
-	glBindVertexArray(LightVao);
-	glBindBuffer(GL_ARRAY_BUFFER, LightVbo);
-	glBufferData(GL_ARRAY_BUFFER, 3 * sizeof(Vertex), point, GL_STATIC_DRAW);
-
-	// Vertex Positions
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
-	glEnableVertexAttribArray(0);
-
-	// Normals attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(3 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(1);
-
-	// Vertex Texture Coords
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(6 * sizeof(GLfloat)));
-	glEnableVertexAttribArray(2);
-
-	// unbind to make sure other code does not change it somewhere else
-	glBindVertexArray(0);
-
-
+	lightType = type;
+	if (lightType == LightType::POINT)
+	{
+		float point[3] = { pos.x,pos.y,pos.z };
+		glGenVertexArrays(1, &LightVao);
+		glGenBuffers(1, &LightVbo);
+		
+		glBindVertexArray(LightVao);
+		glBindBuffer(GL_ARRAY_BUFFER, LightVbo);
+		glBufferData(GL_ARRAY_BUFFER, 3 * sizeof(Vertex), point, GL_STATIC_DRAW);
+		
+		// Vertex Positions
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
+		glEnableVertexAttribArray(0);
+		
+		// Normals attribute
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(3 * sizeof(GLfloat)));
+		glEnableVertexAttribArray(1);
+		
+		// Vertex Texture Coords
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)(6 * sizeof(GLfloat)));
+		glEnableVertexAttribArray(2);
+		
+		// unbind to make sure other code does not change it somewhere else
+		glBindVertexArray(0);
+		glGenVertexArrays(1, &LightVao);
+		//glGenBuffers(1, &LightVbo);
+		//
+		//glBindVertexArray(LightVao);
+		//glBindBuffer(GL_ARRAY_BUFFER, LightVbo);
+		//glBufferData(GL_ARRAY_BUFFER, 3 * sizeof(point), point, GL_STATIC_DRAW);
+		//
+		//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float), (GLvoid*)0);
+		//glEnableVertexAttribArray(0);
+		//glBindBuffer(GL_ARRAY_BUFFER, 0);
+		//
+		//// unbind to make sure other code does not change it somewhere else
+		//glBindVertexArray(0);
+	}
+	else
+	{
+		glm::vec3 direction = normalize(lightDirection);
+		direction = 0.014f * direction + parallelLights;
+		float point[24] = { parallelLights.x, parallelLights.y, parallelLights.z,direction.x, direction.y, direction.z,
+							parallelLights.x + 0.005, parallelLights.y, parallelLights.z,direction.x + 0.005, direction.y, direction.z,
+							parallelLights.x + 0.006, parallelLights.y, parallelLights.z,direction.x + 0.006, direction.y, direction.z,
+							parallelLights.x + 0.007, parallelLights.y, parallelLights.z,direction.x + 0.007, direction.y, direction.z };
+		glGenVertexArrays(1, &LightVao);
+		glGenBuffers(1, &LightVbo);
+		glBindVertexArray(LightVao);
+		glBindBuffer(GL_ARRAY_BUFFER, LightVbo);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(point), &point, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
+	}
 }
 
 const glm::vec3& Light::GetDiffuseLightColor() const
@@ -79,9 +110,23 @@ void Light::SetSpecularLightColor(glm::vec3 color)
 	SlightColor = color;
 }
 
-void Light::SetLightDirection(glm::vec3 direction)
+void Light::SetLightDirection(glm::vec3 direction1)
 {
-	lightDirection = direction;
+	lightDirection = direction1;
+	glm::vec3 direction = normalize(lightDirection);
+	direction = 0.014f * direction + parallelLights;
+	float point[18] = {
+						parallelLights.x + 0.005, parallelLights.y, parallelLights.z,direction.x + 0.005, direction.y, direction.z,
+						parallelLights.x + 0.006, parallelLights.y, parallelLights.z,direction.x + 0.006, direction.y, direction.z,
+						parallelLights.x + 0.007, parallelLights.y, parallelLights.z,direction.x + 0.007, direction.y, direction.z };
+
+	glGenVertexArrays(1, &LightVao);
+	glGenBuffers(1, &LightVbo);
+	glBindVertexArray(LightVao);
+	glBindBuffer(GL_ARRAY_BUFFER, LightVbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(point), &point, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void*)0);
 }
 
 void Light::SetLightPosition(glm::vec4 position)
@@ -179,16 +224,6 @@ void Light::ResetTransformations()
 	LTranslateX = 0.f;
 	LTranslateY = 0.f;
 	LTranslateZ = 0.f;
-}
-
-void Light::SetAlpha(int a)
-{
-	alpha = a;
-}
-
-int  Light::GetAlpha()
-{
-	return alpha;
 }
 
 float Light::GetWRotationX() {

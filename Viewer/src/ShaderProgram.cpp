@@ -172,6 +172,27 @@ void ShaderProgram::setUniform(const GLchar* name, const glm::vec3& v)
 	glUniform3f(loc, v.x, v.y, v.z);
 }
 
+// Sets a glm::vec3 array shader uniform
+void ShaderProgram::setUniform(const GLchar* name, const glm::vec3 v[], int size)
+{
+	GLint loc = getUniformLocation(name);
+	glUniform3fv(loc, size, (float*)v);
+}
+
+// Sets a glm::mat4 array shader uniform
+void ShaderProgram::setUniform(const GLchar* name, const glm::mat4x4 m[], int size)
+{
+	GLint loc = getUniformLocation(name);
+	glUniformMatrix4fv(loc, size, GL_FALSE,(float*)m);
+}
+
+// Sets a float array shader uniform
+void ShaderProgram::setUniform(const GLchar* name, const GLfloat* v, int size)
+{
+	GLint loc = getUniformLocation(name);
+	glUniform1fv(loc, size, v);
+}
+
 //-----------------------------------------------------------------------------
 // Sets a glm::vec4 shader uniform
 //-----------------------------------------------------------------------------

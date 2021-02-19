@@ -88,7 +88,8 @@ public:
 	std::vector<glm::vec3> vertices_;
 	std::vector<glm::vec3> normals_;
 	std::vector<glm::vec2> textureCoords;
-
+	void SetAlpha(float a);
+	float GetAlpha();
 protected:
 	std::vector<Vertex> modelVertices;
 	GLuint vbo;
@@ -97,6 +98,7 @@ protected:
 
 private:
 	
+	float alpha;
 	glm::mat4x4 PreTransformation;
 	std::vector<glm::vec3> boundingBoxVertices;
 	glm::mat4x4 S_w= Transformations::Identity4X4Matrix();

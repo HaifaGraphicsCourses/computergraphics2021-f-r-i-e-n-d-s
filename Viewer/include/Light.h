@@ -8,7 +8,7 @@
 class Light 
 {
 public:
-	Light(glm::vec3 pos);
+	Light(glm::vec3 pos, LightType type);
 
 	const glm::vec3& GetDiffuseLightColor() const;
 	const glm::vec3& GetAmbientLightColor() const;
@@ -28,8 +28,7 @@ public:
 	void SetWorldTransformation();
 	void SetLocalTransformation();
 	void ResetTransformations();
-	void SetAlpha(int a);
-	int GetAlpha();
+
 	void SetLightType(LightType type);
 	float GetWRotationX();
 	float GetWRotationY();
@@ -55,7 +54,6 @@ private:
 	glm::vec3 lightPosition;
 	LightType lightType;
 	ShadingType shadingType;
-	int alpha;
 	glm::mat4x4 WorldTransformation = Transformations::Identity4X4Matrix();
 	glm::mat4x4 LocalTransformation = Transformations::Identity4X4Matrix();
 	float WRotationX = 0.f;
@@ -70,6 +68,7 @@ private:
 	float LTranslateX = 0.f;
 	float LTranslateY = 0.f;
 	float LTranslateZ = 0.f;
+	glm::vec3 parallelLights = glm::vec3(0.05f,0.f,0.f);
 	GLuint LightVao;
 	GLuint LightVbo;
 };

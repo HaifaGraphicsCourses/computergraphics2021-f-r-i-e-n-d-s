@@ -1,6 +1,6 @@
 #define _USE_MATH_DEFINES
-#define GRAYSCALE 999
-#define RANDOM_COLORED 990
+#define PHONGSHADING 999
+#define WIREFRAME 990
 #define MODEL_COLOR 900
 #include <cmath>
 #include <imgui/imgui.h>
@@ -345,29 +345,12 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		if (scene.GetModelCount())
 		{
 			scene.GetActiveModel()->SetColors(BoundingBoxColor, FacesNormalsColor, NormalsColor);
-			if (ImGui::Button("Grayscale Model"))
-				scene.GetActiveModel()->SetColorMethod(GRAYSCALE);
+			if (ImGui::Button("Phong Shading"))
+				scene.GetActiveModel()->SetColorMethod(PHONGSHADING);
 			ImGui::SameLine();
-			if (ImGui::Button("Random Colored Model"))
-				scene.GetActiveModel()->SetColorMethod(RANDOM_COLORED);
+			if (ImGui::Button("Wireframe Model"))
+				scene.GetActiveModel()->SetColorMethod(WIREFRAME);
 			ImGui::SameLine();
-			if (ImGui::Button("Chosen Color Model"))
-				scene.GetActiveModel()->SetColorMethod(MODEL_COLOR);
-			ImGui::RadioButton("Flat Shading", &Shadingtype, 0);
-			ImGui::SameLine(); ImGui::RadioButton("Gouraud Shading", &Shadingtype, 1);
-			ImGui::SameLine(); ImGui::RadioButton("Phong Shading", &Shadingtype, 2);
-			ImGui::RadioButton("Divide By Max", &coloringWay, 0);
-			ImGui::SameLine(); ImGui::RadioButton("Threshold By 1", &coloringWay, 1);
-				scene.SetColoring(coloringWay);
-				if (!Shadingtype) {
-					scene.SetShadingtype(ShadingType::FLAT);
-				}
-				if (Shadingtype == 1){
-					scene.SetShadingtype(ShadingType::GORAUD);
-				}
-				if (Shadingtype == 2){
-					scene.SetShadingtype(ShadingType::PHONG);
-				}
 		}
 		ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.f, 0.f, 0.f));
 		if (ImGui::Button("Close Me"))
@@ -426,18 +409,19 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		static float WScaleY = 1.f;
 		static float WScaleZ = 1.f;
 		glm::mat4x4 Transformation;
-		static float TranslateX = 0;
-		static float TranslateY = 0;
-		static float TranslateZ = 0;
-		static float WTranslateX = 0;
-		static float WTranslateY = 0;
-		static float WTranslateZ = 0;
-		static float AngleX=0;
-		static float AngleY=0;
-		static float AngleZ=0;
-		static float WAngleX=0;
-		static float WAngleY=0;
-		static float WAngleZ=0;
+		static float TranslateX = 0.f;
+		static float TranslateY = 0.f;
+		static float TranslateZ = 0.f;
+		static float WTranslateX = 0.f;
+		static float WTranslateY = 0.f;
+		static float WTranslateZ = 0.f;
+		static float AngleX=0.f;
+		static float AngleY=0.f;
+		static float AngleZ=0.f;
+		static float WAngleX=0.f;
+		static float WAngleY=0.f;
+		static float WAngleZ=0.f;
+		static float alpha = 2.f;
 		if (ModelWindow)
 		{
 			ImGui::Begin("Transformations Window");
@@ -448,6 +432,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 			ImGui::ColorEdit3("Specular Model Color", SModelColor);
 			scene.GetActiveModel()->SetSpecularColor(glm::vec3(SModelColor[0], SModelColor[1], SModelColor[2]));
 			scene.GetActiveModel()->SetColors(BoundingBoxColor, FacesNormalsColor, NormalsColor);
+
+			ImGui::SliderFloat("alpha coefficent", &alpha, 1, 10);
+			scene.GetActiveModel()->SetAlpha(alpha);
 			ImGui::ListBox("World Or Local", &SelectedTransform, TransformItems, IM_ARRAYSIZE(TransformItems), 2);
 			ImGui::ListBox("Choose Transformation", &SelectedItem, items, IM_ARRAYSIZE(items), 3);
 			if (SelectedTransform) {
@@ -616,7 +603,6 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		static float xDirection;
 		static float yDirection;
 		static float zDirection;
-		static int alpha = 2;
 		if (LightWindow)
 		{
 			ImGui::Begin("Light Window");
@@ -633,14 +619,16 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 					ALightC = glm::vec3(AlightColor[0], AlightColor[1], AlightColor[2]);
 					if (ImGui::Button("Add Light"))
 					{
-						std::shared_ptr <Light> new_light = std::make_shared<Light>(model->GetModelCenter());
-						(*new_light).SetDiffuseLightColor(DLightC);
-						(*new_light).SetAmbientLightColor(ALightC);
-						(*new_light).SetSpecularLightColor(SLightC);
+						glm::vec3 m = model->GetModelCenter();
+
+						std::shared_ptr <Light> new_light;
 						if (lightType)
-							(*new_light).SetLightType(LightType::POINT);
+							new_light = std::make_shared<Light>(model->GetModelCenter(), LightType::POINT);
 						else
-							(*new_light).SetLightType(LightType::PARALLEL);
+							new_light = std::make_shared<Light>(model->GetModelCenter(), LightType::PARALLEL);
+						new_light->SetDiffuseLightColor(DLightC);
+						new_light->SetAmbientLightColor(ALightC);
+						new_light->SetSpecularLightColor(SLightC);
 						scene.AddLight(new_light);
 					}
 					ImGui::TreePop();
@@ -651,11 +639,11 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 					if (ImGui::SliderInt("Active Light Index", &item_current, 0, scene.GetLightCount() - 1))
 					{
 						scene.SetActiveLightIndex(item_current);
-						TranslateX_ = scene.GetActiveLight()->GetLTranslateX() * scene.GetActiveModel()->GetTranslateFactor();
-						TranslateY_ = scene.GetActiveLight()->GetLTranslateY() * scene.GetActiveModel()->GetTranslateFactor();
+						TranslateX_ = scene.GetActiveLight()->GetLTranslateX();
+						TranslateY_ = scene.GetActiveLight()->GetLTranslateY();
 						TranslateZ_ = scene.GetActiveLight()->GetLTranslateZ();
-						WTranslateX_ = scene.GetActiveLight()->GetWTranslateX() * scene.GetActiveModel()->GetTranslateFactor();
-						WTranslateY_ = scene.GetActiveLight()->GetWTranslateY() * scene.GetActiveModel()->GetTranslateFactor();
+						WTranslateX_ = scene.GetActiveLight()->GetWTranslateX();
+						WTranslateY_ = scene.GetActiveLight()->GetWTranslateY();
 						WTranslateZ_ = scene.GetActiveLight()->GetWTranslateZ();
 						AngleX_ = scene.GetActiveLight()->GetLRotationX();
 						AngleY_ = scene.GetActiveLight()->GetLRotationY();
@@ -686,20 +674,18 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 						light->SetAmbientLightColor(glm::vec3(ALL[0], ALL[1], ALL[2]));
 						ImGui::ColorEdit3("Active Light Specular Color", SLL);
 						light->SetSpecularLightColor(glm::vec3(SLL[0], SLL[1], SLL[2]));
-						ImGui::SliderInt("alpha coefficent", &alpha, 1, 10);
-						light->SetAlpha(alpha);
 						if (light->GetLightType() == LightType::PARALLEL)
 						{
 							ImGui::Text("Light Direction");
-							if (ImGui::SliderFloat("X Coordinate", &xDirection, -10, 10))
+							if (ImGui::SliderFloat("X Coordinate", &xDirection, -1, 1))
 							{
 								light->SetLightDirection(glm::vec3(xDirection, yDirection, zDirection));
 							}
-							if (ImGui::SliderFloat("Y Coordinate", &yDirection, -10, 10))
+							if (ImGui::SliderFloat("Y Coordinate", &yDirection, -1, 1))
 							{
 								light->SetLightDirection(glm::vec3(xDirection, yDirection, zDirection));
 							}
-							if (ImGui::SliderFloat("Z Coordinate", &zDirection, -10, 10))
+							if (ImGui::SliderFloat("Z Coordinate", &zDirection, -1, 1))
 							{
 								light->SetLightDirection(glm::vec3(xDirection, yDirection, zDirection));
 							}
@@ -717,10 +703,10 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 							{
 								if (!TransformationType_ && light->GetLightType()!=LightType::PARALLEL)
 								{
-									ImGui::SliderFloat("Translate in X", &WTranslateX_, -115, 115);
-									ImGui::SliderFloat("Translate in y", &WTranslateY_, -85, 85);
-									ImGui::SliderFloat("Translate in Z", &WTranslateZ_, -1, 1);
-									scene.GetActiveLight()->SetTranslationMatrix(WTranslateX_ / scene.GetActiveModel()->GetTranslateFactor(), WTranslateY_ / scene.GetActiveModel()->GetTranslateFactor(), WTranslateZ_, true);
+									ImGui::SliderFloat("Translate in X", &WTranslateX_, -0.1, 0.1);
+									ImGui::SliderFloat("Translate in y", &WTranslateY_, -0.1, 0.1);
+									ImGui::SliderFloat("Translate in Z", &WTranslateZ_, -0.1, 0.1);
+									scene.GetActiveLight()->SetTranslationMatrix(WTranslateX_, WTranslateY_ , WTranslateZ_, true);
 								}
 								else
 									if (TransformationType_)
@@ -748,10 +734,10 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 								else
 									if (!TransformationType_ && light->GetLightType() != LightType::PARALLEL)
 									{
-										ImGui::SliderFloat("Translate in X", &TranslateX_, -115, 115);
-										ImGui::SliderFloat("Translate in y", &TranslateY_, -85, 85);
-										ImGui::SliderFloat("Translate in Z", &TranslateZ_, -200, 200);
-										scene.GetActiveLight()->SetTranslationMatrix(TranslateX_ / scene.GetActiveModel()->GetTranslateFactor(), TranslateY_ / scene.GetActiveModel()->GetTranslateFactor(),TranslateZ_, false);
+										ImGui::SliderFloat("Translate in X", &TranslateX_, -0.1, 0.1);
+										ImGui::SliderFloat("Translate in y", &TranslateY_, -0.1, 0.1);
+										ImGui::SliderFloat("Translate in Z", &TranslateZ_, -0.1, 0.1);
+										scene.GetActiveLight()->SetTranslationMatrix(TranslateX_ , TranslateY_ ,TranslateZ_, false);
 									}
 								scene.GetActiveLight()->SetLocalTransformation();
 							}

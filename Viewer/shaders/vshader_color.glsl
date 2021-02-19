@@ -10,6 +10,7 @@ uniform mat4 view;
 uniform mat4 projection;
 uniform bool DrawLight;
 uniform mat4 LightTransformation;
+uniform int lightType;
 
 // These outputs will be available in the fragment shader as inputs
 out vec3 orig_fragPos;
@@ -32,5 +33,10 @@ void main()
 	// This is an internal OpenGL variable, we must set a value to this variable
 	gl_Position = projection * view *  model * vec4(pos, 1.0f);
 	if(DrawLight==true)
-		gl_Position= projection * view *  LightTransformation * vec4(pos, 1.0f);
+	{
+		if(lightType==1)
+			gl_Position= projection * view * vec4(pos, 1.0f);
+		else
+			gl_Position= projection * view *  LightTransformation * vec4(pos, 1.0f);
+	}
 }

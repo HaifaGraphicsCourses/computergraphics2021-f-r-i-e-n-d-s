@@ -56,5 +56,5 @@ private:
 	int viewport_height_;
 	GLuint gl_screen_tex_;
 	GLuint gl_screen_vtc_;
-	glm::vec4 parallelLights = glm::vec4(1800, 500, 0, 1);
+	glm::vec3 parallelLights = glm::vec3(0.f, 0.f, 0.f);
 };

@@ -2,6 +2,9 @@
 #include <iostream>
 #include "Renderer.h"
 #include <random>
+#define PHONGSHADING 999
+#define WIREFRAME 990
+#define MODEL_COLOR 900
 
 MeshModel::MeshModel(ModelParameters& model) :
 	faces_(model.faces),
@@ -20,6 +23,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 	ModelCenter(model.modelCenter)
 {
     std::string name = GetModelName();
+	colorMethod = WIREFRAME;
 	if (!name.compare("Sphere.obj"))
 	{
 		TranslateFactor = 1000;
@@ -29,6 +33,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 		minDensity = 300;
 		maxDensity = 1000;
 	}
+	else
 	if (!name.compare("banana.obj"))
 	{
 		TranslateFactor = 1000;
@@ -38,6 +43,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 		minDensity = 300;
 		maxDensity = 1000;
 	}
+	else
 	if (!name.compare("beethoven.obj"))
 	{
 		TranslateFactor = 2;
@@ -45,6 +51,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 		minOrtho = 10;
 		maxOrtho = 80;
 	}
+	else
 	if (!name.compare("bishop.obj"))
 	{
 		TranslateFactor = 1000;
@@ -54,6 +61,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 		minDensity = 400;
 		maxDensity = 1000;
 	}
+	else
 	if (!name.compare("blob.obj"))
 	{
 		TranslateFactor = 2;
@@ -63,6 +71,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 		minDensity = 1;
 		maxDensity = 10;
 	}
+	else
 	if (!name.compare("bunny.obj"))
 	{
 		TranslateFactor = 55;
@@ -72,6 +81,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 		minDensity = 50;
 		maxDensity = 200;
 	}
+	else
 	if (!name.compare("camera.obj"))
 	{
 		TranslateFactor = 35;
@@ -81,6 +91,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 		minDensity = 20;
 		maxDensity = 100;
 	}
+	else
 	if (!name.compare("chain.obj"))
 	{
 		TranslateFactor = 35;
@@ -88,6 +99,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 		minOrtho = 10;
 		maxOrtho = 35;
 	}
+	else
 	if (!name.compare("cow.obj"))
 	{
 		TranslateFactor = 30;
@@ -95,6 +107,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 		minOrtho = 1;
 		maxOrtho = 50;
 	}
+	else
 	if (!name.compare("demo.obj"))
 	{
 		TranslateFactor = 33;
@@ -102,6 +115,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 		minOrtho = 10;
 		maxOrtho = 50;
 	}
+	else
 	if (!name.compare("dolphin.obj"))
 	{
 		TranslateFactor = 1;
@@ -109,6 +123,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 		minOrtho = 500;
 		maxOrtho = 2500;
 	}
+	else
 	if (!name.compare("feline.obj"))
 	{
 		TranslateFactor = 20;
@@ -116,6 +131,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 		minOrtho = 1;
 		maxOrtho = 29;
 	}
+	else
 	if (!name.compare("pawn.obj"))
 	{
 		TranslateFactor = 1000;
@@ -123,12 +139,20 @@ MeshModel::MeshModel(ModelParameters& model) :
 		minOrtho = 0.355;
 		maxOrtho = 1.145;
 	}
+	else
 	if (!name.compare("teapot.obj"))
 	{
 		TranslateFactor = 50;
 		Preffered_eye = glm::vec3(0, 0, 10);
 		minOrtho = 0;
 		maxOrtho = 30;
+	}
+	else
+	{
+		TranslateFactor = 50;
+		Preffered_eye = glm::vec3(0, 0, 1);
+		minOrtho = 0;
+		maxOrtho = 10;
 	}
 	modelVertices.reserve(3 * model.faces.size());
 	for (int i = 0; i < faces_.size(); i++)
@@ -137,10 +161,12 @@ MeshModel::MeshModel(ModelParameters& model) :
 		for (int j = 0; j < 3; j++)
 		{
 			int vertexIndex = currentFace.GetVertexIndex(j) - 1;
+			int normalIndex = currentFace.GetNormalIndex(j) - 1;
 
 			Vertex vertex;
 			vertex.position = vertices_[vertexIndex];
-			//vertex.normal = model.normals[vertexIndex];
+			if(normals_.size())
+			vertex.normal = normals_[normalIndex];
 
 			if (textureCoords.size() > 0)
 			{
@@ -472,4 +498,13 @@ GLuint MeshModel::GetVAO() const
 const std::vector<Vertex>& MeshModel::GetModelVertices()
 {
 	return modelVertices;
+}
+
+void  MeshModel::SetAlpha(float a)
+{
+	alpha = a;
+}
+float MeshModel::GetAlpha()
+{
+	return alpha;
 }
