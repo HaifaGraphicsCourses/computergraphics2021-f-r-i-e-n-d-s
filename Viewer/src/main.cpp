@@ -237,7 +237,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene,Renderer& renderer)
 			nfdresult_t result = NFD_OpenDialog("png,jpg", NULL, &outPath);
 			if (result == NFD_OKAY)
 			{
-				renderer.LoadTextures(outPath);
+				scene.GetActiveModel()->LoadTextures(outPath);
 				free(outPath);
 			}
 		}

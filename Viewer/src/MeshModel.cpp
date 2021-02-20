@@ -557,3 +557,10 @@ void MeshModel::SetAngleZ(float S) { AngleZ=S;}
 void MeshModel::SetWAngleX(float S) {WAngleX = S;}
 void MeshModel::SetWAngleY(float S) { WAngleY = S; }
 void MeshModel::SetWAngleZ(float S) { WAngleZ = S; }
+void MeshModel::LoadTextures(const std::string& filePath)
+{
+	if (!texture1.loadTexture(filePath, true))
+	{
+		texture1.loadTexture(filePath, true);
+	}
+}

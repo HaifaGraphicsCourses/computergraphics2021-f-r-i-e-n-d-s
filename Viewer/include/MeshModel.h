@@ -6,6 +6,7 @@
 #include "ModelParameters.h"
 #include "Enums.h"
 #include <glad/glad.h>
+#include <Texture2D.h>
 
 #define GRAYSCALE 999
 #define RANDOM_COLORED 990
@@ -131,6 +132,8 @@ public:
 	void SetWAngleX(float S);
 	void SetWAngleY(float S);
 	void SetWAngleZ(float S);
+	Texture2D texture1;
+	void LoadTextures(const std::string& filePath);
 
 
 protected:

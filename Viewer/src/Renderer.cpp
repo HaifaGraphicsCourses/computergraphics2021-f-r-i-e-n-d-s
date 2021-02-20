@@ -402,13 +402,13 @@ void Renderer::Render(Scene& scene)
 			colorShader.setUniform("material.diffuseColor", currentModel->GetDiffuseColor());
 			colorShader.setUniform("material.specularColor", currentModel->GetSpecularColor());
 			colorShader.setUniform("material.ambientColor", currentModel->GetAmbientColor());
-			colorShader.setUniform("material.alpha", scene.GetActiveModel()->GetAlpha());
-			colorShader.setUniform("ColorMethod", scene.GetActiveModel()->GetColorMethod());
-			colorShader.setUniform("HasVt", scene.GetActiveModel()->GetHasVt());
+			colorShader.setUniform("material.alpha", currentModel->GetAlpha());
+			colorShader.setUniform("ColorMethod", currentModel->GetColorMethod());
+			colorShader.setUniform("HasVt", currentModel->GetHasVt());
 
 			// Set 'texture1' as the active texture at slot #0
-			texture1.bind(0);
-			if (scene.GetActiveModel()->GetColorMethod() == TEXTURED)
+			currentModel->texture1.bind(0);
+			if (currentModel->GetColorMethod() == TEXTURED)
 			{
 				// Drag our model's faces (triangles) in fill mode
 				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -418,9 +418,9 @@ void Renderer::Render(Scene& scene)
 			}
 
 			// Unset 'texture1' as the active texture at slot #0
-			texture1.unbind(0);
+			currentModel->texture1.unbind(0);
 
-			if (scene.GetActiveModel()->GetColorMethod() == WIREFRAME)
+			if (currentModel->GetColorMethod() == WIREFRAME)
 			{
 				// Drag our model's faces (triangles) in line mode (wireframe)
 				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -429,7 +429,7 @@ void Renderer::Render(Scene& scene)
 				glBindVertexArray(0);
 			}
 
-			if (scene.GetActiveModel()->GetColorMethod() == PHONGSHADING)
+			if (currentModel->GetColorMethod() == PHONGSHADING)
 			{
 				// Drag our model's faces (triangles) in fill mode
 				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
