@@ -9,6 +9,7 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 uniform bool DrawLight;
+uniform bool HasVt;
 uniform mat4 LightTransformation;
 uniform int lightType;
 
@@ -25,8 +26,12 @@ void main()
 	orig_fragPos = vec3(vec4(pos, 1.0f));
 	fragPos = vec3(model * vec4(pos, 1.0f));
 	fragNormal = mat3(model) * normal;
-		
-	fragTexCoords = texCoords;
+	
+	if(HasVt==true)
+		fragTexCoords = texCoords;
+	else
+		fragTexCoords =orig_fragPos.xy;//vec2(0.5+(atan(orig_fragPos.x,orig_fragPos.y)/(2*3.14159265359)),0.5-(asin(orig_fragPos.y)/3.14159265359));//
+
 	// Pass the vertex texture coordinates property as it is. Its interpolated value
 	// will be avilable for us in the fragment shader
 	gl_PointSize=10.0f;

@@ -1,5 +1,7 @@
 #version 330 core
-
+#define PHONGSHADING 999
+#define WIREFRAME 990
+#define TEXTURED 900
 struct Material
 {
 	sampler2D textureMap;
@@ -26,6 +28,7 @@ uniform mat4 lightTransformations[10];
 uniform vec3 lightsDirections[10];
 uniform float lightsTypes[10];
 uniform int LightsNumber;
+uniform int ColorMethod;
 
 // Inputs from vertex shader (after interpolation was applied)
 in vec3 fragPos;
@@ -47,29 +50,35 @@ void main()
 		frag_color = vec4(1.f,1.f,1.f,1.f);
 	else
 	{
-		for(int i=0;i<LightsNumber;i++)
+		if(ColorMethod==PHONGSHADING)	
 		{
-			vec3 lightpos=vec3(lightTransformations[i]* vec4(lightsPositions[i],1.f));
-			if(lightsTypes[i]==0)
-				I=normalize(fragPos-lightpos[i]);
-			else
-				I=lightsDirections[i];
-			vec3 Acolor=AmbientColor[i],Dcolor=DiffuseColor[i],Scolor=SpecularColor[i];
-			Ia+=vec3(Acolor.x*material.ambientColor.x,Acolor.y*material.ambientColor.y,Acolor.z*material.ambientColor.z);
-			
-			vec3 temp=vec3(Dcolor.x * material.diffuseColor.x, Dcolor.y * material.diffuseColor.y, Dcolor.z * material.diffuseColor.z);
-			float IdotN = dot(-(fragNormal), I);
-			Id+=temp * IdotN;
+			for(int i=0;i<LightsNumber;i++)
+			{
+				vec3 lightpos=vec3(lightTransformations[i]* vec4(lightsPositions[i],1.f));
+				if(lightsTypes[i]==0)
+					I=normalize(fragPos-lightpos[i]);
+				else
+					I=lightsDirections[i];
+				vec3 Acolor=AmbientColor[i],Dcolor=DiffuseColor[i],Scolor=SpecularColor[i];
+				Ia+=vec3(Acolor.x*material.ambientColor.x,Acolor.y*material.ambientColor.y,Acolor.z*material.ambientColor.z);
+				
+				vec3 temp=vec3(Dcolor.x * material.diffuseColor.x, Dcolor.y * material.diffuseColor.y, Dcolor.z * material.diffuseColor.z);
+				float IdotN = dot(-(fragNormal), I);
+				Id+=temp * IdotN;
 
-			float alpha = material.alpha;
-			temp = vec3(Scolor.x * material.specularColor.x, Scolor.y * material.specularColor.y, Scolor.z * material.specularColor.z);
-			vec3 r = (2.f * dot(-fragNormal, I) * fragNormal - I);
-			float Power = pow(max(0.0f, dot((r), (eye))), alpha);
-			Is+=(temp * Power);
+				float alpha = material.alpha;
+				temp = vec3(Scolor.x * material.specularColor.x, Scolor.y * material.specularColor.y, Scolor.z * material.specularColor.z);
+				vec3 r = (2.f * dot(-fragNormal, I) * fragNormal - I);
+				float Power = pow(max(0.0f, dot((r), (eye))), alpha);
+				Is+=(temp * Power);
+			}
+			frag_color = vec4((Is+Id+Ia),1.f);
 		}
-		frag_color = vec4((Is+Id+Ia),1.f);
-		frag_color=vec4(textureColor,1.f);
-		
-	}
-		
+		if(ColorMethod==WIREFRAME)
+		{
+			frag_color=vec4(material.ambientColor,1.f);
+		}
+		if(ColorMethod==TEXTURED)
+			frag_color=vec4(textureColor,1.f);
+	}	
 }

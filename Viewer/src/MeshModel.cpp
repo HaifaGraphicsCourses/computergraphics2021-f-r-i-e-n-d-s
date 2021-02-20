@@ -4,7 +4,7 @@
 #include <random>
 #define PHONGSHADING 999
 #define WIREFRAME 990
-#define MODEL_COLOR 900
+#define TEXTURED 900
 
 MeshModel::MeshModel(ModelParameters& model) :
 	faces_(model.faces),
@@ -170,6 +170,7 @@ MeshModel::MeshModel(ModelParameters& model) :
 
 			if (textureCoords.size() > 0)
 			{
+				HasVt = true;
 				int textureCoordsIndex = currentFace.GetTextureIndex(j) - 1;
 				vertex.textureCoords = model.textureCoords[textureCoordsIndex];
 			}
@@ -508,3 +509,51 @@ float MeshModel::GetAlpha()
 {
 	return alpha;
 }
+
+void MeshModel::SetHasVt(bool a)
+{
+	HasVt = a;
+}
+
+bool MeshModel::GetHasVt()
+{
+	return HasVt;
+}
+
+float MeshModel::GetScaleX() { return ScaleX; }
+float MeshModel::GetScaleY() { return ScaleY; }
+float MeshModel::GetScaleZ() { return ScaleZ; }
+float MeshModel::GetWScaleX() { return WScaleX; }
+float MeshModel::GetWScaleY() { return WScaleY; }
+float MeshModel::GetWScaleZ() { return  WScaleZ; }
+float MeshModel::GetTranslateX(){return TranslateX;}
+float MeshModel::GetTranslateY(){return TranslateY;}
+float MeshModel::GetTranslateZ(){return TranslateZ;}
+float MeshModel::GetWTranslateX(){return WTranslateX;}
+float MeshModel::GetWTranslateY(){return WTranslateY;}
+float MeshModel::GetWTranslateZ(){return WTranslateZ;}
+float MeshModel::GetAngleX(){return AngleX;}
+float MeshModel::GetAngleY(){return AngleY;}
+float MeshModel::GetAngleZ(){return AngleZ;}
+float MeshModel::GetWAngleX(){return WAngleX;}
+float MeshModel::GetWAngleY(){return WAngleY;}
+float MeshModel::GetWAngleZ(){return WAngleZ;}
+
+void MeshModel::SetScaleX(float S) { ScaleX = S; }
+void MeshModel::SetScaleY(float S) {ScaleY=S; }
+void MeshModel::SetScaleZ(float S) {ScaleZ=S; }
+void MeshModel::SetWScaleX(float S) { WScaleX = S; }
+void MeshModel::SetWScaleY(float S) { WScaleY = S; }
+void MeshModel::SetWScaleZ(float S) { WScaleZ = S; }
+void MeshModel::SetTranslateX(float S) { TranslateX = S; }
+void MeshModel::SetTranslateY(float S) { TranslateY = S; }
+void MeshModel::SetTranslateZ(float S) { TranslateZ = S; }
+void MeshModel::SetWTranslateX(float S) { WTranslateX=S; }
+void MeshModel::SetWTranslateY(float S) { WTranslateY=S; }
+void MeshModel::SetWTranslateZ(float S) { WTranslateZ=S; }
+void MeshModel::SetAngleX(float S) { AngleX=S;}
+void MeshModel::SetAngleY(float S) { AngleY=S;}
+void MeshModel::SetAngleZ(float S) { AngleZ=S;}
+void MeshModel::SetWAngleX(float S) {WAngleX = S;}
+void MeshModel::SetWAngleY(float S) { WAngleY = S; }
+void MeshModel::SetWAngleZ(float S) { WAngleZ = S; }

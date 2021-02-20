@@ -1,7 +1,7 @@
 #define _USE_MATH_DEFINES
 #define PHONGSHADING 999
 #define WIREFRAME 990
-#define MODEL_COLOR 900
+#define TEXTURED 900
 #include <cmath>
 #include <imgui/imgui.h>
 #include <stdio.h>
@@ -78,7 +78,7 @@ ImGuiIO& SetupDearImgui(GLFWwindow* window);
 void StartFrame();
 void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& io);
 void Cleanup(GLFWwindow* window);
-void DrawImguiMenus(ImGuiIO& io, Scene& scene);
+void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer);
 void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
@@ -98,17 +98,14 @@ int main(int argc, char** argv)
 
 	Renderer renderer = Renderer(frameBufferWidth, frameBufferHeight);
 	renderer.LoadShaders();
-	renderer.LoadTextures();
 	Scene scene = Scene();
-	scene.AddCamera(std::make_shared<Camera>(glm::vec3(0, 0, 1)));
-	scene.SetActiveCameraIndex(0);
 	ImGuiIO& io = SetupDearImgui(window);
 	glfwSetScrollCallback(window, ScrollCallback);
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
 		StartFrame();
-		DrawImguiMenus(io, scene);
+		DrawImguiMenus(io, scene,renderer);
 		RenderFrame(window, scene, renderer, io);
 	}
 
@@ -220,7 +217,7 @@ void Cleanup(GLFWwindow* window)
 	glfwTerminate();
 }
 
-void DrawImguiMenus(ImGuiIO& io, Scene& scene)
+void DrawImguiMenus(ImGuiIO& io, Scene& scene,Renderer& renderer)
 {
 	static bool CameraWindow = true;
 	static bool ModelWindow = true;
@@ -234,6 +231,16 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 	// Menu Bar
 	if (ImGui::BeginMainMenuBar())
 	{
+		if (ImGui::Button("Load Texture"))
+		{
+			nfdchar_t* outPath = NULL;
+			nfdresult_t result = NFD_OpenDialog("png,jpg", NULL, &outPath);
+			if (result == NFD_OKAY)
+			{
+				renderer.LoadTextures(outPath);
+				free(outPath);
+			}
+		}
 		if (ImGui::BeginMenu("Choose Model"))
 		{
 			if (ImGui::MenuItem("Banana")) {
@@ -288,7 +295,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				scene.AddModel(Utils::LoadMeshModel("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\teapot.obj"));
 				OrthoWidth = (scene.GetActiveModel()->GetMinOrtho() + scene.GetActiveModel()->GetMaxOrtho()) / 3;
 			}
-				if (ImGui::MenuItem("Other", "CTRL+O"))
+			if (ImGui::MenuItem("Other", "CTRL+O"))
 			{
 				nfdchar_t* outPath = NULL;
 				nfdresult_t result = NFD_OpenDialog("obj;", NULL, &outPath);
@@ -307,6 +314,11 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				}
 			}
 			ImGui::EndMenu();
+			if (scene.GetModelCount())
+			{
+				scene.AddCamera(std::make_shared<Camera>(scene.GetActiveModel()->GetModelCenter()));
+				scene.SetActiveCameraIndex(0);
+			}
 		}
 		
 		if (ImGui::Button("Clear Model"))
@@ -328,6 +340,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 				ColorsWindow = true;
 			ImGui::EndMenu();
 		}
+		
 		ImGui::EndMainMenuBar();
 	}
 	
@@ -345,12 +358,6 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		if (scene.GetModelCount())
 		{
 			scene.GetActiveModel()->SetColors(BoundingBoxColor, FacesNormalsColor, NormalsColor);
-			if (ImGui::Button("Phong Shading"))
-				scene.GetActiveModel()->SetColorMethod(PHONGSHADING);
-			ImGui::SameLine();
-			if (ImGui::Button("Wireframe Model"))
-				scene.GetActiveModel()->SetColorMethod(WIREFRAME);
-			ImGui::SameLine();
 		}
 		ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.f, 0.f, 0.f));
 		if (ImGui::Button("Close Me"))
@@ -395,7 +402,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		auto model = scene.GetActiveModel();
 		static float DModelColor[3] = { 0.5f,0.285f,0.285f };
 		static float AModelColor[3] = {0.0625f ,0.3f,0.57f };
-		static float SModelColor[3]={};
+		static float SModelColor[3]=  {};
 		const static char* items[] = { "Scale","Rotate","Translate"};
 		const static char* TransformItems[] = {"World Transformation","Local Transformation"};
 		const static char* Axis[] = { "X Axis","Y Axis","Z Axis" };
@@ -408,6 +415,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		static float WScaleX = 1.f;
 		static float WScaleY = 1.f;
 		static float WScaleZ = 1.f;
+		static int current_model = 0;
 		glm::mat4x4 Transformation;
 		static float TranslateX = 0.f;
 		static float TranslateY = 0.f;
@@ -415,16 +423,56 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 		static float WTranslateX = 0.f;
 		static float WTranslateY = 0.f;
 		static float WTranslateZ = 0.f;
-		static float AngleX=0.f;
-		static float AngleY=0.f;
-		static float AngleZ=0.f;
+		static float AngleX =0.f;
+		static float AngleY =0.f;
+		static float AngleZ =0.f;
 		static float WAngleX=0.f;
 		static float WAngleY=0.f;
 		static float WAngleZ=0.f;
 		static float alpha = 2.f;
+
 		if (ModelWindow)
 		{
 			ImGui::Begin("Transformations Window");
+			if (ImGui::SliderInt("Active Model Index", &current_model, 0, scene.GetModelCount() - 1))
+			{
+				scene.SetActiveModelIndex(current_model);
+				TranslateX = scene.GetActiveModel()->GetTranslateX();
+				TranslateY = scene.GetActiveModel()->GetTranslateY();
+				TranslateZ = scene.GetActiveModel()->GetTranslateZ();
+				WTranslateX = scene.GetActiveModel()->GetWTranslateX();
+				WTranslateY = scene.GetActiveModel()->GetWTranslateY();
+				WTranslateZ = scene.GetActiveModel()->GetWTranslateZ();
+				AngleX = scene.GetActiveModel()->GetAngleX();
+				AngleY = scene.GetActiveModel()->GetAngleY();
+				AngleZ = scene.GetActiveModel()->GetAngleZ();
+				WAngleX = scene.GetActiveModel()->GetWAngleX();
+				WAngleY = scene.GetActiveModel()->GetWAngleY();
+				WAngleZ = scene.GetActiveModel()->GetWAngleZ();
+				ScaleX = scene.GetActiveModel()->GetScaleX();
+				ScaleY =scene.GetActiveModel()->GetScaleY();
+				ScaleZ =scene.GetActiveModel()->GetScaleZ();
+				WScaleX=scene.GetActiveModel()->GetWScaleX();
+				WScaleY=scene.GetActiveModel()->GetWScaleY();
+				WScaleZ=scene.GetActiveModel()->GetWScaleZ();
+				DModelColor[0] = scene.GetActiveModel()->GetDiffuseColor().x;
+				DModelColor[1] = scene.GetActiveModel()->GetDiffuseColor().y;
+				DModelColor[2] = scene.GetActiveModel()->GetDiffuseColor().z;
+				AModelColor[0] = scene.GetActiveModel()->GetAmbientColor().x;
+				AModelColor[1] = scene.GetActiveModel()->GetAmbientColor().y;
+				AModelColor[2] = scene.GetActiveModel()->GetAmbientColor().z;
+				SModelColor[0] = scene.GetActiveModel()->GetSpecularColor().x;
+				SModelColor[1] = scene.GetActiveModel()->GetSpecularColor().y;
+				SModelColor[2] = scene.GetActiveModel()->GetSpecularColor().z;
+			}
+			if (ImGui::Button("Phong Shading"))
+				scene.GetActiveModel()->SetColorMethod(PHONGSHADING);
+			ImGui::SameLine();
+			if (ImGui::Button("Wireframe Model"))
+				scene.GetActiveModel()->SetColorMethod(WIREFRAME);
+			ImGui::SameLine();
+			if (ImGui::Button("Textured Model"))
+				scene.GetActiveModel()->SetColorMethod(TEXTURED);
 			ImGui::ColorEdit3("Diffuse Model Color", DModelColor);
 			scene.GetActiveModel()->SetDiffuseColor(glm::vec3(DModelColor[0], DModelColor[1], DModelColor[2]));
 			ImGui::ColorEdit3("Ambient Model Color", AModelColor);
@@ -444,6 +492,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 					ImGui::SliderFloat("Scale Factor X", &ScaleX, 0.f, 3.f);
 					ImGui::SliderFloat("Scale Factor Y", &ScaleY, 0.f, 3.f);
 					ImGui::SliderFloat("Scale Factor Z", &ScaleZ, 0.f, 3.f);
+					scene.GetActiveModel()->SetScaleX(ScaleX);
+					scene.GetActiveModel()->SetScaleY(ScaleY);
+					scene.GetActiveModel()->SetScaleZ(ScaleZ);
 					Transformation = Transformations::ScalingTransformation(ScaleX, ScaleY, ScaleZ);
 					scene.GetActiveModel()->Set_S_m(Transformation);
 					break;
@@ -451,16 +502,19 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 					ImGui::ListBox("Choose Axis to rotate around", &SelectedAxis, Axis, IM_ARRAYSIZE(Axis), 3);
 					if (SelectedAxis == 0) {
 						ImGui::SliderFloat("Rotation Angle", &AngleX, 0, 360);
+						scene.GetActiveModel()->SetAngleX(AngleX);
 						Transformation = Transformations::XRotationTransformation(AngleX);
 					}
 					if (SelectedAxis == 1)
 					{
 						ImGui::SliderFloat("Rotation Angle", &AngleY, 0, 360);
+						scene.GetActiveModel()->SetAngleY(AngleY);
 						Transformation = Transformations::YRotationTransformation(AngleY);
 					}
 					if (SelectedAxis == 2)
 					{
 						ImGui::SliderFloat("Rotation Angle", &AngleZ, 0, 360);
+						scene.GetActiveModel()->SetAngleZ(AngleZ);
 						Transformation = Transformations::ZRotationTransformation(AngleZ);
 					}
 					scene.GetActiveModel()->SetRotationMatrix(Transformation, false, SelectedAxis + 1);
@@ -470,6 +524,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 					ImGui::SliderFloat("Translate Factor X", &TranslateX, -220, 220);
 					ImGui::SliderFloat("Translate Factor Y", &TranslateY, -220, 220);
 					ImGui::SliderFloat("Translate Factor Z", &TranslateZ, -220, 220);
+					scene.GetActiveModel()->SetTranslateX(TranslateX);
+					scene.GetActiveModel()->SetTranslateY(TranslateY);
+					scene.GetActiveModel()->SetTranslateZ(TranslateZ);
 					Transformation = Transformations::TranslationTransformation(TranslateX / scene.GetActiveModel()->GetTranslateFactor(), TranslateY / scene.GetActiveModel()->GetTranslateFactor(), TranslateZ / scene.GetActiveModel()->GetTranslateFactor());
 					scene.GetActiveModel()->Set_T_m(Transformation);
 					break;
@@ -486,6 +543,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 					ImGui::SliderFloat("World Scale Factor X", &WScaleX, 0.f, 3.f);
 					ImGui::SliderFloat("World Scale Factor Y", &WScaleY, 0.f, 3.f);
 					ImGui::SliderFloat("World Scale Factor Z", &WScaleZ, 0.f, 3.f);
+					scene.GetActiveModel()->SetWScaleX(WScaleX);
+					scene.GetActiveModel()->SetWScaleY(WScaleY);
+					scene.GetActiveModel()->SetWScaleZ(WScaleZ);
 					Transformation = Transformations::ScalingTransformation(WScaleX, WScaleY, WScaleZ);
 					scene.GetActiveModel()->Set_S_w(Transformation);
 					break;
@@ -493,16 +553,19 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 					ImGui::ListBox("Choose World Axis to rotate around", &SelectedAxis, Axis, IM_ARRAYSIZE(Axis), 3);
 					if (SelectedAxis == 0) {
 						ImGui::SliderFloat("Rotation Angle", &WAngleX, 0, 360);
+						scene.GetActiveModel()->SetWAngleX(WAngleX);
 						Transformation = Transformations::XRotationTransformation(WAngleX);
 					}
 					if (SelectedAxis == 1)
 					{
 						ImGui::SliderFloat("Rotation Angle", &WAngleY, 0, 360);
+						scene.GetActiveModel()->SetWAngleY(WAngleY);
 						Transformation = Transformations::YRotationTransformation(WAngleY);
 					}
 					if (SelectedAxis == 2)
 					{
 						ImGui::SliderFloat("Rotation Angle", &WAngleZ, 0, 360);
+						scene.GetActiveModel()->SetWAngleZ(WAngleZ);
 						Transformation = Transformations::ZRotationTransformation(WAngleZ);
 					}
 					scene.GetActiveModel()->SetRotationMatrix(Transformation, true, SelectedAxis + 1);
@@ -512,6 +575,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene)
 					ImGui::SliderFloat("World Translate Factor X", &WTranslateX, -220, 220);
 					ImGui::SliderFloat("World Translate Factor Y", &WTranslateY, -220, 220);
 					ImGui::SliderFloat("World Translate Factor Z", &WTranslateZ, -220, 220);
+					scene.GetActiveModel()->SetWTranslateX(WTranslateX);
+					scene.GetActiveModel()->SetWTranslateY(WTranslateY);
+					scene.GetActiveModel()->SetWTranslateZ(WTranslateZ);
 					Transformation = Transformations::TranslationTransformation(WTranslateX / scene.GetActiveModel()->GetTranslateFactor(), WTranslateY / scene.GetActiveModel()->GetTranslateFactor(), WTranslateZ / scene.GetActiveModel()->GetTranslateFactor());
 					scene.GetActiveModel()->Set_T_w(Transformation);
 					break;

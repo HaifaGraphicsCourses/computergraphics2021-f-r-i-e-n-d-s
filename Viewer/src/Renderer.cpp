@@ -9,7 +9,7 @@
 #include <gl/GLU.h>
 #define PHONGSHADING 999
 #define WIREFRAME 990
-#define MODEL_COLOR 900
+#define TEXTURED 900
 
 #define INDEX(width,x,y,c) ((x)+(y)*(width))*3+(c)
 #define Z_INDEX(width,x,y) ((x)+(y)*(width))
@@ -368,7 +368,6 @@ void Renderer::Render(Scene& scene)
 		for (int currentModelIndex = 0; currentModelIndex < modelCount; currentModelIndex++)
 		{
 			std::shared_ptr<MeshModel> currentModel = scene.GetModel(currentModelIndex);
-
 			// Activate the 'colorShader' program (vertex and fragment shaders)
 			for (int i = 0; i < scene.GetLightCount(); i++)
 			{
@@ -395,7 +394,6 @@ void Renderer::Render(Scene& scene)
 			colorShader.setUniform("lightsDirections", lightsDirections, scene.GetLightCount());
 			colorShader.setUniform("LightsNumber", scene.GetLightCount());
 			colorShader.setUniform("eye",normalize(camera->GetEye()));
-
 			colorShader.setUniform("model", currentModel->GetTransformation());
 			colorShader.setUniform("DrawLight", false);
 			colorShader.setUniform("view", camera->GetLookAt() * camera->GetC_inv());
@@ -405,12 +403,12 @@ void Renderer::Render(Scene& scene)
 			colorShader.setUniform("material.specularColor", currentModel->GetSpecularColor());
 			colorShader.setUniform("material.ambientColor", currentModel->GetAmbientColor());
 			colorShader.setUniform("material.alpha", scene.GetActiveModel()->GetAlpha());
+			colorShader.setUniform("ColorMethod", scene.GetActiveModel()->GetColorMethod());
+			colorShader.setUniform("HasVt", scene.GetActiveModel()->GetHasVt());
 
 			// Set 'texture1' as the active texture at slot #0
 			texture1.bind(0);
-
-			
-			if (scene.GetActiveModel()->GetColorMethod() == PHONGSHADING)
+			if (scene.GetActiveModel()->GetColorMethod() == TEXTURED)
 			{
 				// Drag our model's faces (triangles) in fill mode
 				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -430,171 +428,19 @@ void Renderer::Render(Scene& scene)
 				glDrawArrays(GL_TRIANGLES, 0, currentModel->GetModelVertices().size());
 				glBindVertexArray(0);
 			}
+
+			if (scene.GetActiveModel()->GetColorMethod() == PHONGSHADING)
+			{
+				// Drag our model's faces (triangles) in fill mode
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				glBindVertexArray(currentModel->GetVAO());
+				glDrawArrays(GL_TRIANGLES, 0, currentModel->GetModelVertices().size());
+				glBindVertexArray(0);
+			}
 		}
 		if (scene.GetLightCount())
 			DrawLights(scene);
 	}
-			/*for (int i = 0; i < model.GetFacesCount(); i++)
-			{
-				Face face = model.GetFace(i);
-				int VertexIndex1 = face.GetVertexIndex(0), VertexIndex2 = face.GetVertexIndex(1), VertexIndex3 = face.GetVertexIndex(2);
-				glm::vec3 v1Temp = model.GetVertex(VertexIndex1);
-				glm::vec3 v2Temp = model.GetVertex(VertexIndex2);
-				glm::vec3 v3Temp = model.GetVertex(VertexIndex3);
-				glm::vec3 faceNormal = normalize(cross((v1Temp - v2Temp), (v1Temp - v3Temp)));
-				FaceNormal = model.Get_R_w() * model.Get_R_m() * glm::vec4(faceNormal, 1);
-				int Nindex1 = face.GetNormalIndex(0), Nindex2 = face.GetNormalIndex(1), Nindex3 = face.GetNormalIndex(2);
-				glm::vec4 v1 = projectionTransformation * Lookat * C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex1), 1);
-				glm::vec4 v2 = projectionTransformation * Lookat * C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex2), 1);
-				glm::vec4 v3 = projectionTransformation * Lookat * C_inv * Transformation * glm::vec4(model.GetVertex(VertexIndex3), 1);
-				glm::vec4 origin = projectionTransformation * Lookat * C_inv * glm::vec4(0, 0, 0, 1);
-				glm::vec4 temp = scene.GetActiveModel().GetRightTopFar();
-				glm::vec4 XAxis = projectionTransformation * Lookat * C_inv * glm::vec4(5 * temp.x, 0, 0, 1);
-				glm::vec4 YAxis = projectionTransformation * Lookat * C_inv * glm::vec4(0, 1.5 * temp.y, 0, 1);
-				if (!scene.GetActiveCamera().GetIsOrthographic())
-				{
-					v1 /= v1.w;
-					v2 /= v2.w;
-					v3 /= v3.w;
-					origin /= origin.w;
-					XAxis /= XAxis.w;
-					YAxis /= YAxis.w;
-				}
-				v1 = ViewPortTransformation * v1;
-				v2 = ViewPortTransformation * v2;
-				v3 = ViewPortTransformation * v3;
-				glm::vec4 vn1 = model.Get_R_w() * model.Get_R_m() * (glm::vec4(model.GetNormals(Nindex1), 1));
-				glm::vec4 vn2 = model.Get_R_w() * model.Get_R_m() * (glm::vec4(model.GetNormals(Nindex2), 1));
-				glm::vec4 vn3 = model.Get_R_w() * model.Get_R_m() * (glm::vec4(model.GetNormals(Nindex3), 1));
-				FaceCenter = (v1 + v2 + v3) / 3.0f;
-				color = glm::vec3(0.f, 0.f, 0.f);
-				c1 = glm::vec3(0.f, 0.f, 0.f);
-				c2 = glm::vec3(0.f, 0.f, 0.f);
-				c3 = glm::vec3(0.f, 0.f, 0.f);
-				if (scene.GetActiveModel().GetColorMethod() == RANDOM_COLORED)
-					ScanConvert_ZBuffer(v1, v2, v3, scene);
-				for (int i = 0; i < scene.GetLightCount(); i++)
-				{
-					Light& light = scene.GetLight(i);
-					glm::mat4x4 LightTransformations = light.GetWorldTransformation() * light.GetLocalTransformation();
-					LightPosition = projectionTransformation * Lookat * C_inv * LightTransformations * light.GetLightPosition();
-					if (!scene.GetActiveCamera().GetIsOrthographic())
-						LightPosition /= LightPosition.w;
-					LightPosition = ViewPortTransformation * LightPosition;
-					if (scene.GetShadingtype() == ShadingType::FLAT)
-					{
-						if (light.GetLightType() == LightType::POINT)
-							LightDirection = glm::normalize(glm::vec3(FaceCenter) - glm::vec3(LightPosition));
-						else
-							LightDirection = normalize(light.GetLightDirection());
-						color += GetDiffuseColor(FaceNormal, LightDirection, scene, light);
-						color += GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), light.GetAmbientLightColor());
-						color += GetSpecularColor(LightDirection, FaceNormal,scene.GetActiveCamera().GetEye(), light, scene.GetActiveModel().GetSpecularColor());
-					}
-					else if (scene.GetShadingtype() == ShadingType::GORAUD)
-					{
-						Lighting = true;
-						glm::vec3 LightDirection1, LightDirection3, LightDirection2;
-						if (light.GetLightType() == LightType::POINT)
-						{
-							LightDirection1 = glm::normalize(glm::vec3(v1.x, v1.y, v1.z) - glm::vec3(LightPosition.x, LightPosition.y, LightPosition.z));
-							LightDirection2 = glm::normalize(glm::vec3(v2.x, v2.y, v2.z) - glm::vec3(LightPosition.x, LightPosition.y, LightPosition.z));
-							LightDirection3 = glm::normalize(glm::vec3(v3.x, v3.y, v3.z) - glm::vec3(LightPosition.x, LightPosition.y, LightPosition.z));
-						}
-						else
-							LightDirection1 = LightDirection2 = LightDirection3 = normalize(light.GetLightDirection());
-						c1 = GetDiffuseColor((vn1), LightDirection1, scene, light);
-						c1 += GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), light.GetAmbientLightColor());
-						c1 += GetSpecularColor(LightDirection1, vn1, scene.GetActiveCamera().GetEye(), light, scene.GetActiveModel().GetSpecularColor());
-						c2 = GetDiffuseColor(vn2, LightDirection2, scene, light);
-						c2 += GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), light.GetAmbientLightColor());
-						c2 += GetSpecularColor(LightDirection2, vn2, scene.GetActiveCamera().GetEye(), light, scene.GetActiveModel().GetSpecularColor());
-						c3 = GetDiffuseColor(vn3, LightDirection3, scene, light);
-						c3 += GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), light.GetAmbientLightColor());
-						c3 += GetSpecularColor(LightDirection3, vn3, scene.GetActiveCamera().GetEye(), light, scene.GetActiveModel().GetSpecularColor());
-						ScanConvert_Gouraud(v1, v2, v3, c1, c2, c3);
-					}
-					else if (scene.GetShadingtype() == ShadingType::PHONG)
-					{
-						Lighting = true;
-						ScanConvert_Phong(v1, v2, v3, (vn1), (vn2), (vn3), scene, GetAmbientColor(scene.GetActiveModel().GetAmbientColor(), light.GetAmbientLightColor()), LightPosition, light);
-					}
-				}
-				if ((scene.GetShadingtype() == ShadingType::FLAT || scene.GetActiveModel().GetColorMethod() == GRAYSCALE) && scene.GetActiveModel().GetColorMethod() != RANDOM_COLORED)
-					ScanConvert_Flat(v1, v2, v3, scene.GetActiveModel().GetColorMethod(), color, scene, Lighting);
-
-				//Draw X and Y Axes
-				origin = ViewPortTransformation * origin;
-				XAxis = ViewPortTransformation * XAxis;
-				YAxis = ViewPortTransformation * YAxis;
-				DrawLine(glm::vec3(origin.x, origin.y, origin.z), glm::vec3(XAxis.x, XAxis.y, XAxis.z), glm::vec3(255, 255, 255));
-				DrawLine(glm::vec3(origin.x, origin.y, origin.z), glm::vec3(YAxis.x, YAxis.y, YAxis.z), glm::vec3(255, 50, 0));
-				//Draw the normal per vertex
-				if (model.GetNormalsFlag())
-				{
-					vn1 = Transformations::ScalingTransformation(100, 100, 100) * vn1;
-					vn2 = Transformations::ScalingTransformation(100, 100, 100) * vn2;
-					vn3 = Transformations::ScalingTransformation(100, 100, 100) * vn3;
-					DrawLine(glm::vec3(v1.x, v1.y, v1.z), glm::vec3(vn1.x + v1.x, vn1.y + v1.y, vn1.z + vn2.z), model.GetVN());
-					DrawLine(glm::vec3(v2.x, v2.y, v2.z), glm::vec3(vn2.x + v2.x, vn2.y + v2.y, vn1.z + vn2.z), model.GetVN());
-					DrawLine(glm::vec3(v3.x, v3.y, v3.z), glm::vec3(vn3.x + v3.x, vn3.y + v3.y, vn1.z + vn2.z), model.GetVN());
-				}
-				//Draw normals per face
-				FaceNormal = Transformations::ScalingTransformation(100, 100, 100) * FaceNormal + glm::vec4(FaceCenter, 0);
-				if (model.GetFacesNormalsFlag())
-					DrawLine(glm::vec3(FaceCenter.x, FaceCenter.y, FaceCenter.z), glm::vec3(FaceNormal.x, FaceNormal.y, FaceNormal.z), model.GetFN());
-			}
-			//Draw the bounding box
-			if (model.GetBoundingBoxFlag())
-			{
-				glm::vec4 leftTopNear = projectionTransformation * Lookat * C_inv * Transformation * model.GetLeftTopNear();
-				glm::vec4 rightTopNear = projectionTransformation * Lookat * C_inv * Transformation * model.GetRightTopNear();
-				glm::vec4 leftTopFar = projectionTransformation * Lookat * C_inv * Transformation * model.GetLeftTopFar();
-				glm::vec4 rightTopFar = projectionTransformation * Lookat * C_inv * Transformation * model.GetRightTopFar();
-				glm::vec4 leftBottomNear = projectionTransformation * Lookat * C_inv * Transformation * model.GetLeftBottomNear();
-				glm::vec4 leftBottomFar = projectionTransformation * Lookat * C_inv * Transformation * model.GetLeftBottomFar();
-				glm::vec4 rightBottomFar = projectionTransformation * Lookat * C_inv * Transformation * model.GetRightBottomFar();
-				glm::vec4 rightBottomNear = projectionTransformation * Lookat * C_inv * Transformation * model.GetRightBottomNear();
-				if (!scene.GetActiveCamera().GetIsOrthographic())
-				{
-					leftTopNear /= leftTopNear.w;
-					rightTopNear /= rightTopNear.w;
-					leftTopFar /= leftTopFar.w;
-					rightTopFar /= rightTopFar.w;
-					leftBottomNear /= leftBottomNear.w;
-					leftBottomFar /= leftBottomFar.w;
-					rightBottomFar /= rightBottomFar.w;
-					rightBottomNear /= rightBottomNear.w;
-				}
-				leftTopNear = ViewPortTransformation * leftTopNear;
-				rightTopNear = ViewPortTransformation * rightTopNear;
-				leftTopFar = ViewPortTransformation * leftTopFar;
-				rightTopFar = ViewPortTransformation * rightTopFar;
-				leftBottomNear = ViewPortTransformation * leftBottomNear;
-				leftBottomFar = ViewPortTransformation * leftBottomFar;
-				rightBottomFar = ViewPortTransformation * rightBottomFar;
-				rightBottomNear = ViewPortTransformation * rightBottomNear;
-				DrawLine(glm::vec3(leftTopNear.x, leftTopNear.y, leftTopNear.z), glm::vec3(rightTopNear.x, rightTopNear.y, 0), model.GetBB());
-				DrawLine(glm::vec3(leftTopNear.x, leftTopNear.y, leftTopNear.z), glm::vec3(leftTopFar.x, leftTopFar.y, leftTopFar.z), model.GetBB());
-				DrawLine(glm::vec3(leftTopFar.x, leftTopFar.y, leftTopFar.z), glm::vec3(rightTopFar.x, rightTopFar.y, rightTopFar.z), model.GetBB());
-				DrawLine(glm::vec3(rightTopFar.x, rightTopFar.y, rightTopFar.z), glm::vec3(rightTopNear.x, rightTopNear.y, 0), model.GetBB());
-				DrawLine(glm::vec3(leftTopNear.x, leftTopNear.y, leftTopNear.z), glm::vec3(leftBottomNear.x, leftBottomNear.y, 0), model.GetBB());
-				DrawLine(glm::vec3(leftTopFar.x, leftTopFar.y, leftTopFar.z), glm::vec3(leftBottomFar.x, leftBottomFar.y, leftBottomFar.z), model.GetBB());
-				DrawLine(glm::vec3(rightTopFar.x, rightTopFar.y, rightTopFar.z), glm::vec3(rightBottomFar.x, rightBottomFar.y, rightBottomFar.z), model.GetBB());
-				DrawLine(glm::vec3(rightTopNear.x, rightTopNear.y, rightTopNear.z), glm::vec3(rightBottomNear.x, rightBottomNear.y, rightBottomNear.z), model.GetBB());
-				DrawLine(glm::vec3(leftBottomNear.x, leftBottomNear.y, leftBottomNear.z), glm::vec3(rightBottomNear.x, rightBottomNear.y, rightBottomNear.z), model.GetBB());
-				DrawLine(glm::vec3(leftBottomNear.x, leftBottomNear.y, leftBottomNear.z), glm::vec3(leftBottomFar.x, leftBottomFar.y, leftBottomFar.z), model.GetBB());
-				DrawLine(glm::vec3(leftBottomFar.x, leftBottomFar.y, leftBottomFar.z), glm::vec3(rightBottomFar.x, rightBottomFar.y, rightBottomFar.z), model.GetBB());
-				DrawLine(glm::vec3(rightBottomFar.x, rightBottomFar.y, rightBottomFar.z), glm::vec3(rightBottomNear.x, rightBottomNear.y, rightBottomNear.z), model.GetBB());
-			}
-		}
-		FixColors(scene.GetColoring());
-		
-		if (scene.GetActiveModel().GetColorMethod() == GRAYSCALE)
-			ScanConvert_Grayscale();
-		if (scene.GetFog())
-			FogExists(scene);
-	}*/
 }
 
 int Renderer::GetViewportWidth() const
@@ -743,9 +589,6 @@ void Renderer::DrawLights(Scene& scene)
 		{
 			glBindVertexArray(light->GetVao());
 			glDrawArrays(GL_LINES, 0, 18);
-
-			//glBindVertexArray(light->GetVao());
-			//glDrawArrays(GL_LINES, 0, 8);
 			glBindVertexArray(0);
 		}
 	}
@@ -775,7 +618,6 @@ glm::vec3 Renderer::GetDiffuseColor(glm::vec3 normal, glm::vec3 I, Scene& scene,
 	float IdotN = glm::dot(-(normal), I);
 	return temp * IdotN;
 }
-
 
 void Renderer::ScanConvert_Grayscale()
 {
@@ -824,10 +666,10 @@ void Renderer::LoadShaders()
 	colorShader.loadShaders("vshader_color.glsl", "fshader_color.glsl");
 }
 
-void Renderer::LoadTextures()
+void Renderer::LoadTextures(const std::string& filePath)
 {
-	if (!texture1.loadTexture("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\armadillo.jpg", true))
+	if (!texture1.loadTexture(filePath, true))
 	{
-		texture1.loadTexture("C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Data\\armadillo.jpg", true);
+		texture1.loadTexture(filePath, true);
 	}
 }

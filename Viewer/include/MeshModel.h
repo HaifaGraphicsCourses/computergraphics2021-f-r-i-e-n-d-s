@@ -90,6 +90,49 @@ public:
 	std::vector<glm::vec2> textureCoords;
 	void SetAlpha(float a);
 	float GetAlpha();
+	void SetHasVt(bool a);
+	bool GetHasVt();
+	float GetScaleX();
+	float GetScaleY();
+	float GetScaleZ();
+	float GetWScaleX();
+	float GetWScaleY();
+	float GetWScaleZ();
+
+	float GetTranslateX();
+	float GetTranslateY();
+	float GetTranslateZ();
+	float GetWTranslateX();
+	float GetWTranslateY();
+	float GetWTranslateZ();
+
+	float GetAngleX();
+	float GetAngleY();
+	float GetAngleZ();
+	float GetWAngleX();
+	float GetWAngleY();
+	float GetWAngleZ();
+
+	void SetScaleX(float S) ;
+	void SetScaleY(float S) ;
+	void SetScaleZ(float S) ;
+	void SetWScaleX(float S);
+	void SetWScaleY(float S);
+	void SetWScaleZ(float S);
+	void SetTranslateX(float S) ;
+	void SetTranslateY(float S) ;
+	void SetTranslateZ(float S) ;
+	void SetWTranslateX(float S);
+	void SetWTranslateY(float S);
+	void SetWTranslateZ(float S);
+	void SetAngleX(float S) ;
+	void SetAngleY(float S) ;
+	void SetAngleZ(float S) ;
+	void SetWAngleX(float S);
+	void SetWAngleY(float S);
+	void SetWAngleZ(float S);
+
+
 protected:
 	std::vector<Vertex> modelVertices;
 	GLuint vbo;
@@ -98,6 +141,7 @@ protected:
 
 private:
 	
+	bool HasVt=false;
 	float alpha;
 	glm::mat4x4 PreTransformation;
 	std::vector<glm::vec3> boundingBoxVertices;
@@ -116,6 +160,24 @@ private:
 	glm::mat4x4 WorldTransformation = Transformations::Identity4X4Matrix();
 	glm::mat4x4 Transformation = Transformations::Identity4X4Matrix();
 	glm::mat4x4 ModelTransformation = Transformations::Identity4X4Matrix();
+	float ScaleX = 1.f;
+	float ScaleY = 1.f;
+	float ScaleZ = 1.f;
+	float WScaleX = 1.f;
+	float WScaleY = 1.f;
+	float WScaleZ = 1.f;
+	float TranslateX=0.f;
+	float TranslateY=0.f;
+	float TranslateZ=0.f;
+	float WTranslateX = 0.f;
+	float WTranslateY = 0.f;
+	float WTranslateZ = 0.f;
+	float AngleX = 0.f;
+	float AngleY = 0.f;
+	float AngleZ = 0.f;
+	float WAngleX = 0.f;
+	float WAngleY = 0.f;
+	float WAngleZ = 0.f;
 	glm::vec4 leftTopNear_;
 	glm::vec4 rightTopNear_;
 	glm::vec4 leftTopFar_;
@@ -131,8 +193,8 @@ private:
 	glm::vec3 BoundingBoxColor_;
 	glm::vec3 FacesNormalsColor_;
 	glm::vec3 NormalsColor_;
-	glm::vec3 DModelColor;
-	glm::vec3 AModelColor;
+	glm::vec3 DModelColor = glm::vec3(0.5f, 0.285f, 0.285f);
+	glm::vec3 AModelColor = glm::vec3(0.0625f, 0.3f, 0.57f);
 	glm::vec3 SModelColor;
 	glm::vec3 Preffered_eye;
 	float TranslateFactor;

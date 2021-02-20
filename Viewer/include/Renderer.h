@@ -34,7 +34,7 @@ public:
 	void ScanConvert_Grayscale();
 	void FixColors(int coloring);
 	void LoadShaders();
-	void LoadTextures();
+	void LoadTextures(const std::string& filePath);
 
 private:
 	ShaderProgram lightShader;
