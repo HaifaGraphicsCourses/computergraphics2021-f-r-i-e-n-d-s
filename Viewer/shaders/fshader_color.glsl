@@ -2,6 +2,7 @@
 #define PHONGSHADING 999
 #define WIREFRAME 990
 #define TEXTURED 900
+#define REFLECTION 909
 struct Material
 {
 	sampler2D textureMap;
@@ -29,6 +30,7 @@ uniform vec3 lightsDirections[10];
 uniform float lightsTypes[10];
 uniform int LightsNumber;
 uniform int ColorMethod;
+uniform samplerCube skybox;
 
 // Inputs from vertex shader (after interpolation was applied)
 in vec3 fragPos;
@@ -80,5 +82,11 @@ void main()
 		}
 		if(ColorMethod==TEXTURED)
 			frag_color=vec4(textureColor,1.f);
+		if(ColorMethod==REFLECTION)
+		{
+		    vec3 I = normalize(fragPos - eye);
+		    vec3 R = reflect(I,normalize(fragNormal));
+		    frag_color = vec4(0.2,0.2,0.2,0)+vec4(texture(skybox, R).rgb, 1.0);
+		}
 	}	
 }

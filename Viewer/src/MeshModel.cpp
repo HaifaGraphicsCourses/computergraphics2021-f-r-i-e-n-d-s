@@ -5,6 +5,7 @@
 #define PHONGSHADING 999
 #define WIREFRAME 990
 #define TEXTURED 900
+#define REFLECTION 909
 
 MeshModel::MeshModel(ModelParameters& model) :
 	faces_(model.faces),

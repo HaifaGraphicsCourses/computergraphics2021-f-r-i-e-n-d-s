@@ -1,6 +1,5 @@
 #include "Scene.h"
-#include "MeshModel.h"
-#include <string>
+
 
 Scene::Scene() :
 	active_camera_index_(0),
@@ -16,14 +15,14 @@ void Scene::ClearActiveModel()
 	mesh_models_.clear();
 }
 
-void Scene::SetFog(bool fog)
+void Scene::SetenvironmentMap(bool flag)
 {
-	Fog = fog;
+	environmentMap = flag;
 }
 
-bool Scene::GetFog()
+bool Scene::GetenvironmentMap()
 {
-	return Fog;
+	return environmentMap;
 }
 
 void Scene::AddModel(const std::shared_ptr<MeshModel>& mesh_model)

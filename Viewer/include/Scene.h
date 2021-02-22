@@ -2,10 +2,11 @@
 
 #include <vector>
 #include <memory>
-
 #include "Camera.h"
 #include "MeshModel.h"
 #include "Light.h"
+#include <CubeMap.h>
+#include <string>
 
 class Scene {
 public:
@@ -35,8 +36,8 @@ public:
 	void SetActiveModelIndex(int index);
 	int GetActiveModelIndex() const;
 	void ClearActiveModel();
-	void SetFog(bool fog);
-	bool GetFog();
+	void SetenvironmentMap(bool flag);
+	bool GetenvironmentMap();
 	void SetFogEnd(float value);
 	const float GetFogEnd() const;
 	void SetFogStart(float value);
@@ -49,10 +50,10 @@ public:
 	int GetColoring();
 	void SetShadingtype(ShadingType type);
 	ShadingType GetShadingtype();
-
+	std::shared_ptr<CubeMap> cubemap;
 	
 private:
-	bool Fog=false;
+	bool environmentMap=false;
 	bool LinearFog=true;
 	float FogStart = -1;
 	float FogEnd = 1;

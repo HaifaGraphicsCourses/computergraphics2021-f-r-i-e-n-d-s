@@ -2,6 +2,7 @@
 #define PHONGSHADING 999
 #define WIREFRAME 990
 #define TEXTURED 900
+#define REFLECTION 909
 #include <cmath>
 #include <imgui/imgui.h>
 #include <stdio.h>
@@ -224,23 +225,13 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene,Renderer& renderer)
 	static bool LightWindow = false;
 	static bool ColorsWindow = true;
 	static bool Fog = false;
-
 	static float OrthoWidth;
 	static int Shadingtype = 0;
 	static int coloringWay = 0;
 	// Menu Bar
 	if (ImGui::BeginMainMenuBar())
 	{
-		if (ImGui::Button("Load Texture"))
-		{
-			nfdchar_t* outPath = NULL;
-			nfdresult_t result = NFD_OpenDialog("png,jpg", NULL, &outPath);
-			if (result == NFD_OKAY)
-			{
-				scene.GetActiveModel()->LoadTextures(outPath);
-				free(outPath);
-			}
-		}
+
 		if (ImGui::BeginMenu("Choose Model"))
 		{
 			if (ImGui::MenuItem("Banana")) {
@@ -320,7 +311,16 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene,Renderer& renderer)
 				scene.SetActiveCameraIndex(0);
 			}
 		}
-		
+		if (ImGui::Button("Load Texture"))
+		{
+			nfdchar_t* outPath = NULL;
+			nfdresult_t result = NFD_OpenDialog("png,jpg", NULL, &outPath);
+			if (result == NFD_OKAY)
+			{
+				scene.GetActiveModel()->LoadTextures(outPath);
+				free(outPath);
+			}
+		}
 		if (ImGui::Button("Clear Model"))
 		{
 			scene.GetActiveCamera()->ResetTransformations();
@@ -352,47 +352,52 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene,Renderer& renderer)
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::ColorEdit3("Background Color", (float*)&clear_color);
 		glClearColor(clear_color.x, clear_color.y, clear_color.z, 1.f);
-		ImGui::ColorEdit3("Bounding Box Color", BoundingBoxColor);
-		ImGui::ColorEdit3("Vertices Normals Color", NormalsColor);
-		ImGui::ColorEdit3("Faces Normals Color", FacesNormalsColor);
-		if (scene.GetModelCount())
-		{
-			scene.GetActiveModel()->SetColors(BoundingBoxColor, FacesNormalsColor, NormalsColor);
-		}
 		ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.f, 0.f, 0.f));
+
 		if (ImGui::Button("Close Me"))
 			ColorsWindow = false;
 		ImGui::PopStyleColor();
-		ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.2f, 0.2f, 0.2f));
-		if (ImGui::Button("Add/Remove Fog effect"))
-			scene.SetFog(!scene.GetFog());
-		ImGui::PopStyleColor();
-		if (scene.GetFog())
+		if (ImGui::TreeNode("Add Environment"))
 		{
-			if (ImGui::TreeNode("Fog Control Panel"))
+			std::vector<std::string> faces;
+			if (ImGui::Button("Mountains"))
 			{
-				if (ImGui::RadioButton("Linear", &fogType, 0))
-				{
-					scene.SetIsLinearFog(true);
-				}
-				ImGui::SameLine();
-				if (ImGui::RadioButton("Exponential", &fogType, 1))
-				{
-					scene.SetIsLinearFog(false);
-				}
 
-				if (fogType == 1)
-				{
-					static float fogDensity;
-					fogDensity = scene.GetFogDensity();
-					if (ImGui::SliderFloat("Fog Density", &fogDensity, scene.GetActiveModel()->minDensity, scene.GetActiveModel()->maxDensity))
-					{
-						scene.SetFogDensity(fogDensity);
-					}
-				}
-				ImGui::TreePop();
 			}
+			if (ImGui::Button("Random"))
+			{
+				faces =
+				{
+					"C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Skybox\\right1.jpg",
+						"C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Skybox\\left1.jpg",
+						"C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Skybox\\top1.jpg",
+						"C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Skybox\\bottom1.jpg",
+						"C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Skybox\\front1.jpg",
+						"C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Skybox\\back1.jpg"
+				};
+				scene.cubemap = std::make_shared<CubeMap>(faces);
+				scene.SetenvironmentMap(true);
+				scene.GetActiveModel()->SetColorMethod(REFLECTION);
+			}
+			if (ImGui::Button("Sea"))
+			{
+				faces=
+				{
+					"C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Skybox\\right.jpg",
+						"C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Skybox\\left.jpg",
+						"C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Skybox\\top.jpg",
+						"C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Skybox\\bottom.jpg",
+						"C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Skybox\\front.jpg",
+						"C:\\Users\\most_\\OneDrive\\Documents\\GitHub\\computergraphics2021-f-r-i-e-n-d-s\\Skybox\\back.jpg"
+				};
+				scene.cubemap = std::make_shared<CubeMap>(faces);
+				scene.SetenvironmentMap(true);
+				scene.GetActiveModel()->SetColorMethod(REFLECTION);
+			}
+
+			ImGui::TreePop();
 		}
+		
 		ImGui::End();
 	}
 
@@ -610,26 +615,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene,Renderer& renderer)
 				WAngleZ = 0;
 				scene.GetActiveModel()->ResetModel();
 			}
-			float color[3];
-			RGBtoHSV(BoundingBoxColor[0] * 255, BoundingBoxColor[1] * 255, BoundingBoxColor[2] * 255, color[0], color[1], color[2]);
-			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(color[0] / 360, color[1], color[2] / 255));
-			if (ImGui::Button("Show/Hide Bounding Box"))
-				scene.GetActiveModel()->SetBoundingBoxFlag();
-			ImGui::PopStyleColor();
-
-			ImGui::SameLine();
-			RGBtoHSV(FacesNormalsColor[0] * 255, FacesNormalsColor[1] * 255, FacesNormalsColor[2] * 255, color[0], color[1], color[2]);
-			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(color[0] / 360, color[1], color[2] / 255));
-			if (ImGui::Button("Show/Hide Faces Normals"))
-				scene.GetActiveModel()->SetFacesNormalsFlag();
-			ImGui::PopStyleColor();
-
-			ImGui::SameLine();
-			RGBtoHSV(NormalsColor[0] * 255, NormalsColor[1] * 255, NormalsColor[2] * 255, color[0], color[1], color[2]);
-			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(color[0] / 360, color[1], color[2] / 255));
-			if (ImGui::Button("Show/Hide Normals"))
-				scene.GetActiveModel()->SetNormalsFlag();
-			ImGui::PopStyleColor();
+			
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0.f, 0.f, 0.f));
 			if (ImGui::Button("Close Me"))
 				ModelWindow = false;

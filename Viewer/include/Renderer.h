@@ -35,9 +35,11 @@ public:
 	void FixColors(int coloring);
 	void LoadShaders();
 	void LoadTextures(const std::string& filePath);
+	Texture2D texture1;
 
 private:
-	ShaderProgram lightShader;
+
+	ShaderProgram skyboxShader;
 	ShaderProgram colorShader;
 	void PutPixel(const int i, const int j, const glm::vec3& color);
 	void DrawLine(const glm::vec3& p1, const glm::vec3& p2,glm::vec3& color);
@@ -54,5 +56,4 @@ private:
 	GLuint gl_screen_tex_;
 	GLuint gl_screen_vtc_;
 	glm::vec3 parallelLights = glm::vec3(0.f, 0.f, 0.f);
-	Texture2D texture1;
 };

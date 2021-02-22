@@ -10,7 +10,7 @@
 #define PHONGSHADING 999
 #define WIREFRAME 990
 #define TEXTURED 900
-
+#define REFLECTION 909
 #define INDEX(width,x,y,c) ((x)+(y)*(width))*3+(c)
 #define Z_INDEX(width,x,y) ((x)+(y)*(width))
 
@@ -364,7 +364,6 @@ void Renderer::Render(Scene& scene)
 	{
 		int modelCount = scene.GetModelCount();
 		std::shared_ptr<Camera> camera = scene.GetActiveCamera();
-
 		for (int currentModelIndex = 0; currentModelIndex < modelCount; currentModelIndex++)
 		{
 			std::shared_ptr<MeshModel> currentModel = scene.GetModel(currentModelIndex);
@@ -383,8 +382,42 @@ void Renderer::Render(Scene& scene)
 				else
 					lightsTypes[i] = 0;
 			}
+			if (scene.GetenvironmentMap())
+			{
+				colorShader.use();
+				colorShader.setUniform("reflection", true);
+				colorShader.setUniform("skybox", 0);
+				colorShader.setUniform("material.textureMap", 0);
+				colorShader.setUniform("model", currentModel->GetTransformation());
+				colorShader.setUniform("DrawLight", false);
+				colorShader.setUniform("view", camera->GetLookAt() * camera->GetC_inv());
+				colorShader.setUniform("projection", camera->GetProjectionTransformation());
+				colorShader.setUniform("ColorMethod", REFLECTION);
+
+				currentModel->texture1.bind(0);
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				glBindVertexArray(currentModel->GetVAO());
+				glDrawArrays(GL_TRIANGLES, 0, currentModel->GetModelVertices().size());
+				glBindVertexArray(0);
+				currentModel->texture1.unbind(0);
+
+				skyboxShader.use();
+				skyboxShader.setUniform("skybox", 0);
+				glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+				skyboxShader.use();
+				skyboxShader.setUniform("view", camera->GetLookAt() * camera->GetC_inv());
+				skyboxShader.setUniform("projection", camera->GetProjectionTransformation());
+				// skybox cube
+				glBindVertexArray(scene.cubemap->GetskyboxVAO());
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_CUBE_MAP,scene.cubemap->cubemapTexture);
+				glDrawArrays(GL_TRIANGLES, 0, 36);
+				glBindVertexArray(0);
+				glDepthFunc(GL_LESS);
+			}
 			// Set the uniform variables
 			colorShader.use();
+			colorShader.setUniform("reflection", false);
 			colorShader.setUniform("AmbientColor", AmbientColor, scene.GetLightCount());
 			colorShader.setUniform("DiffuseColor", DiffuseColor, scene.GetLightCount());
 			colorShader.setUniform("SpecularColor", SpecularColor, scene.GetLightCount());
@@ -664,6 +697,7 @@ void Renderer::FixColors(int coloring)
 void Renderer::LoadShaders()
 {
 	colorShader.loadShaders("vshader_color.glsl", "fshader_color.glsl");
+	skyboxShader.loadShaders("vshader_skybox.glsl", "fshader_skybox.glsl");
 }
 
 void Renderer::LoadTextures(const std::string& filePath)

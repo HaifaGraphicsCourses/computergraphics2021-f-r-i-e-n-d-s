@@ -12,6 +12,7 @@ uniform bool DrawLight;
 uniform bool HasVt;
 uniform mat4 LightTransformation;
 uniform int lightType;
+uniform bool reflection;
 
 // These outputs will be available in the fragment shader as inputs
 out vec3 orig_fragPos;
@@ -30,11 +31,19 @@ void main()
 	if(HasVt==true)
 		fragTexCoords = texCoords;
 	else
-		fragTexCoords =orig_fragPos.xy;//vec2(0.5+(atan(orig_fragPos.x,orig_fragPos.y)/(2*3.14159265359)),0.5-(asin(orig_fragPos.y)/3.14159265359));//
+	{
+		fragTexCoords=orig_fragPos.xy;
+		//float r=sqrt(pow(orig_fragPos.x,2)+pow(orig_fragPos.y,2)+pow(orig_fragPos.z,2));
+		//fragTexCoords.x =atan((sqrt(pow(orig_fragPos.x,2)+pow(orig_fragPos.y,2)))/orig_fragPos.z);			
+		//fragTexCoords.y = atan(orig_fragPos.y/orig_fragPos.x);
+	}
+	if(reflection==true)
+	{
+		fragNormal = mat3(transpose(inverse(model))) * normal;
+	}
 
-	// Pass the vertex texture coordinates property as it is. Its interpolated value
-	// will be avilable for us in the fragment shader
 	gl_PointSize=10.0f;
+
 	// This is an internal OpenGL variable, we must set a value to this variable
 	gl_Position = projection * view *  model * vec4(pos, 1.0f);
 	if(DrawLight==true)

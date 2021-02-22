@@ -24,9 +24,8 @@ std::shared_ptr<MeshModel> Utils::LoadMeshModel(const std::string& filePath)
 {
 	ModelParameters model;
 	glm::vec3 Vertex, VertexNormal;
-	glm::mat4x4 Transformation;
 	std::ifstream ifile(filePath.c_str());
-	float Min_X = FLT_MAX, Max_X = FLT_MIN, Max_Y = FLT_MIN, Min_Y = FLT_MAX, Max_Z = FLT_MIN, Min_Z = FLT_MAX,MaxIndex;
+	float Min_X = FLT_MAX, Max_X = FLT_MIN, Max_Y = FLT_MIN, Min_Y = FLT_MAX, Max_Z = FLT_MIN, Min_Z = FLT_MAX;
 	//parameters to assign a scaling values
 	// while not end of file
 	while (!ifile.eof())
