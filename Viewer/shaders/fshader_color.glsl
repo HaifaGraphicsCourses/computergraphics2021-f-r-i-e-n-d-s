@@ -47,7 +47,6 @@ void main()
 	// Sample the texture-map at the UV coordinates given by 'fragTexCoords'
 	vec3 textureColor = vec3(texture(material.textureMap, fragTexCoords));
 	vec3 I,Ia=vec3(0.f,0.f,0.f),Id=vec3(0.f,0.f,0.f),Is=vec3(0.f,0.f,0.f);
-
 	if(DrawLight==true)
 		frag_color = vec4(1.f,1.f,1.f,1.f);
 	else
@@ -74,7 +73,7 @@ void main()
 				float Power = pow(max(0.0f, dot((r), (eye))), alpha);
 				Is+=(temp * Power);
 			}
-			frag_color = vec4((Is+Id+Ia),1.f);
+				frag_color = vec4((Is+Id+Ia),1.f);
 		}
 		if(ColorMethod==WIREFRAME)
 		{

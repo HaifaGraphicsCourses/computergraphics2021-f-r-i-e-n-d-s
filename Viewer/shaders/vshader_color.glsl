@@ -33,9 +33,6 @@ void main()
 	else
 	{
 		fragTexCoords=orig_fragPos.xy;
-		//float r=sqrt(pow(orig_fragPos.x,2)+pow(orig_fragPos.y,2)+pow(orig_fragPos.z,2));
-		//fragTexCoords.x =atan((sqrt(pow(orig_fragPos.x,2)+pow(orig_fragPos.y,2)))/orig_fragPos.z);			
-		//fragTexCoords.y = atan(orig_fragPos.y/orig_fragPos.x);
 	}
 	if(reflection==true)
 	{

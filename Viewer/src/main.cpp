@@ -198,7 +198,7 @@ void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& 
 	}
 	glClearColor(clear_color.r, clear_color.g, clear_color.b, clear_color.a);
 	glEnable(GL_DEPTH_TEST);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);//added
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	renderer.ClearColorBuffer(clear_color);
 	renderer.Render(scene);
